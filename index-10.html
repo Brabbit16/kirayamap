@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KirayaMap · AI Property Matchmaking · Delhi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --ink:#1a1a1a;--ink2:#555;--ink3:#999;
+      --bg:#f7f6f3;--white:#fff;--border:#ece9e3;
+      --accent:#2d6a4f;--acl:#e6f2ec;
+      --rust:#c8552a;--gold:#b8902a;
+      --sh:0 1px 8px rgba(0,0,0,.07);
+      --shl:0 4px 24px rgba(0,0,0,.13);--r:14px;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);overflow:hidden;}
+
+    /* ══ SPLASH ══ */
+    #splash{position:fixed;inset:0;z-index:9999;background:#111;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .sp{width:100%;max-width:400px;display:flex;flex-direction:column;animation:fadeUp .5s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .sp-logo{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#fff;margin-bottom:4px;}
+    .sp-logo em{font-style:normal;color:#a8c5b5;}
+    .sp-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:26px;}
+    .sp-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(168,197,181,.1);border:1px solid rgba(168,197,181,.2);border-radius:40px;padding:7px 14px;margin-bottom:20px;font-size:12px;color:#a8c5b5;}
+    .sp-dot{width:6px;height:6px;border-radius:50%;background:#a8c5b5;animation:blink 2s infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .sp-hero{font-family:'Playfair Display',serif;font-size:25px;font-weight:600;line-height:1.35;color:#fff;margin-bottom:8px;}
+    .sp-hero span{color:#a8c5b5;}
+    .sp-desc{font-size:13px;color:#666;line-height:1.6;margin-bottom:20px;max-width:340px;}
+    .sp-slbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#555;margin-bottom:7px;}
+    .sp-sbox{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:13px 15px;display:flex;gap:12px;margin-bottom:18px;}
+    .sp-stxt{font-size:12px;color:#aaa;line-height:1.55;flex:1;}
+    .cp-btn{background:none;border:none;cursor:pointer;color:#555;font-size:16px;flex-shrink:0;transition:color .2s;}
+    .cp-btn:hover{color:#a8c5b5;}
+    .btn-wa{width:100%;padding:13px;border-radius:12px;border:none;background:#25d366;color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:9px;}
+    .btn-enter{width:100%;padding:13px;border-radius:12px;border:none;background:#fff;color:var(--ink);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:9px;}
+    .btn-how{width:100%;padding:12px;border-radius:12px;border:1px solid #2a2a2a;background:transparent;color:#666;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .sp-tos{font-size:11px;color:#444;text-align:center;margin-top:12px;} .sp-tos a{color:#666;}
+
+    /* ══ HOW MODAL ══ */
+    .overlay{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;}
+    .overlay.open{display:flex;}
+    .modal-card{background:#fff;border-radius:20px;width:100%;max-width:420px;padding:28px 24px;animation:fadeUp .22s ease;max-height:92vh;overflow-y:auto;}
+    .mc-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:600;margin-bottom:4px;}
+    .mc-sub{font-size:13px;color:var(--ink2);margin-bottom:20px;}
+    .step{display:flex;gap:13px;margin-bottom:16px;}
+    .step-n{width:30px;height:30px;border-radius:50%;background:var(--acl);color:var(--accent);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .step-t{font-size:14px;font-weight:500;margin-bottom:2px;}
+    .step-d{font-size:13px;color:var(--ink2);line-height:1.5;}
+    .mc-close-btn{width:100%;padding:13px;border-radius:12px;border:none;background:var(--ink);color:#fff;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px;}
+
+    /* ══ FIND FLAT / TENANT MODAL ══ */
+    #find-modal .modal-card{background:#1e1f2e;border:1px solid #2a2b3d;}
+    #find-modal .mc-title{color:#fff;}
+    #find-modal .mc-sub{color:#9aa0a6;}
+    .find-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+    .find-card{background:#252637;border:1.5px solid #32334a;border-radius:14px;padding:18px;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:14px;}
+    .find-card:hover{border-color:#6c63ff;}
+    .find-card.selected{border-color:#6c63ff;background:rgba(108,99,255,.1);}
+    .find-card-ico{font-size:26px;flex-shrink:0;}
+    .find-card-title{font-size:16px;font-weight:600;color:#fff;margin-bottom:4px;}
+    .find-card-desc{font-size:13px;color:#9aa0a6;line-height:1.5;}
+    .find-note{font-size:12px;color:#666;line-height:1.6;margin-bottom:16px;}
+    .find-note a{color:#6c63ff;text-decoration:none;}
+    .btn-find-next{width:100%;padding:13px;border-radius:12px;border:none;background:#6c63ff;color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .btn-find-close{width:36px;height:36px;border-radius:50%;background:#32334a;border:none;cursor:pointer;color:#9aa0a6;font-size:16px;position:absolute;top:20px;right:20px;}
+    #find-modal .modal-card{position:relative;}
+
+    /* ══ INTEREST MODAL ══ */
+    #interest-modal .modal-card{max-width:400px;}
+    .interest-pin-preview{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:16px;border:1px solid var(--border);}
+    .ipr-rent{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;}
+    .ipr-det{font-size:12px;color:var(--ink2);margin-top:3px;}
+    .int-label{font-size:12px;color:var(--ink2);margin-bottom:5px;display:block;font-weight:500;}
+    .int-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 13px;color:var(--ink);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;transition:border-color .2s;}
+    .int-input:focus{border-color:var(--accent);}
+    .int-note{font-size:12px;color:var(--ink3);line-height:1.5;margin-bottom:14px;}
+    .btn-interest{width:100%;padding:13px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .btn-int-cancel{width:100%;padding:11px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--ink2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+
+    /* ══ APP ══ */
+    #app{display:none;height:100%;}
+    #app.show{display:block;}
+
+    /* ══ TOPBAR ══ */
+    #topbar{position:fixed;top:0;left:0;right:0;height:54px;z-index:1000;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;}
+    .logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);white-space:nowrap;flex-shrink:0;}
+    .logo em{font-style:normal;color:var(--accent);}
+    .logo-ai{font-size:9px;background:var(--acl);color:var(--accent);border-radius:5px;padding:2px 6px;margin-left:5px;vertical-align:middle;}
+
+    /* SEARCH */
+    .sw{flex:1;position:relative;max-width:500px;}
+    #si{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:24px;padding:8px 36px 8px 36px;font-size:13px;color:var(--ink);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;}
+    #si:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,106,79,.08);}
+    .si-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--ink3);pointer-events:none;}
+    #si-clr{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ink3);font-size:14px;display:none;line-height:1;}
+    #si-spin{position:absolute;right:11px;top:50%;transform:translateY(-50%);display:none;font-size:13px;color:var(--ink3);animation:spin .8s linear infinite;}
+    @keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
+
+    #dd{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shl);z-index:2000;max-height:360px;overflow-y:auto;}
+    #dd.open{display:block;}
+    .dd-sec{padding:7px 0 2px;}
+    .dd-lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3);padding:0 13px 5px;font-weight:500;}
+    .dd-item{padding:9px 13px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:9px;transition:background .1s;}
+    .dd-item:hover,.dd-item.hl{background:var(--bg);}
+    .dd-ico{font-size:14px;flex-shrink:0;}
+    .dd-name{font-weight:500;}
+    .dd-sub{font-size:11px;color:var(--ink3);margin-top:1px;}
+    .dd-sep{height:1px;background:var(--border);margin:3px 0;}
+    .nearby-header{padding:10px 13px 5px;display:flex;align-items:center;justify-content:space-between;}
+    .nearby-title{font-size:12px;font-weight:600;}
+    .nearby-count{font-size:11px;color:var(--accent);background:var(--acl);padding:2px 8px;border-radius:10px;}
+    .nearby-pin{padding:9px 13px;cursor:pointer;font-size:13px;display:flex;align-items:flex-start;gap:10px;transition:background .1s;border-left:3px solid transparent;}
+    .nearby-pin:hover{background:var(--bg);border-left-color:var(--accent);}
+    .np-ico{font-size:16px;flex-shrink:0;margin-top:1px;}
+    .np-rent{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;}
+    .np-det{font-size:11px;color:var(--ink2);margin-top:2px;}
+    .np-dir{margin-left:auto;font-size:11px;color:var(--accent);background:var(--acl);padding:3px 9px;border-radius:8px;white-space:nowrap;flex-shrink:0;text-decoration:none;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;}
+    .np-dir:hover{background:var(--accent);color:#fff;}
+
+    .top-right{display:flex;gap:7px;margin-left:auto;flex-shrink:0;}
+    .tbtn{background:transparent;border:1px solid var(--border);border-radius:20px;padding:6px 13px;font-size:12px;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+    .tbtn:hover{border-color:var(--accent);color:var(--accent);}
+    .tbtn.acc{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .tbtn.acc:hover{opacity:.88;}
+    .tbtn.purple{background:#6c63ff;color:#fff;border-color:#6c63ff;}
+    .tbtn.purple:hover{opacity:.88;}
+
+    /* MAP */
+    #map{position:fixed;top:54px;left:0;right:300px;bottom:0;z-index:1;}
+    #map.cross{cursor:crosshair!important;}
+
+    /* RIGHT PANEL */
+    #rp{position:fixed;top:54px;right:0;width:300px;bottom:0;z-index:500;background:var(--white);border-left:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+    .rp-sec{padding:18px 16px 14px;border-bottom:1px solid rgba(0,0,0,.04);}
+    .rp-lbl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);font-weight:500;margin-bottom:11px;}
+    .tcards{display:flex;flex-direction:column;gap:6px;}
+    .tcard{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:11px;cursor:pointer;transition:all .15s;}
+    .tcard:hover{border-color:var(--accent);}
+    .tcard.on{border-color:var(--accent);background:var(--acl);}
+    .tcard-ico{font-size:17px;flex-shrink:0;}
+    .tcard-lbl{font-size:13px;font-weight:500;}
+    .tcard-sub{font-size:11px;color:var(--ink3);}
+    .tcard-cnt{margin-left:auto;font-size:11px;font-weight:600;color:var(--accent);background:var(--acl);padding:2px 7px;border-radius:10px;}
+    .fd{border-bottom:1px solid rgba(0,0,0,.04);}
+    .fd-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink);transition:background .15s;}
+    .fd-trigger:hover{background:var(--bg);}
+    .fd-tr{display:flex;align-items:center;gap:8px;}
+    .fd-val{font-size:12px;color:var(--accent);font-weight:400;}
+    .fd-arrow{font-size:11px;color:var(--ink3);transition:transform .2s;}
+    .fd.open .fd-arrow{transform:rotate(180deg);}
+    .fd-body{display:none;padding:0 16px 14px;}
+    .fd.open .fd-body{display:block;}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;}
+    .chip{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;min-height:36px;}
+    .chip:hover{border-color:var(--accent);}
+    .chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .bw{padding:4px 0;}
+    .bd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .bp{background:var(--acl);border:1px solid var(--accent);border-radius:20px;padding:5px 14px;font-size:13px;font-weight:500;color:var(--accent);}
+    .bsep{font-size:12px;color:var(--ink3);}
+    .st{position:relative;height:4px;background:var(--border);border-radius:4px;margin-bottom:6px;}
+    .sf{position:absolute;height:100%;background:var(--accent);border-radius:4px;pointer-events:none;}
+    .rs{position:absolute;width:100%;height:4px;opacity:0;cursor:pointer;-webkit-appearance:none;top:0;left:0;pointer-events:none;}
+    .rs.act{pointer-events:all;z-index:2;}
+    .sth{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--white);border:2.5px solid var(--accent);top:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+    .blbls{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:4px;}
+    .fopts{display:flex;gap:5px;}
+    .fopt{flex:1;padding:7px 4px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;font-size:11px;font-weight:500;text-align:center;transition:all .15s;font-family:'DM Sans',sans-serif;}
+    .fopt:hover{border-color:var(--accent);}
+    .fopt.on{background:var(--acl);border-color:var(--accent);color:var(--accent);}
+    .zl{display:flex;flex-direction:column;gap:4px;}
+    .zi{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .15s;}
+    .zi:hover{background:var(--bg);}
+    .zi.on{background:var(--acl);}
+    .zcb{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s;}
+    .zi.on .zcb{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .z-lbl{font-size:13px;}.z-sub{font-size:10px;color:var(--ink3);}
+    .rp-foot{padding:12px 16px;position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);display:flex;gap:7px;}
+    .btn-reset{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .btn-apply{flex:2;padding:10px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+    /* STATS */
+    #stats{position:fixed;bottom:20px;left:calc((100% - 300px)/2);transform:translateX(-50%);z-index:500;background:var(--white);border:1px solid var(--border);border-radius:40px;display:flex;box-shadow:var(--shl);overflow:hidden;}
+    .si{padding:9px 18px;display:flex;flex-direction:column;align-items:center;border-right:1px solid var(--border);}
+    .si:last-child{border-right:none;}
+    .snum{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--accent);}
+    .slbl{font-size:9px;color:var(--ink3);margin-top:1px;letter-spacing:.3px;}
+    #banner{display:none;position:fixed;top:66px;left:calc((100% - 300px)/2);transform:translateX(-50%);z-index:900;background:var(--ink);color:#fff;padding:9px 20px;border-radius:20px;font-size:13px;box-shadow:var(--shl);white-space:nowrap;animation:pulse 1.5s infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.65}}
+
+    /* ══ RICH PIN POPUP (side panel) ══ */
+    #pin-panel{
+      display:none;position:fixed;top:54px;right:300px;width:340px;bottom:0;
+      z-index:800;background:#1e1f2e;border-left:1px solid #2a2b3d;
+      overflow-y:auto;flex-direction:column;
+    }
+    #pin-panel.open{display:flex;}
+    .pp-head{padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;}
+    .pp-type{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#9aa0a6;margin-bottom:4px;}
+    .pp-rent{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;line-height:1;}
+    .pp-rent small{font-size:14px;font-weight:400;color:#9aa0a6;font-family:'DM Sans',sans-serif;}
+    .pp-actions{display:flex;gap:8px;flex-shrink:0;}
+    .pp-action{width:36px;height:36px;border-radius:50%;background:#252637;border:1px solid #32334a;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .15s;}
+    .pp-action:hover{background:#32334a;}
+    .pp-notice{margin:14px 20px 0;background:#252637;border:1px solid #32334a;border-radius:10px;padding:12px 14px;font-size:13px;color:#ccc;line-height:1.5;}
+    .pp-notice strong{color:#fff;}
+    .pp-tags{display:flex;flex-wrap:wrap;gap:7px;padding:14px 20px 0;}
+    .pp-tag{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid #32334a;background:#252637;color:#ccc;display:flex;align-items:center;gap:5px;}
+    .pp-tag .td{width:7px;height:7px;border-radius:50%;}
+    .pp-section{padding:16px 20px 0;}
+    .pp-sec-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:8px;}
+    .pp-quote{font-size:14px;color:#f9ab00;font-style:italic;line-height:1.6;}
+    .pp-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;}
+    .pp-meta-item{font-size:12px;color:#9aa0a6;display:flex;align-items:center;gap:5px;}
+    .pp-dir-link{color:#6c63ff;text-decoration:none;font-weight:500;}
+    .pp-dir-link:hover{text-decoration:underline;}
+    .pp-divider{height:1px;background:#2a2b3d;margin:16px 20px 0;}
+    /* community rating */
+    .pp-rating-row{padding:14px 20px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+    .pp-rating-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;}
+    .pp-rating-val{font-size:13px;color:#9aa0a6;}
+    .pp-rating-arrow{font-size:12px;color:#555;}
+    .stars{display:flex;gap:4px;margin-top:10px;padding:0 20px;}
+    .star{font-size:22px;cursor:pointer;transition:transform .15s;color:#333;}
+    .star.lit{color:#f9ab00;}
+    .star:hover{transform:scale(1.2);}
+    /* comments */
+    .pp-comments{padding:14px 20px 0;}
+    .comment-item{background:#252637;border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+    .comment-txt{font-size:13px;color:#ddd;line-height:1.5;}
+    .comment-time{font-size:11px;color:#555;margin-top:4px;}
+    .comment-empty{font-size:13px;color:#555;font-style:italic;}
+    .pp-comment-input{padding:12px 20px;display:flex;gap:8px;}
+    .ci{flex:1;background:#252637;border:1px solid #32334a;border-radius:10px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
+    .ci:focus{border-color:#6c63ff;}
+    .ci::placeholder{color:#555;}
+    .ci-post{background:#6c63ff;border:none;border-radius:10px;padding:9px 14px;color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    /* interest CTA */
+    .pp-cta{margin:16px 20px 20px;background:linear-gradient(135deg,rgba(45,106,79,.3),rgba(45,106,79,.1));border:1px solid rgba(45,106,79,.4);border-radius:12px;padding:16px;}
+    .pp-cta-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;}
+    .pp-cta-sub{font-size:12px;color:#9aa0a6;margin-bottom:12px;line-height:1.5;}
+    .btn-interested{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .btn-interested:hover{opacity:.88;}
+    .pp-close{position:absolute;top:16px;right:16px;/* handled in pp-actions */}
+
+    /* ADD PIN MODAL */
+    #modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(26,26,26,.6);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;}
+    #modal.open{display:flex;}
+    @media(min-width:600px){#modal{align-items:center;}.mbox{border-radius:20px;max-width:440px;}}
+    .mbox{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:440px;padding:20px 20px 32px;max-height:92vh;overflow-y:auto;animation:su .24s ease;}
+    @keyframes su{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .mhdl{width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 16px;}
+    .mtitle{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;margin-bottom:3px;}
+    .msub{font-size:13px;color:var(--ink2);margin-bottom:13px;}
+    .mloc{background:var(--acl);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--accent);margin-bottom:13px;}
+    .fg{margin-bottom:12px;}
+    .fl{font-size:12px;color:var(--ink2);margin-bottom:5px;display:block;font-weight:500;}
+    .fi,.fs,.fta{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 13px;color:var(--ink);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+    .fi:focus,.fs:focus,.fta:focus{border-color:var(--accent);}
+    .fs option{background:#fff;}
+    .fta{resize:vertical;min-height:60px;}
+    .trow{display:flex;gap:7px;margin-bottom:12px;}
+    .tbtn2{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;transition:all .15s;text-align:center;}
+    .tbtn2.on{border-color:var(--accent);background:var(--acl);color:var(--accent);}
+    .mfoot{display:flex;gap:8px;margin-top:13px;}
+    .bsub{flex:1;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .bcan{background:transparent;color:var(--ink2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+    /* POPUP — minimal, opens side panel */
+    .leaflet-popup-content-wrapper{background:#fff!important;border:1px solid var(--border)!important;border-radius:12px!important;box-shadow:var(--shl)!important;color:var(--ink)!important;}
+    .leaflet-popup-tip{background:#fff!important;}
+    .leaflet-popup-content{margin:11px 14px!important;min-width:160px;}
+    .mp-rent{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;}
+    .mp-rent small{font-size:11px;font-weight:400;color:var(--ink3);font-family:'DM Sans',sans-serif;}
+    .mp-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+    .mp-tag{font-size:11px;padding:2px 7px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--ink2);}
+    .mp-view{display:inline-block;margin-top:7px;font-size:12px;color:#fff;background:var(--accent);padding:5px 12px;border-radius:8px;cursor:pointer;font-weight:500;border:none;font-family:'DM Sans',sans-serif;transition:opacity .15s;}
+    .mp-view:hover{opacity:.85;}
+
+    /* TOAST */
+    #toast{position:fixed;bottom:80px;left:calc((100% - 300px)/2);transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:3000;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--shl);}
+    #toast.show{opacity:1;}
+
+    /* MAP CONTROLS */
+    .leaflet-right{right:310px!important;}
+    .leaflet-control-zoom{border:1px solid var(--border)!important;border-radius:10px!important;overflow:hidden;box-shadow:var(--sh)!important;}
+    .leaflet-control-zoom a{background:var(--white)!important;color:var(--ink)!important;border-bottom:1px solid var(--border)!important;}
+    .leaflet-control-zoom a:hover{background:var(--bg)!important;}
+    .leaflet-control-attribution{background:rgba(255,255,255,.85)!important;color:var(--ink3)!important;font-size:10px!important;border-radius:6px!important;}
+    @media(max-width:768px){
+      #map{right:0;bottom:56px;}#rp{display:none;}#pin-panel{right:0;width:100%;top:54px;}
+      .leaflet-right{right:0!important;}
+      #stats{left:50%;transform:translateX(-50%);bottom:8px;}
+      #banner,#toast{left:50%;transform:translateX(-50%);}
+    }
+  
+    /* LOADING */
+    #km-loading{display:none;position:fixed;inset:0;z-index:99998;background:rgba(26,26,26,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+    #km-loading.show{display:flex;}
+    .km-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #km-loading-text{color:#fff;font-size:14px;}
+    /* CLUSTER */
+    .km-cluster{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+    .leaflet-marker-icon.leaflet-div-icon{background:none;border:none;}
+    /* MOBILE FILTER BTN */
+    #mob-filter-btn{display:none;position:fixed;bottom:80px;right:14px;z-index:600;background:var(--white);border:1px solid var(--border);border-radius:50%;width:46px;height:46px;box-shadow:var(--shl);cursor:pointer;font-size:18px;align-items:center;justify-content:center;}
+    #mob-overlay{display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.4);}
+    #mob-overlay.show{display:block;}
+    #mob-sheet{position:fixed;bottom:-100%;left:0;right:0;z-index:800;background:var(--white);border-radius:20px 20px 0 0;padding:20px 20px 40px;transition:bottom .3s ease;max-height:80vh;overflow-y:auto;}
+    #mob-sheet.open{bottom:0;}
+    @media(max-width:768px){#mob-filter-btn{display:flex;}.top-right .tbtn.purple{font-size:11px;padding:5px 10px;}}
+    @media(max-width:480px){.logo-ai,.top-right .tbtn:not(.acc){display:none;}}
+
+  </style>
+</head>
+<body>
+
+<!-- ══ SPLASH ══ -->
+<div id="splash">
+  <div class="sp">
+    <div class="sp-logo">Kiraya<em>Map</em></div>
+    <div class="sp-badge">AI Property Matchmaking · Delhi</div>
+    <div class="sp-pill"><span class="sp-dot"></span>36 real rents pinned across Delhi</div>
+    <div class="sp-hero">Find your place.<br><span>Without the broker.</span></div>
+    <div class="sp-desc">Real rents pinned anonymously across all Delhi — DU, coaching hubs, south campus &amp; budget zones. AI matches you to the right place.</div>
+    <div class="sp-slbl">Share with your group</div>
+    <div class="sp-sbox">
+      <div class="sp-stxt" id="smsg">Bhai/Didi — finally a real rent map for all Delhi. No brokers, no BS. Anonymous pins, AI matching. 👉 kirayamap.in</div>
+      <button class="cp-btn" onclick="copyMsg()">⧉</button>
+    </div>
+    <button class="btn-enter" onclick="enterApp()">Open the Map →</button>
+    <button class="btn-wa" onclick="shareWA()" style="background:transparent;border:1px solid #2a2a2a;color:#888;margin-bottom:9px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Share with friends
+    </button>
+    <button class="btn-how" onclick="openHow()">How does this work?</button>
+    <div class="sp-tos">By continuing you agree to our <a href="#">Privacy Policy</a> &amp; <a href="#">Terms</a></div>
+  </div>
+</div>
+
+<!-- ══ HOW TO USE ══ -->
+<div id="how-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-card" style="position:relative;">
+    <button onclick="closeHow()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:#999;line-height:1;">✕</button>
+    <div class="mc-title">How KirayaMap works</div>
+    <div class="mc-sub">Simple. Anonymous. Honest.</div>
+    <div class="step"><div class="step-n">1</div><div><div class="step-t">Search any place in Delhi</div><div class="step-d">Type anything — Lajpat Nagar, Connaught Place, Red Fort, AIIMS, Janakpuri, any area. The map flies there and shows nearby rent pins with directions.</div></div></div>
+    <div class="step"><div class="step-n">2</div><div><div class="step-t">Tap any pin for full details</div><div class="step-d">See rent, BHK, furnishing, tenant's honest quote, community ratings, comments, and get directions. Tap "I'm Interested" to connect with the owner.</div></div></div>
+    <div class="step"><div class="step-n">3</div><div><div class="step-t">Filter from the right panel</div><div class="step-d">Choose Flat / PG / Flatmate, set budget with the slider, pick BHK, furnishing, zone. Filters collapse when not needed.</div></div></div>
+    <div class="step"><div class="step-n">4</div><div><div class="step-t">Have a flat? Find a tenant</div><div class="step-d">Click "Find Flat or Tenant" → choose your role → drop a pin → fill details. Seekers are matched and notified by email.</div></div></div>
+    <div class="step"><div class="step-n">5</div><div><div class="step-t">AI Matchmaking (coming soon)</div><div class="step-d">Drop a seeker pin. AI matches you with compatible flats and flatmates, notifies you by email when there's a fit.</div></div></div>
+    <button class="mc-close-btn" onclick="closeHow()">Got it →</button>
+  </div>
+</div>
+
+<!-- ══ FIND FLAT / TENANT MODAL ══ -->
+<div class="overlay" id="find-modal">
+  <div class="modal-card" style="background:#1e1f2e;border:1px solid #2a2b3d;position:relative;">
+    <button class="btn-find-close" onclick="document.getElementById('find-modal').classList.remove('open')">✕</button>
+    <div class="mc-title" style="color:#fff;margin-bottom:4px;">Find Flat or Tenants</div>
+    <div class="mc-sub">Tell us your role — we'll match you with the right people nearby.</div>
+    <div class="find-cards" id="find-cards">
+      <div class="find-card" data-role="owner" onclick="selectRole(this,'owner')">
+        <span class="find-card-ico">🔑</span>
+        <div>
+          <div class="find-card-title">I have a flat</div>
+          <div class="find-card-desc">Rent it out or find a flatmate. Drop a pin, add details, get matched with seekers nearby.</div>
+        </div>
+      </div>
+      <div class="find-card" data-role="seeker" onclick="selectRole(this,'seeker')">
+        <span class="find-card-ico">🔍</span>
+        <div>
+          <div class="find-card-title">I'm looking for a flat</div>
+          <div class="find-card-desc">Find a whole flat or a room. Drop a pin, set your budget, get matched with flats and flatmates nearby.</div>
+        </div>
+      </div>
+    </div>
+    <div class="find-note">We match you with people near your pin based on budget, BHK, and preferences. <a href="#" onclick="event.preventDefault();openHow()">Learn how it works →</a></div>
+    <button class="btn-find-next" onclick="startFindFlow()">Continue →</button>
+  </div>
+</div>
+
+<!-- ══ INTEREST MODAL ══ -->
+<div class="overlay" id="interest-modal">
+  <div class="modal-card">
+    <div class="mc-title">I'm Interested</div>
+    <div class="mc-sub">We'll notify the owner and recommend similar listings to you by email.</div>
+    <div class="interest-pin-preview" id="int-preview">
+      <div class="ipr-rent" id="int-rent">₹—</div>
+      <div class="ipr-det" id="int-det">—</div>
+    </div>
+    <label class="int-label">Your Name</label>
+    <input class="int-input" id="int-name" type="text" placeholder="What should we call you?"/>
+    <label class="int-label">Your Email *</label>
+    <input class="int-input" id="int-email" type="email" placeholder="you@example.com"/>
+    <label class="int-label">Your WhatsApp (optional)</label>
+    <input class="int-input" id="int-phone" type="text" placeholder="+91 98765 43210"/>
+    <label class="int-label">Message to owner (optional)</label>
+    <input class="int-input" id="int-msg" type="text" placeholder="e.g. Can I visit this weekend?"/>
+    <div class="int-note">📧 We'll email the owner your interest. We'll also send you similar listings nearby that match your budget. Your contact is only shared with the owner of this specific listing.</div>
+    <button class="btn-interest" onclick="submitInterest()">Send Interest & Get Matches</button>
+    <button class="btn-int-cancel" onclick="document.getElementById('interest-modal').classList.remove('open')">Cancel</button>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <div id="topbar">
+    <div class="logo">Kiraya<em>Map</em><span class="logo-ai">AI</span></div>
+    <div class="sw">
+      <span class="si-ico">🔍</span>
+      <input id="si" type="text" placeholder="Search any place in Delhi — area, college, metro, landmark…" autocomplete="off"
+        oninput="onSearch(this.value)" onfocus="onSiFocus()" onkeydown="onKey(event)"/>
+      <button id="si-clr" onclick="clearSearch()">✕</button>
+      <span id="si-spin">↻</span>
+      <div id="dd"></div>
+    </div>
+    <div class="top-right">
+      <button class="tbtn" style="color:var(--ink3);font-size:12px;border-color:transparent;" onclick="document.getElementById('find-modal').classList.add('open')">Find / Match</button>
+      <button class="tbtn acc" onclick="startPin()" style="padding:7px 16px;font-weight:600;">＋ Pin Rent</button>
+    </div>
+  </div>
+
+  <div id="map"></div>
+  <div id="empty-state" style="display:none;position:fixed;top:50%;left:calc(50% - 150px);transform:translate(-50%,-50%);z-index:490;text-align:center;pointer-events:none;">
+    <div style="font-size:32px;margin-bottom:8px;">📍</div>
+    <div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">No listings here yet</div>
+    <div style="font-size:13px;color:#777;margin-bottom:14px;">Be the first to pin a rent in this area</div>
+    <button id="empty-pin-btn" style="pointer-events:all;background:var(--accent);color:#fff;border:none;border-radius:20px;padding:10px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">＋ Add first pin</button>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="rp">
+    <div class="rp-sec">
+      <div class="rp-lbl">Listing Type</div>
+      <div class="tcards">
+        <div class="tcard on" data-type="all" onclick="selType(this,'all')">
+          <span class="tcard-ico">🗺</span>
+          <div><div class="tcard-lbl">All Listings</div><div class="tcard-sub">Flats · PGs · Flatmates</div></div>
+          <span class="tcard-cnt" id="cnt-all">36</span>
+        </div>
+        <div class="tcard" data-type="flat" onclick="selType(this,'flat')">
+          <span class="tcard-ico">🏠</span>
+          <div><div class="tcard-lbl">Flat</div><div class="tcard-sub">Whole apartment</div></div>
+          <span class="tcard-cnt" id="cnt-flat">—</span>
+        </div>
+        <div class="tcard" data-type="pg" onclick="selType(this,'pg')">
+          <span class="tcard-ico">🛏</span>
+          <div><div class="tcard-lbl">PG</div><div class="tcard-sub">Paying guest room</div></div>
+          <span class="tcard-cnt" id="cnt-pg">—</span>
+        </div>
+        <div class="tcard" data-type="flatmate" onclick="selType(this,'flatmate')">
+          <span class="tcard-ico">🤝</span>
+          <div><div class="tcard-lbl">Flatmate</div><div class="tcard-sub">Room in shared flat</div></div>
+          <span class="tcard-cnt" id="cnt-fm">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fd" id="fd-bhk">
+      <button class="fd-trigger" onclick="toggleFd('fd-bhk')">BHK<div class="fd-tr"><span class="fd-val" id="fv-bhk">Any</span><span class="fd-arrow">▾</span></div></button>
+      <div class="fd-body"><div class="chips">
+        <button class="chip on" data-g="bhk" data-v="all" onclick="fchip(this,'fv-bhk','Any')">Any</button>
+        <button class="chip" data-g="bhk" data-v="1" onclick="fchip(this,'fv-bhk','1 BHK')">1 BHK</button>
+        <button class="chip" data-g="bhk" data-v="2" onclick="fchip(this,'fv-bhk','2 BHK')">2 BHK</button>
+        <button class="chip" data-g="bhk" data-v="3" onclick="fchip(this,'fv-bhk','3 BHK')">3 BHK</button>
+        <button class="chip" data-g="bhk" data-v="3+" onclick="fchip(this,'fv-bhk','3+')">3+</button>
+      </div></div>
+    </div>
+
+    <div class="fd open" id="fd-budget">
+      <button class="fd-trigger" onclick="toggleFd('fd-budget')">Budget<div class="fd-tr"><span class="fd-val" id="fv-budget">Any</span><span class="fd-arrow">▾</span></div></button>
+      <div class="fd-body"><div class="bw">
+        <div class="bd"><div class="bp" id="bp-min">₹2K</div><div class="bsep">to</div><div class="bp" id="bp-max">₹50K+</div></div>
+        <div class="st" id="st">
+          <div class="sf" id="sf"></div>
+          <input type="range" class="rs act" id="rmin" min="2000" max="50000" step="500" value="2000" oninput="onRange()"/>
+          <input type="range" class="rs act" id="rmax" min="2000" max="50000" step="500" value="50000" oninput="onRange()"/>
+          <div class="sth" id="th-min"></div>
+          <div class="sth" id="th-max"></div>
+        </div>
+        <div class="blbls"><span>₹2K</span><span>₹50K+</span></div>
+      </div></div>
+    </div>
+
+    <div class="fd" id="fd-fur">
+      <button class="fd-trigger" onclick="toggleFd('fd-fur')">Furnishing<div class="fd-tr"><span class="fd-val" id="fv-fur">Any</span><span class="fd-arrow">▾</span></div></button>
+      <div class="fd-body"><div class="fopts">
+        <button class="fopt on" data-v="all" onclick="ffur(this,'Any')">Any</button>
+        <button class="fopt" data-v="furnished" onclick="ffur(this,'Furnished')">Furnished</button>
+        <button class="fopt" data-v="semi" onclick="ffur(this,'Semi')">Semi</button>
+        <button class="fopt" data-v="unfurnished" onclick="ffur(this,'Bare')">Bare</button>
+      </div></div>
+    </div>
+
+    <div class="fd" id="fd-zone">
+      <button class="fd-trigger" onclick="toggleFd('fd-zone')">Zone<div class="fd-tr"><span class="fd-val" id="fv-zone">All Delhi</span><span class="fd-arrow">▾</span></div></button>
+      <div class="fd-body"><div class="zl" id="zone-list"></div></div>
+    </div>
+
+    <div class="rp-foot">
+      <button class="btn-reset" onclick="resetAll()">Reset</button>
+      <button class="btn-apply" onclick="draw()">Apply</button>
+    </div>
+  </div>
+
+  <!-- RICH PIN PANEL -->
+  <div id="pin-panel">
+    <div style="padding:16px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div class="pp-type" id="pp-type">FLAT</div>
+        <div class="pp-rent" id="pp-rent">₹—<small>/month</small></div>
+      </div>
+      <div class="pp-actions">
+        <button class="pp-action" onclick="sharePin()" title="Share">⬆</button>
+        <button class="pp-action" onclick="reportPin()" title="Report">🚩</button>
+        <button class="pp-action" onclick="closePinPanel()" title="Close">✕</button>
+      </div>
+    </div>
+    <div class="pp-notice" id="pp-notice" style="display:none"></div>
+    <div class="pp-tags" id="pp-tags"></div>
+    <div class="pp-section" id="pp-quote-sec" style="display:none">
+      <div class="pp-sec-lbl">Tenant Said</div>
+      <div class="pp-quote" id="pp-quote"></div>
+    </div>
+    <div class="pp-section">
+      <div class="pp-meta" id="pp-meta"></div>
+    </div>
+    <div class="pp-divider"></div>
+    <div class="pp-rating-row" onclick="toggleStars()">
+      <div>
+        <div class="pp-rating-lbl">Community Rating</div>
+        <div class="pp-rating-val" id="pp-rating-val">No ratings yet — tap to rate ›</div>
+      </div>
+      <span class="pp-rating-arrow">›</span>
+    </div>
+    <div class="stars" id="star-row" style="display:none;padding-bottom:12px;">
+      <span class="star" onclick="rate(1)">★</span>
+      <span class="star" onclick="rate(2)">★</span>
+      <span class="star" onclick="rate(3)">★</span>
+      <span class="star" onclick="rate(4)">★</span>
+      <span class="star" onclick="rate(5)">★</span>
+    </div>
+    <div class="pp-divider"></div>
+    <div class="pp-comments">
+      <div class="pp-sec-lbl" style="margin-bottom:10px;">Comments</div>
+      <div id="pp-comment-list"><div class="comment-empty">No comments yet — be the first!</div></div>
+    </div>
+    <div class="pp-comment-input">
+      <input class="ci" id="ci" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')postComment()"/>
+      <button class="ci-post" onclick="postComment()">Post</button>
+    </div>
+    <div class="pp-cta">
+      <div class="pp-cta-title">Interested in this place?</div>
+      <div class="pp-cta-sub">Tap below — we'll notify the owner and also recommend similar listings to your email.</div>
+      <button class="btn-interested" onclick="openInterest()">I'm Interested →</button>
+    </div>
+  </div>
+
+  <div id="stats">
+    <div class="si"><div class="snum" id="s-pins">36</div><div class="slbl">Total pins</div></div>
+    <div class="si"><div class="snum" id="s-avg">₹10.8K</div><div class="slbl">Avg rent</div></div>
+    <div class="si"><div class="snum" id="s-low">₹5K</div><div class="slbl">Lowest</div></div>
+    <div class="si"><div class="snum" id="s-mine" style="color:#6c63ff">0</div><div class="slbl">Your pins</div></div>
+  </div>
+  <div id="banner">📍 Tap the map where your flat / PG is</div>
+  <div id="hint-bar" style="display:none;position:fixed;bottom:54px;left:calc(50% - 150px);transform:translateX(-50%);z-index:490;background:rgba(26,26,26,.82);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;backdrop-filter:blur(6px);pointer-events:none;white-space:nowrap;animation:fadeUp .4s ease;">
+    🗺 Search an area or tap a pin to explore
+  </div>
+
+  <!-- ADD PIN MODAL -->
+  <div id="modal">
+    <div class="mbox">
+      <div class="mhdl"></div>
+      <div class="mtitle">Pin your rent</div>
+      <div class="msub">Anonymous · No login · Helps hundreds find fair prices</div>
+      <div class="mloc">📌 <span id="cloc">Location set</span></div>
+      <div class="fg"><label class="fl">Listing type</label>
+        <div class="trow">
+          <button class="tbtn2 on" onclick="seltype(this,'flat')">🏠 Flat</button>
+          <button class="tbtn2" onclick="seltype(this,'pg')">🛏 PG</button>
+          <button class="tbtn2" onclick="seltype(this,'flatmate')">🤝 Flatmate</button>
+        </div>
+      </div>
+      <div class="fg" id="bhkrow"><label class="fl">BHK</label>
+        <select class="fs" id="f-bhk"><option value="1">1 BHK</option><option value="2">2 BHK</option><option value="3">3 BHK</option><option value="3+">3+ BHK</option></select>
+      </div>
+      <div class="fg"><label class="fl">Monthly Rent (₹) *</label><input class="fi" id="f-rent" type="number" placeholder="e.g. 12000"/></div>
+      <div class="fg"><label class="fl">Furnishing</label>
+        <select class="fs" id="f-fur2"><option value="furnished">Furnished</option><option value="semi">Semi-Furnished</option><option value="unfurnished">Unfurnished</option></select>
+      </div>
+      <div class="fg"><label class="fl">Area / Building Name</label><input class="fi" id="f-area" placeholder="e.g. Vijay Nagar, Satya Niketan, Lajpat Nagar"/></div>
+      <div class="fg"><label class="fl">Sq ft (optional)</label><input class="fi" id="f-sqft" type="number" placeholder="e.g. 850"/></div>
+      <div class="fg"><label class="fl">Tenant quote — your honest take on the place</label><textarea class="fta" id="f-note" placeholder="e.g. Good ventilation, noisy lane, landlord helpful. No brokerage."></textarea></div>
+      <div class="fg"><label class="fl">WhatsApp / Phone <span style="color:#bbb;font-weight:400">(optional)</span></label><input class="fi" id="f-contact" type="text" placeholder="Blank = fully anonymous"/></div>
+      <div class="mfoot"><button class="bcan" onclick="closeModal()">Cancel</button><button class="bsub" onclick="submit()">Add to Map</button></div>
+    </div>
+  </div>
+  
+  <!-- LOADING -->
+  <div id="km-loading"><div class="km-spinner"></div><div id="km-loading-text">Loading…</div></div>
+  <!-- MOBILE FILTER -->
+  <button id="mob-filter-btn">⚙</button>
+  <div id="mob-overlay"></div>
+  <div id="mob-sheet">
+    <div style="width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 16px;"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin-bottom:16px;">Filters</div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Type</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="chip on" data-g="mtype" data-v="all">All</button>
+        <button class="chip" data-g="mtype" data-v="flat">🏠 Flat</button>
+        <button class="chip" data-g="mtype" data-v="pg">🛏 PG</button>
+        <button class="chip" data-g="mtype" data-v="flatmate">🤝 Flatmate</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button onclick="resetAll();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Reset</button>
+      <button onclick="draw();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:2;padding:11px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Apply</button>
+    </div>
+  </div>
+
+  <div id="toast">✅ Done!</div>
+</div>
+
+<script>
+// ══ DATA ══
+const seed=[
+  {lat:28.6892,lng:77.2091,type:'flat',bhk:'2',rent:18000,fur:'furnished',area:'Vijay Nagar',note:'Ground floor, attached bath, near DU North Gate. Landlord is chill.',sqft:700,time:'2 days ago',zone:'north'},
+  {lat:28.6915,lng:77.2104,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Hudson Lane',note:'Meals included, AC room, boys only. Lane gets noisy at night.',sqft:null,time:'1 day ago',zone:'north'},
+  {lat:28.6876,lng:77.2067,type:'flat',bhk:'3',rent:28000,fur:'semi',area:'Kamla Nagar',note:'3rd floor, balcony. Great locality, slightly far from metro.',sqft:1100,time:'5 hours ago',zone:'north'},
+  {lat:28.6858,lng:77.2122,type:'flatmate',bhk:'2',rent:10000,fur:'furnished',area:'GTB Nagar',note:'Need 1 flatmate. Non-smoker preferred. Very clean house.',sqft:null,time:'3 days ago',zone:'north'},
+  {lat:28.6900,lng:77.2148,type:'flat',bhk:'1',rent:12000,fur:'furnished',area:'Chhatra Marg',note:'Walking distance to DU Arts Faculty. Quiet street.',sqft:450,time:'2 days ago',zone:'north'},
+  {lat:28.6868,lng:77.2090,type:'flat',bhk:'2',rent:22000,fur:'furnished',area:'Mall Road',note:'New building, 24hr water, lift, parking. Premium for the area.',sqft:800,time:'Today',zone:'north'},
+  {lat:28.6880,lng:77.2110,type:'flat',bhk:'1',rent:11000,fur:'unfurnished',area:'Vijay Nagar',note:'No brokerage, direct owner. Peaceful neighbours.',sqft:400,time:'3 days ago',zone:'north'},
+  {lat:28.6850,lng:77.2055,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Kamla Nagar',note:'Sharing basis, 3 per room. Super affordable but cramped.',sqft:null,time:'6 days ago',zone:'north'},
+  {lat:28.6932,lng:77.2080,type:'pg',bhk:'1',rent:7000,fur:'unfurnished',area:'Mukherjee Nagar',note:'Budget PG, near all IAS coaching centres. Very basic.',sqft:null,time:'1 week ago',zone:'coaching'},
+  {lat:28.6924,lng:77.2035,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Shakti Nagar',note:'Girls PG, homely food, curfew 10pm. Safe area.',sqft:null,time:'4 days ago',zone:'coaching'},
+  {lat:28.6940,lng:77.2062,type:'flat',bhk:'2',rent:16000,fur:'semi',area:'Mukherjee Nagar',note:'Near Aggarwal Sweets. Easy metro commute. 2km to yellow line.',sqft:650,time:'5 days ago',zone:'coaching'},
+  {lat:28.6908,lng:77.2130,type:'flatmate',bhk:'3',rent:8000,fur:'furnished',area:'Mukherjee Nagar',note:'2 flatmates needed. Working professionals only. Very clean.',sqft:null,time:'Today',zone:'coaching'},
+  {lat:28.5655,lng:77.1921,type:'flat',bhk:'2',rent:20000,fur:'furnished',area:'Satya Niketan',note:'Near South Campus, gated society. Premium but worth it.',sqft:750,time:'2 days ago',zone:'south'},
+  {lat:28.5628,lng:77.1942,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Satya Niketan',note:'Girls PG, 5 min walk to LSR. Very safe, homely.',sqft:null,time:'1 day ago',zone:'south'},
+  {lat:28.5809,lng:77.1803,type:'flat',bhk:'3',rent:32000,fur:'furnished',area:'Moti Bagh',note:'Premium flat, parking, 24hr security, society pool.',sqft:1400,time:'3 days ago',zone:'south'},
+  {lat:28.5944,lng:77.1657,type:'flatmate',bhk:'2',rent:11000,fur:'semi',area:'Dhaula Kuan',note:'Near IIT Delhi. Professionals preferred. Slightly pricey for area.',sqft:null,time:'Today',zone:'south'},
+  {lat:28.5401,lng:77.1659,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Munirka',note:'Near JNU gate, vegetarian meals. Students only.',sqft:null,time:'2 days ago',zone:'south'},
+  {lat:28.6312,lng:77.2763,type:'flat',bhk:'2',rent:10000,fur:'unfurnished',area:'Laxmi Nagar',note:'Very affordable, metro right outside. Bit congested area.',sqft:600,time:'5 days ago',zone:'budget'},
+  {lat:28.6239,lng:77.2731,type:'pg',bhk:'1',rent:5000,fur:'unfurnished',area:'Shakarpur',note:'Cheapest in east Delhi, sharing. No frills.',sqft:null,time:'1 week ago',zone:'budget'},
+  {lat:28.5694,lng:77.2430,type:'flat',bhk:'1',rent:13000,fur:'furnished',area:'Lajpat Nagar',note:'Near market, great connectivity. Noisy but lively.',sqft:500,time:'3 days ago',zone:'budget'},
+  {lat:28.5483,lng:77.2590,type:'flatmate',bhk:'2',rent:9000,fur:'furnished',area:'Kalkaji',note:'Need female flatmate. Near metro. Very clean.',sqft:null,time:'Today',zone:'budget'},
+  {lat:28.7495,lng:77.0766,type:'flat',bhk:'2',rent:12000,fur:'semi',area:'Rohini',note:'Near IPU campus, good transport. Very family-friendly area.',sqft:700,time:'2 days ago',zone:'other'},
+  {lat:28.7341,lng:77.1008,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Rohini East',note:'Budget PG near Rohini metro. Shared kitchen.',sqft:null,time:'1 week ago',zone:'other'},
+  {lat:28.6270,lng:77.0827,type:'flat',bhk:'3',rent:18000,fur:'furnished',area:'Janakpuri',note:'Spacious flat, west Delhi, peaceful locality.',sqft:1000,time:'3 days ago',zone:'other'},
+  {lat:28.5921,lng:77.0460,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Dwarka',note:'Near IPU Dwarka. Girls hostel style. Curfew 9pm.',sqft:null,time:'5 days ago',zone:'other'},
+];
+
+const ZONES=[
+  {id:'north',label:'DU North Belt',sub:'Kamla Nagar, Vijay Nagar…'},
+  {id:'coaching',label:'Coaching Hub',sub:'Mukherjee Nagar, Shakti Nagar'},
+  {id:'south',label:'South Campus / South Delhi',sub:'Satya Niketan, Hauz Khas…'},
+  {id:'budget',label:'Budget Zones',sub:'Laxmi Nagar, Shakarpur…'},
+  {id:'other',label:'Other Student Pockets',sub:'Rohini, Janakpuri, Dwarka…'},
+];
+
+let userPins=[],markers=[],activeZones=new Set(),curType='flat',pendingLL=null,pinMode=false;
+let flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
+let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
+
+// ══ SPLASH ══
+function showLoading(msg='Loading…'){const el=document.getElementById('km-loading');if(el){el.classList.add('show');document.getElementById('km-loading-text').textContent=msg;}}
+function hideLoading(){const el=document.getElementById('km-loading');if(el)el.classList.remove('show');}
+
+function enterApp(){
+  document.getElementById('splash').style.display='none';
+  document.getElementById('app').classList.add('show');
+  document.getElementById('how-modal').style.display='none';
+  setTimeout(()=>{map.invalidateSize(true);draw();},150);
+  // Bind mobile sheet
+  const mbtn=document.getElementById('mob-filter-btn');
+  const mov=document.getElementById('mob-overlay');
+  const msh=document.getElementById('mob-sheet');
+  if(mbtn){mbtn.addEventListener('click',()=>{msh.classList.add('open');mov.classList.add('show');});}
+  if(mov){mov.addEventListener('click',()=>{msh.classList.remove('open');mov.classList.remove('show');});}
+  // Mobile type chips
+  document.querySelectorAll('.chip[data-g="mtype"]').forEach(c=>{
+    c.addEventListener('click',()=>{
+      document.querySelectorAll('.chip[data-g="mtype"]').forEach(x=>x.classList.remove('on'));
+      c.classList.add('on'); flt.type=c.dataset.v; draw();
+    });
+  });
+  // Wire empty state pin button
+  const epb=document.getElementById('empty-pin-btn');
+  if(epb) epb.addEventListener('click',startPin);
+  // Show onboarding hint once
+  if(!localStorage.getItem('km_hinted')){
+    setTimeout(()=>{
+      const h=document.getElementById('hint-bar');
+      if(h){h.style.display='block';}
+      setTimeout(()=>{
+        const h=document.getElementById('hint-bar');
+        if(h){h.style.opacity='0';h.style.transition='opacity .6s';setTimeout(()=>h.style.display='none',600);}
+      },4500);
+    },1000);
+    const hideHint=()=>{
+      localStorage.setItem('km_hinted','1');
+      const h=document.getElementById('hint-bar');
+      if(h){h.style.opacity='0';h.style.transition='opacity .3s';setTimeout(()=>h.style.display='none',300);}
+    };
+    document.addEventListener('click',hideHint,{once:true});
+  }
+}
+function openHow(){
+  const m=document.getElementById('how-modal');
+  m.style.display='flex';
+}
+function closeHow(){
+  document.getElementById('how-modal').style.display='none';
+}
+function copyMsg(){navigator.clipboard.writeText(document.getElementById('smsg').textContent.trim()).then(()=>showToast('✅ Copied!'));}
+function shareWA(){window.open('https://wa.me/?text='+encodeURIComponent(document.getElementById('smsg').textContent.trim()),'_blank');}
+
+// ══ MAP ══
+const map=L.map('map',{zoomControl:true}).setView([28.6450,77.2000],11);
+const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:20});
+tileLayer.addTo(map);
+// Markers always show even if tiles fail to load
+
+function mkIcon(type){
+  const c={flat:{bg:'#c8552a',e:'🏠'},pg:{bg:'#2d6a4f',e:'🛏'},flatmate:{bg:'#b8902a',e:'🤝'}}[type]||{bg:'#1a1a1a',e:'📍'};
+  return L.divIcon({className:'',html:`<div style="width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${c.bg};border:2px solid rgba(255,255,255,.75);box-shadow:0 2px 8px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:13px">${c.e}</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-36]});
+}
+
+// ══ DRAW ══
+function draw(){
+  markers.forEach(m=>map.removeLayer(m));markers=[];
+  const all=[...seed,...userPins];
+  const vis=all.filter(p=>{
+    if(flt.type!=='all'&&p.type!==flt.type)return false;
+    if(flt.bhk!=='all'&&p.bhk!==flt.bhk)return false;
+    if(flt.fur!=='all'&&p.fur!==flt.fur)return false;
+    if(p.rent<flt.minRent||p.rent>flt.maxRent)return false;
+    if(activeZones.size>0&&!activeZones.has(p.zone))return false;
+    return true;
+  });
+  // Use marker cluster if available
+  const useCluster = typeof L.markerClusterGroup !== 'undefined';
+  if(!window._cluster){
+    if(useCluster){
+      window._cluster=L.markerClusterGroup({maxClusterRadius:50,showCoverageOnHover:false,spiderfyOnMaxZoom:true,
+        iconCreateFunction:c=>L.divIcon({html:`<div class="km-cluster">${c.getChildCount()}</div>`,className:'',iconSize:[38,38]})
+      });
+      map.addLayer(window._cluster);
+    }
+  }
+  if(useCluster) window._cluster.clearLayers();
+
+  vis.forEach((p,i)=>{
+    const pidx=all.findIndex(x=>x===p||(x.lat===p.lat&&x.lng===p.lng));
+    const tl={flat:'Flat',pg:'PG',flatmate:'Need Flatmate'}[p.type];
+    const fl={furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
+    const m=L.marker([p.lat,p.lng],{icon:mkIcon(p.type)});
+    m.bindTooltip(`<b>₹${Number(p.rent).toLocaleString('en-IN')}</b>/mo · ${p.area}`,{permanent:false,direction:'top'});
+    m.bindPopup(`
+      <div class="mp-rent">₹${Number(p.rent).toLocaleString('en-IN')}<small>/mo</small></div>
+      <div class="mp-tags">
+        ${p.bhk&&p.type!=='pg'?`<span class="mp-tag">${p.bhk} BHK</span>`:''}
+        <span class="mp-tag">${fl}</span>
+        <span class="mp-tag">📍 ${p.area}</span>
+      </div>
+      <button class="mp-view" onclick="openPinPanel(${pidx})">View Details →</button>
+    `);
+    if(useCluster) window._cluster.addLayer(m); else m.addTo(map);
+    markers.push(m);
+  });
+  const el=id=>document.getElementById(id);
+  el('s-pins').textContent=vis.length;
+  if(vis.length){
+    el('s-avg').textContent='₹'+(Math.round(vis.reduce((s,p)=>s+p.rent,0)/vis.length)/1000).toFixed(1)+'K';
+    el('s-low').textContent='₹'+(Math.min(...vis.map(p=>p.rent))/1000).toFixed(1)+'K';
+  }
+  el('cnt-all').textContent=all.length;
+  el('cnt-flat').textContent=all.filter(p=>p.type==='flat').length;
+  el('cnt-pg').textContent=all.filter(p=>p.type==='pg').length;
+  el('cnt-fm').textContent=all.filter(p=>p.type==='flatmate').length;
+  el('s-mine').textContent=userPins.length;
+  // Empty state
+  const emp=document.getElementById('empty-state');
+  if(emp) emp.style.display=vis.length===0?'block':'none';
+}
+
+// ══ RICH PIN PANEL ══
+function openPinPanel(idx){
+  const all=[...seed,...userPins];
+  const p=all[idx];
+  if(!p)return;
+  activePinData={...p,idx};
+  const tl={flat:'FLAT',pg:'PG / PAYING GUEST',flatmate:'FLATMATE NEEDED'}[p.type];
+  const fl={furnished:'Furnished',semi:'Semi-Furnished',unfurnished:'Unfurnished'}[p.fur];
+  const gmUrl=`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+
+  document.getElementById('pp-type').textContent=tl;
+  document.getElementById('pp-rent').innerHTML=`₹${p.rent.toLocaleString('en-IN')}<small>/month</small>`;
+
+  // Tags
+  const tagColors={furnished:'#b8902a',semi:'#555',unfurnished:'#888'};
+  let tags=`<div class="pp-tag"><span class="td" style="background:#6c63ff"></span>${p.bhk&&p.type!=='pg'?p.bhk+' BHK':'PG Room'}</div>`;
+  tags+=`<div class="pp-tag"><span class="td" style="background:${tagColors[p.fur]||'#555'}"></span>${fl}</div>`;
+  tags+=`<div class="pp-tag">📍 ${p.area}</div>`;
+  document.getElementById('pp-tags').innerHTML=tags;
+
+  // Quote
+  if(p.note){
+    document.getElementById('pp-quote-sec').style.display='block';
+    document.getElementById('pp-quote').textContent=`"${p.note}"`;
+  }else{
+    document.getElementById('pp-quote-sec').style.display='none';
+  }
+
+  // Meta
+  let meta=`<span class="pp-meta-item">🕐 ${p.time}</span>`;
+  if(p.sqft)meta+=`<span class="pp-meta-item">📐 ${p.sqft} sq.ft</span>`;
+  meta+=`<a class="pp-meta-item pp-dir-link" href="${gmUrl}" target="_blank">🗺 Get directions</a>`;
+  document.getElementById('pp-meta').innerHTML=meta;
+  // Trust badge
+  const trustEl=document.getElementById('pp-trust');
+  if(trustEl) trustEl.remove();
+  const trustBadge=document.createElement('div');
+  trustBadge.id='pp-trust';
+  trustBadge.className='pp-trust';
+  trustBadge.innerHTML='✓ Community verified listing';
+  document.getElementById('pp-meta').after(trustBadge);
+
+  // Rating
+  const r=pinRatings[idx];
+  document.getElementById('pp-rating-val').textContent=r?`${r} ★ (you rated)`:'No ratings yet — tap to rate ›';
+  document.getElementById('star-row').style.display='none';
+  document.querySelectorAll('.star').forEach((s,i)=>{s.classList.toggle('lit',r&&i<r);});
+
+  // Comments
+  renderComments(idx);
+
+  document.getElementById('pin-panel').classList.add('open');
+  document.getElementById('int-rent').textContent=`₹${p.rent.toLocaleString('en-IN')}/month`;
+  document.getElementById('int-det').textContent=`${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}`;
+}
+
+function closePinPanel(){
+  document.getElementById('pin-panel').classList.remove('open');
+  activePinData=null;
+}
+
+function toggleStars(){
+  const sr=document.getElementById('star-row');
+  sr.style.display=sr.style.display==='none'?'flex':'none';
+}
+function rate(n){
+  if(!activePinData)return;
+  pinRatings[activePinData.idx]=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));
+  document.getElementById('pp-rating-val').textContent=`${n} ★ (you rated)`;
+  document.getElementById('star-row').style.display='none';
+  showToast(`⭐ Rated ${n}/5 — thank you!`);
+}
+
+function renderComments(idx){
+  const list=pinComments[idx]||[];
+  const el=document.getElementById('pp-comment-list');
+  if(!list.length){el.innerHTML='<div class="comment-empty">No comments yet — be the first!</div>';return;}
+  el.innerHTML=list.map(c=>`<div class="comment-item"><div class="comment-txt">${c.text}</div><div class="comment-time">${c.time}</div></div>`).join('');
+}
+function postComment(){
+  const ci=document.getElementById('ci');
+  if(!ci.value.trim()||!activePinData)return;
+  const idx=activePinData.idx;
+  if(!pinComments[idx])pinComments[idx]=[];
+  pinComments[idx].push({text:ci.value.trim(),time:'Just now'});
+  ci.value='';
+  renderComments(idx);
+}
+
+function sharePin(){
+  const p=activePinData;if(!p)return;
+  const txt=`Check out this ${p.type} in ${p.area} — ₹${p.rent.toLocaleString('en-IN')}/mo on KirayaMap! kirayamap.in`;
+  navigator.clipboard.writeText(txt).then(()=>showToast('✅ Link copied!'));
+}
+function reportPin(){showToast('🚩 Reported — our team will review.');}
+
+// ══ INTEREST MODAL ══
+function openInterest(){document.getElementById('interest-modal').classList.add('open');}
+function submitInterest(){
+  const email=document.getElementById('int-email').value.trim();
+  if(!email){showToast('⚠️ Please enter your email.');return;}
+  showLoading('Sending your interest to owner…');
+  setTimeout(()=>{
+    hideLoading();
+    document.getElementById('interest-modal').classList.remove('open');
+    showToast('✅ Interest sent! Check your email for matches.',4000);
+  },900);
+}
+
+// ══ FIND FLAT / TENANT ══
+function selectRole(el,role){
+  document.querySelectorAll('.find-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');selectedRole=role;
+}
+function startFindFlow(){
+  if(!selectedRole){alert('Please select your role first.');return;}
+  document.getElementById('find-modal').classList.remove('open');
+  if(selectedRole==='owner'){
+    startPin();
+  } else {
+    showSeekerMode();
+  }
+}
+
+function showSeekerMode(){
+  const b=document.getElementById('banner');
+  b.innerHTML='\uD83D\uDD0D Seeker mode &mdash; tap any pin on the map to view rent details &amp; express interest. Tap empty map to dismiss.';
+  b.style.display='block';
+  b.style.background='#6c63ff';
+  b.style.animation='none';
+  b.style.maxWidth='520px';
+  b.style.textAlign='center';
+  b.style.lineHeight='1.6';
+  b.style.whiteSpace='normal';
+  const dismiss=()=>{
+    b.style.display='none';
+    b.removeAttribute('style');
+    b.innerHTML='\uD83D\uDCCD Tap the map where your flat / PG is';
+    map.off('click',dismiss);
+  };
+  setTimeout(()=>map.once('click',dismiss),300);
+}
+
+// ══ SEARCH (Nominatim geocoding for full Delhi) ══
+let searchTimer=null;
+const LOCAL=[
+  {name:'Kamla Nagar',sub:'North Campus',icon:'🎓',lat:28.6843,lng:77.2050},
+  {name:'Vijay Nagar',sub:'North Campus',icon:'🎓',lat:28.6892,lng:77.2091},
+  {name:'Hudson Lane',sub:'North Campus',icon:'🎓',lat:28.6915,lng:77.2104},
+  {name:'GTB Nagar',sub:'North Campus',icon:'🎓',lat:28.6858,lng:77.2122},
+  {name:'Mukherjee Nagar',sub:'Coaching Hub',icon:'📚',lat:28.6932,lng:77.2080},
+  {name:'Satya Niketan',sub:'South Campus',icon:'🎓',lat:28.5655,lng:77.1921},
+  {name:'Laxmi Nagar',sub:'East Delhi',icon:'💸',lat:28.6312,lng:77.2763},
+  {name:'Shakarpur',sub:'East Delhi',icon:'💸',lat:28.6239,lng:77.2731},
+  {name:'Lajpat Nagar',sub:'South Delhi',icon:'💸',lat:28.5694,lng:77.2430},
+  {name:'Rohini',sub:'North-West Delhi',icon:'🏫',lat:28.7495,lng:77.0766},
+  {name:'Janakpuri',sub:'West Delhi',icon:'🏫',lat:28.6270,lng:77.0827},
+  {name:'Dwarka',sub:'South-West Delhi',icon:'🏫',lat:28.5921,lng:77.0460},
+  {name:'Delhi University',sub:'North Campus',icon:'🏛',lat:28.6881,lng:77.2090},
+  {name:'AIIMS',sub:'Ansari Nagar',icon:'🏥',lat:28.5672,lng:77.2100},
+  {name:'IIT Delhi',sub:'Hauz Khas',icon:'🏛',lat:28.5459,lng:77.1926},
+  {name:'JNU',sub:'Munirka',icon:'🏛',lat:28.5401,lng:77.1659},
+  {name:'Connaught Place',sub:'Central Delhi',icon:'🏙',lat:28.6315,lng:77.2167},
+  {name:'Karol Bagh',sub:'Central Delhi',icon:'🏙',lat:28.6513,lng:77.1907},
+  {name:'Saket',sub:'South Delhi',icon:'🏙',lat:28.5244,lng:77.2066},
+  {name:'Hauz Khas',sub:'South Delhi',icon:'🏙',lat:28.5431,lng:77.2062},
+  {name:'GTB Nagar Metro',sub:'Yellow Line',icon:'🚇',lat:28.6895,lng:77.2101},
+  {name:'Vishwavidyalaya Metro',sub:'Yellow Line',icon:'🚇',lat:28.6938,lng:77.2107},
+  {name:'AIIMS Metro',sub:'Yellow Line',icon:'🚇',lat:28.5681,lng:77.2085},
+  {name:'Hauz Khas Metro',sub:'Yellow & Magenta',icon:'🚇',lat:28.5431,lng:77.2062},
+  {name:'Rajiv Chowk Metro',sub:'Yellow & Blue Line',icon:'🚇',lat:28.6330,lng:77.2197},
+  {name:'Laxmi Nagar Metro',sub:'Blue Line',icon:'🚇',lat:28.6322,lng:77.2777},
+];
+
+function onSearch(q){
+  document.getElementById('si-clr').style.display=q?'block':'none';
+  if(!q.trim()){closeDd();return;}
+  // Show local matches instantly
+  const local=LOCAL.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||p.sub.toLowerCase().includes(q.toLowerCase())).slice(0,5);
+  if(local.length)renderDdLocal(local);
+  // Then geocode for anything else
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(()=>geocode(q,local),500);
+}
+
+function renderDdLocal(results){
+  const dd=document.getElementById('dd');
+  let html='<div class="dd-sec"><div class="dd-lbl">Suggestions</div>';
+  results.forEach(r=>{
+    html+=`<div class="dd-item" onclick="selectPlace(${r.lat},${r.lng},'${r.name.replace(/'/g,"\\'")}')">
+      <span class="dd-ico">${r.icon}</span>
+      <div><div class="dd-name">${r.name}</div><div class="dd-sub">${r.sub}</div></div>
+    </div>`;
+  });
+  html+='</div>';
+  dd.innerHTML=html;dd.classList.add('open');
+}
+
+async function geocode(q,localAlready){
+  const spin=document.getElementById('si-spin');
+  spin.style.display='block';
+  document.getElementById('si-clr').style.display='none';
+  try{
+    const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q+', Delhi, India')}&limit=5&countrycodes=in&viewbox=76.8,28.9,77.5,28.4&bounded=1`,{headers:{'Accept-Language':'en'}});
+    const data=await res.json();
+    const dd=document.getElementById('dd');
+    let html='';
+    if(localAlready.length){
+      html+='<div class="dd-sec"><div class="dd-lbl">Quick matches</div>';
+      localAlready.forEach(r=>{html+=`<div class="dd-item" onclick="selectPlace(${r.lat},${r.lng},'${r.name.replace(/'/g,"\\'")}')"><span class="dd-ico">${r.icon}</span><div><div class="dd-name">${r.name}</div><div class="dd-sub">${r.sub}</div></div></div>`;});
+      html+='</div><div class="dd-sep"></div>';
+    }
+    if(data.length){
+      html+='<div class="dd-sec"><div class="dd-lbl">Places in Delhi</div>';
+      data.forEach(r=>{
+        const name=r.display_name.split(',')[0];
+        const sub=r.display_name.split(',').slice(1,3).join(',').trim();
+        html+=`<div class="dd-item" onclick="selectPlace(${r.lat},${r.lon},'${name.replace(/'/g,"\\'")}')"><span class="dd-ico">📍</span><div><div class="dd-name">${name}</div><div class="dd-sub">${sub}</div></div></div>`;
+      });
+      html+='</div>';
+    }
+    if(!localAlready.length&&!data.length){html='<div style="padding:14px;font-size:13px;color:#999;text-align:center">No results found</div>';}
+    dd.innerHTML=html;dd.classList.add('open');
+  }catch(e){console.log('Geocode error',e);}
+  finally{spin.style.display='none';document.getElementById('si-clr').style.display=document.getElementById('si').value?'block':'none';}
+}
+
+function dist(a,b,c,d){return Math.sqrt((a-c)**2+(b-d)**2);}
+function getNearby(lat,lng){
+  return [...seed,...userPins].map(p=>({...p,d:dist(lat,lng,p.lat,p.lng)})).sort((a,b)=>a.d-b.d).slice(0,5);
+}
+
+function selectPlace(lat,lng,name){
+  document.getElementById('si').value=name;
+  document.getElementById('si-clr').style.display='block';
+  document.getElementById('si-spin').style.display='none';
+  closeDd();
+  map.flyTo([lat,lng],16,{duration:1.1});
+  setTimeout(()=>showNearby(lat,lng),1300);
+}
+
+function showNearby(lat,lng){
+  const nearby=getNearby(lat,lng);
+  if(!nearby.length)return;
+  const all=[...seed,...userPins];
+  const dd=document.getElementById('dd');
+  let html=`<div class="nearby-header"><div class="nearby-title">Nearby listings</div><div class="nearby-count">${nearby.length} pins found</div></div>`;
+  nearby.forEach(p=>{
+    const ico={flat:'🏠',pg:'🛏',flatmate:'🤝'}[p.type];
+    const fl={furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
+    const gmUrl=`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+    const distM=Math.round(dist(lat,lng,p.lat,p.lng)*111000);
+    const pidx=all.indexOf(p);
+    html+=`<div class="nearby-pin" onclick="openPinPanel(${pidx});closeDd()">
+      <span class="np-ico">${ico}</span>
+      <div style="flex:1">
+        <div class="np-rent">₹${p.rent.toLocaleString('en-IN')}<span style="font-size:11px;font-weight:400;color:#999">/mo</span></div>
+        <div class="np-det">${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area} · ~${distM<1000?distM+'m':(distM/1000).toFixed(1)+'km'}</div>
+      </div>
+      <a class="np-dir" href="${gmUrl}" target="_blank" onclick="event.stopPropagation()">Directions</a>
+    </div>`;
+  });
+  dd.innerHTML=html;dd.classList.add('open');
+}
+
+function onSiFocus(){const v=document.getElementById('si').value;if(v)onSearch(v);}
+function clearSearch(){document.getElementById('si').value='';document.getElementById('si-clr').style.display='none';document.getElementById('si-spin').style.display='none';closeDd();}
+function closeDd(){document.getElementById('dd').classList.remove('open');document.getElementById('dd').innerHTML='';}
+function onKey(e){
+  const items=document.querySelectorAll('.dd-item');
+  let idx=Array.from(items).findIndex(x=>x.classList.contains('hl'));
+  if(e.key==='ArrowDown'){idx=Math.min(idx+1,items.length-1);items.forEach((x,i)=>x.classList.toggle('hl',i===idx));}
+  else if(e.key==='ArrowUp'){idx=Math.max(idx-1,0);items.forEach((x,i)=>x.classList.toggle('hl',i===idx));}
+  else if(e.key==='Enter'&&idx>=0){items[idx].click();}
+  else if(e.key==='Escape'){clearSearch();}
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.sw'))closeDd();});
+
+// ══ FILTER DROPDOWNS ══
+function toggleFd(id){document.getElementById(id).classList.toggle('open');}
+function fchip(el,valId,label){
+  document.querySelectorAll(`.chip[data-g="${el.dataset.g}"]`).forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');flt[el.dataset.g]=el.dataset.v;
+  document.getElementById(valId).textContent=label;draw();
+}
+function ffur(el,label){
+  document.querySelectorAll('.fopt').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');flt.fur=el.dataset.v;
+  document.getElementById('fv-fur').textContent=label;draw();
+}
+function selType(el,t){
+  document.querySelectorAll('.tcard').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');flt.type=t;draw();
+}
+
+// ══ BUDGET SLIDER ══
+const MN=2000,MX=50000;
+function fmt(v){return v>=1000?'₹'+(v/1000)+'K':'₹'+v;}
+function onRange(){
+  let mn=parseInt(document.getElementById('rmin').value);
+  let mx=parseInt(document.getElementById('rmax').value);
+  if(mn>mx-500){if(document.activeElement.id==='rmin'){mn=mx-500;document.getElementById('rmin').value=mn;}else{mx=mn+500;document.getElementById('rmax').value=mx;}}
+  flt.minRent=mn;flt.maxRent=mx;
+  updateSlider(mn,mx);
+  document.getElementById('fv-budget').textContent=mn===MN&&mx===MX?'Any':`${fmt(mn)}–${fmt(mx)}`;
+  draw();
+}
+function updateSlider(mn,mx){
+  const p=v=>((v-MN)/(MX-MN))*100;
+  const lp=p(mn),rp=p(mx);
+  document.getElementById('sf').style.cssText=`left:${lp}%;width:${rp-lp}%`;
+  document.getElementById('th-min').style.left=lp+'%';
+  document.getElementById('th-max').style.left=rp+'%';
+  document.getElementById('bp-min').textContent=fmt(mn);
+  document.getElementById('bp-max').textContent=mx>=MX?'₹50K+':fmt(mx);
+}
+updateSlider(MN,MX);
+
+// ══ ZONES ══
+function buildZones(){
+  document.getElementById('zone-list').innerHTML=ZONES.map(z=>`
+    <div class="zi" data-zone="${z.id}" onclick="toggleZone(this,'${z.id}')">
+      <div class="zcb" id="zcb-${z.id}"></div>
+      <div><div class="z-lbl">${z.label}</div><div class="z-sub">${z.sub}</div></div>
+    </div>`).join('');
+}
+function toggleZone(el,id){
+  el.classList.toggle('on');
+  const cb=document.getElementById('zcb-'+id);
+  if(el.classList.contains('on')){activeZones.add(id);cb.textContent='✓';}
+  else{activeZones.delete(id);cb.textContent='';}
+  document.getElementById('fv-zone').textContent=activeZones.size?`${activeZones.size} selected`:'All Delhi';
+  draw();
+}
+buildZones();
+
+function resetAll(){
+  flt={type:'all',bhk:'all',fur:'all',minRent:MN,maxRent:MX};
+  activeZones.clear();
+  document.querySelectorAll('.tcard').forEach(c=>c.classList.remove('on'));
+  document.querySelector('.tcard[data-type="all"]').classList.add('on');
+  document.querySelectorAll('.chip').forEach(c=>{c.classList.remove('on');if(c.dataset.v==='all')c.classList.add('on');});
+  document.querySelectorAll('.fopt').forEach(c=>{c.classList.remove('on');if(c.dataset.v==='all')c.classList.add('on');});
+  document.querySelectorAll('.zi').forEach(c=>{c.classList.remove('on');c.querySelector('.zcb').textContent='';});
+  document.getElementById('rmin').value=MN;document.getElementById('rmax').value=MX;
+  updateSlider(MN,MX);
+  ['fv-bhk','fv-fur'].forEach(id=>document.getElementById(id).textContent='Any');
+  document.getElementById('fv-budget').textContent='Any';
+  document.getElementById('fv-zone').textContent='All Delhi';
+  map.setView([28.6450,77.2000],11);draw();
+}
+
+// ══ PIN MODE ══
+function startPin(){
+  pinMode=true;
+  document.getElementById('map').classList.add('cross');
+  document.getElementById('banner').style.display='block';
+}
+map.on('click',e=>{
+  if(!pinMode)return;
+  pinMode=false;
+  document.getElementById('map').classList.remove('cross');
+  document.getElementById('banner').style.display='none';
+  document.getElementById('banner').removeAttribute('style');
+  document.getElementById('banner').innerHTML='📍 Tap the map where your flat / PG is';
+  pendingLL=e.latlng;
+  document.getElementById('cloc').textContent=`${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+  document.getElementById('modal').classList.add('open');
+});
+
+// ══ MODAL ══
+function seltype(el,t){
+  document.querySelectorAll('.tbtn2').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');curType=t;
+  document.getElementById('bhkrow').style.display=t==='pg'?'none':'block';
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');pendingLL=null;}
+function submit(){
+  const rent=parseInt(document.getElementById('f-rent').value);
+  if(!rent||rent<500){showToast('⚠️ Enter a valid rent (min ₹500)');return;}
+  if(!pendingLL){showToast('⚠️ No location — tap the map first');return;}
+  // Save location before closeModal clears pendingLL
+  showLoading('Adding your pin to the map…');
+  const loc={lat:pendingLL.lat,lng:pendingLL.lng};
+  const newPin={
+    lat:loc.lat,lng:loc.lng,type:curType,
+    bhk:curType==='pg'?'1':document.getElementById('f-bhk').value,
+    rent,fur:document.getElementById('f-fur2').value,
+    area:document.getElementById('f-area').value||'Delhi',
+    note:document.getElementById('f-note').value,
+    sqft:parseInt(document.getElementById('f-sqft').value)||null,
+    time:'Just now',zone:'user'
+  };
+  userPins.push(newPin);
+  ['f-rent','f-area','f-sqft','f-note','f-contact'].forEach(id=>document.getElementById(id).value='');
+  hideLoading();
+  closeModal();
+  // Reset ALL filters so new pin is always visible
+  flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
+  activeZones.clear();
+  document.querySelectorAll('.tcard').forEach(x=>x.classList.remove('on'));
+  document.querySelector('.tcard[data-type="all"]').classList.add('on');
+  document.querySelectorAll('.chip').forEach(x=>{x.classList.remove('on');if(x.dataset.v==='all')x.classList.add('on');});
+  document.querySelectorAll('.fopt').forEach(x=>{x.classList.remove('on');if(x.dataset.v==='all')x.classList.add('on');});
+  document.querySelectorAll('.zi').forEach(x=>{x.classList.remove('on');x.querySelector('.zcb').textContent='';});
+  draw();
+  showToast('✅ Pin added! Flying to your location…');document.getElementById('s-mine').textContent=userPins.length;
+  // Fly to pin and open popup
+  setTimeout(()=>{
+    map.flyTo([loc.lat,loc.lng],16,{duration:0.8});
+  },100);
+  setTimeout(()=>{
+    const last=markers[markers.length-1];
+    if(last) last.openPopup();
+  },1000);
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+draw();
+
+// Handle case where user opens file directly without going through splash
+window.addEventListener('load', ()=>{
+  // If app is already visible (e.g. no splash), invalidate map
+  if(document.getElementById('app').classList.contains('show')){
+    setTimeout(()=>{ map.invalidateSize(true); draw(); }, 200);
+  }
+});
+</script>
+</body>
+</html>
