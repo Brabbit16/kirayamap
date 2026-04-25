@@ -633,6 +633,12 @@
 </div>
 
 <script>
+// ══ SUPABASE CONFIG ══
+// Replace these with your real values from Supabase → Settings → API
+const SUPABASE_URL = 'https://nefyaqjolvglodomshcx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lZnlhcWpvbHZnbG9kb21zaGN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTQ1MDcsImV4cCI6MjA5MjY5MDUwN30.N2oNOSvUGa0oDELrMYn4ib5541zxz58F7NXTiuYCaxk';
+const USE_SUPABASE = SUPABASE_URL !== 'YOUR_SUPABASE_URL';
+
 // ══ DATA ══
 const seed=[
   {lat:28.6892,lng:77.2091,type:'flat',bhk:'2',rent:18000,fur:'furnished',area:'Vijay Nagar',note:'Ground floor, attached bath, near DU North Gate. Landlord is chill.',sqft:700,time:'2 days ago',zone:'north'},
