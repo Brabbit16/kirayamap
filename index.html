@@ -1180,11 +1180,10 @@ function seltype(el,t){
   document.getElementById('bhkrow').style.display=t==='pg'?'none':'block';
 }
 function closeModal(){document.getElementById('modal').classList.remove('open');pendingLL=null;}
-function submit(){
+async function submit(){
   const rent=parseInt(document.getElementById('f-rent').value);
   if(!rent||rent<500){showToast('⚠️ Enter a valid rent (min ₹500)');return;}
   if(!pendingLL){showToast('⚠️ No location — tap the map first');return;}
-  // Save location before closeModal clears pendingLL
   showLoading('Adding your pin to the map…');
   const loc={lat:pendingLL.lat,lng:pendingLL.lng};
   const newPin={
@@ -1196,6 +1195,34 @@ function submit(){
     sqft:parseInt(document.getElementById('f-sqft').value)||null,
     time:'Just now',zone:'user'
   };
+  // Save to Supabase if connected
+  if(USE_SUPABASE){
+    try{
+      console.log('Saving to Supabase…', SUPABASE_URL);
+      const res=await fetch(`${SUPABASE_URL}/rest/v1/pins`,{
+        method:'POST',
+        headers:{
+          'apikey':SUPABASE_KEY,
+          'Authorization':`Bearer ${SUPABASE_KEY}`,
+          'Content-Type':'application/json',
+          'Prefer':'return=minimal'
+        },
+        body:JSON.stringify({
+          lat:newPin.lat,lng:newPin.lng,type:newPin.type,
+          bhk:newPin.bhk,rent:newPin.rent,furnishing:newPin.fur,
+          area:newPin.area,zone:newPin.zone,note:newPin.note,sqft:newPin.sqft
+        })
+      });
+      if(!res.ok){
+        const err=await res.text();
+        console.error('Supabase error:',res.status,err);
+      } else {
+        console.log('✅ Saved to Supabase!');
+      }
+    }catch(e){
+      console.error('Supabase fetch failed:',e);
+    }
+  }
   userPins.push(newPin);
   ['f-rent','f-area','f-sqft','f-note','f-contact'].forEach(id=>document.getElementById(id).value='');
   hideLoading();
