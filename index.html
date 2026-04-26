@@ -331,11 +331,11 @@
     <div class="sp-logo">Kiraya<em>Map</em></div>
     <div class="sp-badge">AI Property Matchmaking · Delhi</div>
     <div class="sp-pill"><span class="sp-dot"></span>36 real rents pinned across Delhi</div>
-    <div class="sp-hero">Find your place.<br><span>Without the broker.</span></div>
+    <div class="sp-hero">Find your place.<br><span>The honest way.</span></div>
     <div class="sp-desc">Real rents pinned anonymously across all Delhi — DU, coaching hubs, south campus &amp; budget zones. AI matches you to the right place.</div>
     <div class="sp-slbl">Share with your group</div>
     <div class="sp-sbox">
-      <div class="sp-stxt" id="smsg">Bhai/Didi — finally a real rent map for all Delhi. No brokers, no BS. Anonymous pins, AI matching. 👉 kirayamap.in</div>
+      <div class="sp-stxt" id="smsg">Finally a real rent map for all Delhi People. No BS. Anonymous pins, AI matching. 👉 kirayamap.in</div>
       <button class="cp-btn" onclick="copyMsg()">⧉</button>
     </div>
     <button class="btn-enter" onclick="enterApp()">Open the Map →</button>
@@ -344,7 +344,7 @@
       Share with friends
     </button>
     <button class="btn-how" onclick="openHow()">How does this work?</button>
-    <div class="sp-tos">By continuing you agree to our <a href="#">Privacy Policy</a> &amp; <a href="#">Terms</a></div>
+    <div class="sp-tos">By continuing you agree to our <a href="#" onclick="event.preventDefault();openPrivacy()">Privacy Policy</a> &amp; <a href="#" onclick="event.preventDefault();openTerms()">Terms</a></div>
   </div>
 </div>
 
@@ -562,8 +562,14 @@
     </div>
     <div class="pp-cta">
       <div class="pp-cta-title">Interested in this place?</div>
-      <div class="pp-cta-sub">Tap below — we'll notify the owner and also recommend similar listings to your email.</div>
-      <button class="btn-interested" onclick="openInterest()">I'm Interested →</button>
+      <div class="pp-cta-sub" id="pp-cta-sub">Connect with the owner or get AI-matched with similar listings.</div>
+      <div id="pp-contact-btns" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+      <button class="btn-interested" onclick="openInterest()">📧 Send Interest &amp; Get AI Matches →</button>
+    </div>
+    <!-- AI MATCHES PANEL -->
+    <div id="pp-matches" style="display:none;padding:0 20px 20px;">
+      <div class="pp-sec-lbl" style="margin-bottom:10px;">AI Matched Listings</div>
+      <div id="pp-matches-list"></div>
     </div>
   </div>
 
@@ -602,7 +608,9 @@
       <div class="fg"><label class="fl">Area / Building Name</label><input class="fi" id="f-area" placeholder="e.g. Vijay Nagar, Satya Niketan, Lajpat Nagar"/></div>
       <div class="fg"><label class="fl">Sq ft (optional)</label><input class="fi" id="f-sqft" type="number" placeholder="e.g. 850"/></div>
       <div class="fg"><label class="fl">Tenant quote — your honest take on the place</label><textarea class="fta" id="f-note" placeholder="e.g. Good ventilation, noisy lane, landlord helpful. No brokerage."></textarea></div>
-      <div class="fg"><label class="fl">WhatsApp / Phone <span style="color:#bbb;font-weight:400">(optional)</span></label><input class="fi" id="f-contact" type="text" placeholder="Blank = fully anonymous"/></div>
+      <div class="fg"><label class="fl">Your WhatsApp <span style="color:#bbb;font-weight:400">(optional — for direct tenant connect)</span></label><input class="fi" id="f-whatsapp" type="text" placeholder="+91 98765 43210"/></div>
+      <div class="fg"><label class="fl">Your Email * <span style="color:#bbb;font-weight:400">(required — get notified when someone is interested)</span></label><input class="fi" id="f-email" type="email" placeholder="you@example.com" required/></div>
+      <div style="background:#f0faf5;border-radius:10px;padding:10px 13px;font-size:12px;color:#2d6a4f;margin-bottom:12px;">🔒 Contact details are never shown publicly. Only shared when a tenant expresses interest.</div>
       <div class="mfoot"><button class="bcan" onclick="closeModal()">Cancel</button><button class="bsub" onclick="submit()">Add to Map</button></div>
     </div>
   </div>
@@ -859,6 +867,18 @@ function openPinPanel(idx){
   document.getElementById('pin-panel').classList.add('open');
   document.getElementById('int-rent').textContent=`₹${p.rent.toLocaleString('en-IN')}/month`;
   document.getElementById('int-det').textContent=`${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}`;
+
+  // Show contact buttons if owner provided details
+  const ctaBtns = document.getElementById('pp-contact-btns');
+  ctaBtns.innerHTML = '';
+  if(p.owner_whatsapp){
+    const waMsg = encodeURIComponent(`Hi! I saw your ${p.type} listing in ${p.area} (₹${Number(p.rent).toLocaleString('en-IN')}/mo) on KirayaMap. I'm interested!`);
+    const waNum = p.owner_whatsapp.replace(/[^0-9]/g,'');
+    ctaBtns.innerHTML += `<a href="https://wa.me/${waNum}?text=${waMsg}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25d366;color:#fff;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:500;text-decoration:none;font-family:'DM Sans',sans-serif;">💬 WhatsApp Owner Directly</a>`;
+  }
+
+  // Show AI matches
+  showAIMatches(p);
 }
 
 function closePinPanel(){
@@ -1187,7 +1207,12 @@ function seltype(el,t){
 function closeModal(){document.getElementById('modal').classList.remove('open');pendingLL=null;}
 async function submit(){
   const rent=parseInt(document.getElementById('f-rent').value);
+  const ownerEmail=document.getElementById('f-email').value.trim();
+  if(!ownerEmail||!ownerEmail.includes('@')){showToast('⚠️ Please enter a valid email to receive interest notifications.');return;}
   if(!rent||rent<500){showToast('⚠️ Enter a valid rent (min ₹500)');return;}
+  // Check 7 pin lifetime limit
+  const totalPins = parseInt(localStorage.getItem('km_total_pins')||'0');
+  if(totalPins >= 7){showToast('⚠️ Max 7 pins per device reached. Contact us to add more.');return;}
   if(!pendingLL){showToast('⚠️ No location — tap the map first');return;}
   showLoading('Adding your pin to the map…');
   const loc={lat:pendingLL.lat,lng:pendingLL.lng};
@@ -1198,7 +1223,9 @@ async function submit(){
     area:document.getElementById('f-area').value||'Delhi',
     note:document.getElementById('f-note').value,
     sqft:parseInt(document.getElementById('f-sqft').value)||null,
-    time:'Just now',zone:'user'
+    time:'Just now',zone:'user',
+    owner_whatsapp:document.getElementById('f-whatsapp').value.trim()||null,
+    owner_email:document.getElementById('f-email').value.trim()||null,
   };
   // Save to Supabase if connected
   if(USE_SUPABASE){
@@ -1215,7 +1242,9 @@ async function submit(){
         body:JSON.stringify({
           lat:newPin.lat,lng:newPin.lng,type:newPin.type,
           bhk:newPin.bhk,rent:newPin.rent,furnishing:newPin.fur,
-          area:newPin.area,zone:newPin.zone,note:newPin.note,sqft:newPin.sqft
+          area:newPin.area,zone:newPin.zone,note:newPin.note,sqft:newPin.sqft,
+          owner_whatsapp:newPin.owner_whatsapp,
+          owner_email:newPin.owner_email
         })
       });
       if(!res.ok){
@@ -1229,7 +1258,7 @@ async function submit(){
     }
   }
   userPins.push(newPin);
-  ['f-rent','f-area','f-sqft','f-note','f-contact'].forEach(id=>document.getElementById(id).value='');
+  ['f-rent','f-area','f-sqft','f-note','f-whatsapp','f-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   hideLoading();
   closeModal();
   // Reset ALL filters so new pin is always visible
@@ -1241,6 +1270,7 @@ async function submit(){
   document.querySelectorAll('.fopt').forEach(x=>{x.classList.remove('on');if(x.dataset.v==='all')x.classList.add('on');});
   document.querySelectorAll('.zi').forEach(x=>{x.classList.remove('on');x.querySelector('.zcb').textContent='';});
   draw();
+  localStorage.setItem('km_total_pins', String(parseInt(localStorage.getItem('km_total_pins')||'0')+1));
   showToast('✅ Pin added! Flying to your location…');document.getElementById('s-mine').textContent=userPins.length;
   // Fly to pin and open popup
   setTimeout(()=>{
@@ -1252,9 +1282,73 @@ async function submit(){
   },1000);
 }
 
+function openPrivacy(){document.getElementById('privacy-modal').style.display='flex';}
+function openTerms(){document.getElementById('terms-modal').style.display='flex';}
+
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ══ AI MATCHING ══
+function showAIMatches(currentPin){
+  const matchPanel = document.getElementById('pp-matches');
+  const matchList = document.getElementById('pp-matches-list');
+  if(!matchPanel||!matchList) return;
+
+  const basePins = (USE_SUPABASE && window._dbPins) ? window._dbPins : seed;
+  const all = [...basePins, ...userPins];
+
+  // Score each pin by similarity
+  const scored = all
+    .filter(p => p !== currentPin && !(p.lat===currentPin.lat && p.lng===currentPin.lng))
+    .map(p => {
+      let score = 0;
+      // Same type → high score
+      if(p.type === currentPin.type) score += 40;
+      // Same zone → good score
+      if(p.zone === currentPin.zone) score += 25;
+      // Similar BHK
+      if(p.bhk === currentPin.bhk) score += 15;
+      // Similar furnishing
+      if(p.fur === currentPin.fur) score += 10;
+      // Similar rent (within 30%)
+      const rentDiff = Math.abs(p.rent - currentPin.rent) / currentPin.rent;
+      if(rentDiff < 0.1) score += 20;
+      else if(rentDiff < 0.2) score += 12;
+      else if(rentDiff < 0.3) score += 6;
+      // Proximity
+      const dist = Math.sqrt((p.lat-currentPin.lat)**2+(p.lng-currentPin.lng)**2);
+      if(dist < 0.01) score += 15;
+      else if(dist < 0.05) score += 8;
+      return {...p, score};
+    })
+    .filter(p => p.score > 20)
+    .sort((a,b) => b.score - a.score)
+    .slice(0, 4);
+
+  if(!scored.length){
+    matchPanel.style.display = 'none';
+    return;
+  }
+
+  matchPanel.style.display = 'block';
+  const basePins2 = (USE_SUPABASE && window._dbPins) ? window._dbPins : seed;
+  const allPins = [...basePins2, ...userPins];
+
+  matchList.innerHTML = scored.map(p => {
+    const ico = {flat:'🏠',pg:'🛏',flatmate:'🤝'}[p.type];
+    const fl = {furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
+    const pidx = allPins.findIndex(x=>x.lat===p.lat&&x.lng===p.lng);
+    const matchPct = Math.min(99, Math.round(p.score * 1.2));
+    return `<div onclick="openPinPanel(${pidx})" style="background:#252637;border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;border:1px solid #32334a;transition:border-color .15s;" onmouseover="this.style.borderColor='#6c63ff'" onmouseout="this.style.borderColor='#32334a'">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;">${ico} ₹${Number(p.rent).toLocaleString('en-IN')}<span style="font-size:11px;font-weight:400;color:#9aa0a6;">/mo</span></span>
+        <span style="font-size:11px;background:rgba(108,99,255,.2);color:#a09cf7;padding:2px 8px;border-radius:10px;">${matchPct}% match</span>
+      </div>
+      <div style="font-size:12px;color:#9aa0a6;">${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}</div>
+    </div>`;
+  }).join('');
 }
 
 // Load pins from Supabase if connected, then draw
@@ -1315,5 +1409,68 @@ window.addEventListener('load', ()=>{
   }
 });
 </script>
+
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacy-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:20px;width:100%;max-width:540px;padding:28px 24px;max-height:88vh;overflow-y:auto;position:relative;">
+    <button onclick="document.getElementById('privacy-modal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:#999;">✕</button>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;">Privacy Policy</div>
+    <div style="font-size:12px;color:#999;margin-bottom:20px;">Last updated: April 2026 · Applies worldwide</div>
+    <div style="font-size:13px;color:#444;line-height:1.8;">
+      <b style="color:#1a1a1a;">1. What we collect</b><br>
+      When you add a pin, we collect: location coordinates, rent amount, property type, furnishing status, area name, and any optional details you choose to share (WhatsApp, email, notes). We do not require account creation or identity verification.<br><br>
+      <b style="color:#1a1a1a;">2. How we use your data</b><br>
+      Data is used solely to display rent listings on the map and facilitate connections between property owners and seekers. We do not sell, rent, or share your data with third parties for marketing purposes.<br><br>
+      <b style="color:#1a1a1a;">3. Contact information</b><br>
+      WhatsApp numbers and email addresses provided by owners are stored securely in our database. They are <b>never displayed publicly</b> on the map. They are only shared with tenants who explicitly express interest in a specific listing.<br><br>
+      <b style="color:#1a1a1a;">4. Anonymous pins</b><br>
+      You may add pins without providing any contact information. Anonymous pins display rent data only, with no way to contact the owner.<br><br>
+      <b style="color:#1a1a1a;">5. Cookies &amp; local storage</b><br>
+      We use browser localStorage to store your pin count, filter preferences, and bookmarks. No tracking cookies are used.<br><br>
+      <b style="color:#1a1a1a;">6. Data retention</b><br>
+      Pin data is retained for 12 months from the date of submission. You may request deletion by contacting us at privacy@kirayamap.in.<br><br>
+      <b style="color:#1a1a1a;">7. Third-party services</b><br>
+      We use Supabase for database storage, Vercel for hosting, and OpenStreetMap/CARTO for map tiles. Each has their own privacy policy.<br><br>
+      <b style="color:#1a1a1a;">8. Your rights</b><br>
+      You have the right to access, correct, or delete your data at any time. Contact us at privacy@kirayamap.in.<br><br>
+      <b style="color:#1a1a1a;">9. Contact</b><br>
+      For privacy concerns: privacy@kirayamap.in
+    </div>
+    <button onclick="document.getElementById('privacy-modal').style.display='none'" style="width:100%;margin-top:20px;padding:13px;border-radius:12px;border:none;background:#1a1a1a;color:#fff;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Got it</button>
+  </div>
+</div>
+
+<!-- TERMS & CONDITIONS MODAL -->
+<div id="terms-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:20px;width:100%;max-width:540px;padding:28px 24px;max-height:88vh;overflow-y:auto;position:relative;">
+    <button onclick="document.getElementById('terms-modal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:#999;">✕</button>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;">Terms &amp; Conditions</div>
+    <div style="font-size:12px;color:#999;margin-bottom:20px;">Last updated: April 2026 · Applies worldwide</div>
+    <div style="font-size:13px;color:#444;line-height:1.8;">
+      <b style="color:#1a1a1a;">1. Acceptance</b><br>
+      By using KirayaMap, you agree to these terms. If you do not agree, please do not use the platform.<br><br>
+      <b style="color:#1a1a1a;">2. User content</b><br>
+      All rent pins are submitted by users. KirayaMap does not verify the accuracy of listings. We are a community platform, not a real estate agent or broker.<br><br>
+      <b style="color:#1a1a1a;">3. Prohibited content</b><br>
+      You must not submit: fake listings, incorrect rent data, spam pins, or content intended to mislead other users. Violations may result in removal of your pins.<br><br>
+      <b style="color:#1a1a1a;">4. Pin limits</b><br>
+      Each device is limited to 7 pins to prevent spam. This limit is enforced via browser storage.<br><br>
+      <b style="color:#1a1a1a;">5. No broker guarantee</b><br>
+      KirayaMap is a community tool. We do not guarantee the availability of any listing. Always verify directly with the owner before making any payments.<br><br>
+      <b style="color:#1a1a1a;">6. Liability</b><br>
+      KirayaMap is not liable for any transactions, disputes, or losses arising from use of the platform. Use at your own risk.<br><br>
+      <b style="color:#1a1a1a;">7. Scraping &amp; automation</b><br>
+      Automated scraping, crawling, or bulk downloading of data from KirayaMap is strictly prohibited. Violators may be blocked.<br><br>
+      <b style="color:#1a1a1a;">8. Intellectual property</b><br>
+      The KirayaMap name, logo, and design are owned by KirayaMap. User-submitted content remains owned by the submitter.<br><br>
+      <b style="color:#1a1a1a;">9. Changes</b><br>
+      We may update these terms at any time. Continued use constitutes acceptance of updated terms.<br><br>
+      <b style="color:#1a1a1a;">10. Contact</b><br>
+      For legal queries: legal@kirayamap.in
+    </div>
+    <button onclick="document.getElementById('terms-modal').style.display='none'" style="width:100%;margin-top:20px;padding:13px;border-radius:12px;border:none;background:#1a1a1a;color:#fff;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Got it</button>
+  </div>
+</div>
+
 </body>
 </html>
