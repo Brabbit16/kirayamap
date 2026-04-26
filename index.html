@@ -688,7 +688,7 @@ function enterApp(){
   document.getElementById('splash').style.display='none';
   document.getElementById('app').classList.add('show');
   document.getElementById('how-modal').style.display='none';
-  setTimeout(()=>{map.invalidateSize(true);draw();},150);
+  setTimeout(()=>{map.invalidateSize(true);loadPins();},150);
   // Bind mobile sheet
   const mbtn=document.getElementById('mob-filter-btn');
   const mov=document.getElementById('mob-overlay');
@@ -747,7 +747,9 @@ function mkIcon(type){
 // ══ DRAW ══
 function draw(){
   markers.forEach(m=>map.removeLayer(m));markers=[];
-  const all=[...seed,...userPins];
+  // Use Supabase pins if loaded, otherwise use seed
+  const basePins = (USE_SUPABASE && window._dbPins) ? window._dbPins : seed;
+  const all=[...basePins,...userPins];
   const vis=all.filter(p=>{
     if(flt.type!=='all'&&p.type!==flt.type)return false;
     if(flt.bhk!=='all'&&p.bhk!==flt.bhk)return false;
@@ -804,7 +806,8 @@ function draw(){
 
 // ══ RICH PIN PANEL ══
 function openPinPanel(idx){
-  const all=[...seed,...userPins];
+  const basePins = (USE_SUPABASE && window._dbPins) ? window._dbPins : seed;
+  const all=[...basePins,...userPins];
   const p=all[idx];
   if(!p)return;
   activePinData={...p,idx};
@@ -1032,7 +1035,8 @@ async function geocode(q,localAlready){
 
 function dist(a,b,c,d){return Math.sqrt((a-c)**2+(b-d)**2);}
 function getNearby(lat,lng){
-  return [...seed,...userPins].map(p=>({...p,d:dist(lat,lng,p.lat,p.lng)})).sort((a,b)=>a.d-b.d).slice(0,5);
+  const basePins = (USE_SUPABASE && window._dbPins) ? window._dbPins : seed;
+  return [...basePins,...userPins].map(p=>({...p,d:dist(lat,lng,p.lat,p.lng)})).sort((a,b)=>a.d-b.d).slice(0,5);
 }
 
 function selectPlace(lat,lng,name){
@@ -1047,7 +1051,8 @@ function selectPlace(lat,lng,name){
 function showNearby(lat,lng){
   const nearby=getNearby(lat,lng);
   if(!nearby.length)return;
-  const all=[...seed,...userPins];
+  const basePins = (USE_SUPABASE && window._dbPins) ? window._dbPins : seed;
+  const all=[...basePins,...userPins];
   const dd=document.getElementById('dd');
   let html=`<div class="nearby-header"><div class="nearby-title">Nearby listings</div><div class="nearby-count">${nearby.length} pins found</div></div>`;
   nearby.forEach(p=>{
@@ -1252,13 +1257,61 @@ function showToast(msg){
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-draw();
+// Load pins from Supabase if connected, then draw
+async function loadPins(){
+  if(!USE_SUPABASE){ draw(); return; }
+  try{
+    console.log('Loading pins from Supabase...');
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/pins?select=*&order=created_at.desc&limit=200`,{
+      headers:{
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    if(res.ok){
+      const data = await res.json();
+      console.log('✅ Loaded', data.length, 'pins from Supabase');
+      // Map Supabase columns to our format
+      const dbPins = data.map(p=>({
+        id: p.id,
+        lat: p.lat, lng: p.lng,
+        type: p.type, bhk: p.bhk,
+        rent: p.rent, fur: p.furnishing,
+        area: p.area, note: p.note,
+        sqft: p.sqft, zone: p.zone||'other',
+        time: timeAgo(p.created_at)
+      }));
+      // Replace seed with real data
+      window._dbPins = dbPins;
+    } else {
+      console.error('Failed to load pins:', res.status, await res.text());
+      window._dbPins = [];
+    }
+  } catch(e){
+    console.error('Load pins error:', e);
+    window._dbPins = [];
+  }
+  draw();
+}
 
-// Handle case where user opens file directly without going through splash
+function timeAgo(ts){
+  if(!ts) return 'Recently';
+  const diff = Date.now() - new Date(ts).getTime();
+  const mins = Math.floor(diff/60000);
+  const hrs = Math.floor(diff/3600000);
+  const days = Math.floor(diff/86400000);
+  if(mins < 1) return 'Just now';
+  if(mins < 60) return mins + ' mins ago';
+  if(hrs < 24) return hrs + ' hours ago';
+  if(days === 1) return '1 day ago';
+  return days + ' days ago';
+}
+
+loadPins();
+
 window.addEventListener('load', ()=>{
-  // If app is already visible (e.g. no splash), invalidate map
   if(document.getElementById('app').classList.contains('show')){
-    setTimeout(()=>{ map.invalidateSize(true); draw(); }, 200);
+    setTimeout(()=>{ map.invalidateSize(true); loadPins(); }, 200);
   }
 });
 </script>
