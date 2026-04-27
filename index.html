@@ -330,7 +330,7 @@
   <div class="sp">
     <div class="sp-logo">Kiraya<em>Map</em></div>
     <div class="sp-badge">AI Property Matchmaking · Delhi</div>
-    <div class="sp-pill"><span class="sp-dot"></span>36 real rents pinned across Delhi</div>
+    <div class="sp-pill"><span class="sp-dot"></span><span id="sp-pill-count">—</span>+ real rents pinned across Delhi</div>
     <div class="sp-hero">Find your place.<br><span>The honest way.</span></div>
     <div class="sp-desc">Real rents pinned anonymously across all Delhi — DU, coaching hubs, south campus &amp; budget zones. AI matches you to the right place.</div>
     <div class="sp-slbl">Share with your group</div>
@@ -447,7 +447,7 @@
         <div class="tcard on" data-type="all" onclick="selType(this,'all')">
           <span class="tcard-ico">🗺</span>
           <div><div class="tcard-lbl">All Listings</div><div class="tcard-sub">Flats · PGs · Flatmates</div></div>
-          <span class="tcard-cnt" id="cnt-all">36</span>
+          <span class="tcard-cnt" id="cnt-all">—</span>
         </div>
         <div class="tcard" data-type="flat" onclick="selType(this,'flat')">
           <span class="tcard-ico">🏠</span>
@@ -508,6 +508,16 @@
       <div class="fd-body"><div class="zl" id="zone-list"></div></div>
     </div>
 
+
+    <div class="fd" id="fd-map-overlay">
+      <button class="fd-trigger" onclick="toggleFd('fd-map-overlay')">Map overlays<div class="fd-tr"><span class="fd-val" id="fv-metro">Off</span><span class="fd-arrow">▾</span></div></button>
+      <div class="fd-body"><div class="chips">
+        <button class="chip" id="metro-toggle" onclick="toggleMetro(this)">🚇 Metro lines</button>
+        <button class="chip" id="metro-stn-toggle" onclick="toggleMetroStations(this)">🚉 Metro stations</button>
+        <button class="chip" id="aqi-toggle" onclick="toggleAqi(this)">🌫 AQI layer</button>
+        <button class="chip" onclick="analyzeVisibleArea()">📊 Analyze visible area</button>
+      </div></div>
+    </div>
     <div class="rp-foot">
       <button class="btn-reset" onclick="resetAll()">Reset</button>
       <button class="btn-apply" onclick="draw()">Apply</button>
@@ -569,15 +579,17 @@
     <!-- AI MATCHES PANEL -->
     <div id="pp-matches" style="display:none;padding:0 20px 20px;">
       <div class="pp-sec-lbl" style="margin-bottom:10px;">AI Matched Listings</div>
+      <div style="font-size:11px;color:#777;line-height:1.5;margin-bottom:10px;">Match score uses listing type, budget similarity, BHK/furnishing overlap, and distance.</div>
       <div id="pp-matches-list"></div>
     </div>
   </div>
 
   <div id="stats">
-    <div class="si"><div class="snum" id="s-pins">36</div><div class="slbl">Total pins</div></div>
+    <div class="si"><div class="snum" id="s-pins">—</div><div class="slbl">Total pins</div></div>
     <div class="si"><div class="snum" id="s-avg">₹10.8K</div><div class="slbl">Avg rent</div></div>
     <div class="si"><div class="snum" id="s-low">₹5K</div><div class="slbl">Lowest</div></div>
     <div class="si"><div class="snum" id="s-mine" style="color:#6c63ff">0</div><div class="slbl">Your pins</div></div>
+    <div class="si"><div class="snum" id="s-updated" style="color:#555">—</div><div class="slbl">Last updated</div></div>
   </div>
   <div id="banner">📍 Tap the map where your flat / PG is</div>
   <div id="hint-bar" style="display:none;position:fixed;bottom:54px;left:calc(50% - 150px);transform:translateX(-50%);z-index:490;background:rgba(26,26,26,.82);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;backdrop-filter:blur(6px);pointer-events:none;white-space:nowrap;animation:fadeUp .4s ease;">
@@ -606,6 +618,9 @@
         <select class="fs" id="f-fur2"><option value="furnished">Furnished</option><option value="semi">Semi-Furnished</option><option value="unfurnished">Unfurnished</option></select>
       </div>
       <div class="fg"><label class="fl">Area / Building Name</label><input class="fi" id="f-area" placeholder="e.g. Vijay Nagar, Satya Niketan, Lajpat Nagar"/></div>
+      <div class="fg"><label class="fl">Posted by</label>
+        <select class="fs" id="f-owner-type"><option value="owner">Owner (Direct)</option><option value="broker">Broker / Agent</option><option value="tenant">Current Tenant</option></select>
+      </div>
       <div class="fg"><label class="fl">Sq ft (optional)</label><input class="fi" id="f-sqft" type="number" placeholder="e.g. 850"/></div>
       <div class="fg"><label class="fl">Tenant quote — your honest take on the place</label><textarea class="fta" id="f-note" placeholder="e.g. Good ventilation, noisy lane, landlord helpful. No brokerage."></textarea></div>
       <div class="fg"><label class="fl">Your WhatsApp <span style="color:#bbb;font-weight:400">(optional — for direct tenant connect)</span></label><input class="fi" id="f-whatsapp" type="text" placeholder="+91 98765 43210"/></div>
@@ -631,9 +646,41 @@
         <button class="chip" data-g="mtype" data-v="flatmate">🤝 Flatmate</button>
       </div>
     </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">BHK</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="chip on" data-g="mbhk" data-v="all">Any</button>
+        <button class="chip" data-g="mbhk" data-v="1">1 BHK</button>
+        <button class="chip" data-g="mbhk" data-v="2">2 BHK</button>
+        <button class="chip" data-g="mbhk" data-v="3">3 BHK</button>
+        <button class="chip" data-g="mbhk" data-v="3+">3+</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Furnishing</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="chip on" data-g="mfur" data-v="all">Any</button>
+        <button class="chip" data-g="mfur" data-v="furnished">Furnished</button>
+        <button class="chip" data-g="mfur" data-v="semi">Semi</button>
+        <button class="chip" data-g="mfur" data-v="unfurnished">Bare</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Budget</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" id="mob-min" min="2000" max="50000" step="500" value="2000" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:13px;"/>
+        <span style="font-size:12px;color:var(--ink3);">to</span>
+        <input type="number" id="mob-max" min="2000" max="50000" step="500" value="50000" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:13px;"/>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Zones</div>
+      <div id="mob-zone-list" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Map overlays</div>
+      <button class="chip" id="mob-metro-toggle" data-v="off">🚇 Metro lines</button>
+      <button class="chip" id="mob-metro-stn-toggle" data-v="off">🚉 Metro stations</button>
+      <button class="chip" id="mob-aqi-toggle" data-v="off">🌫 AQI layer</button>
+    </div>
     <div style="display:flex;gap:8px;margin-top:16px;">
       <button onclick="resetAll();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Reset</button>
-      <button onclick="draw();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:2;padding:11px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Apply</button>
+      <button onclick="applyMobileFilters();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:2;padding:11px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Apply</button>
     </div>
   </div>
 
@@ -687,6 +734,7 @@ const ZONES=[
 let userPins=[],markers=[],activeZones=new Set(),curType='flat',pendingLL=null,pinMode=false;
 let flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
 let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
+let metroLayer=null, metroEnabled=false, metroStationLayer=null, metroStationsEnabled=false, aqiLayer=null, aqiEnabled=false, syncTimer=null, lastSyncAt=null;
 
 // ══ SPLASH ══
 function showLoading(msg='Loading…'){const el=document.getElementById('km-loading');if(el){el.classList.add('show');document.getElementById('km-loading-text').textContent=msg;}}
@@ -703,13 +751,20 @@ function enterApp(){
   const msh=document.getElementById('mob-sheet');
   if(mbtn){mbtn.addEventListener('click',()=>{msh.classList.add('open');mov.classList.add('show');});}
   if(mov){mov.addEventListener('click',()=>{msh.classList.remove('open');mov.classList.remove('show');});}
-  // Mobile type chips
-  document.querySelectorAll('.chip[data-g="mtype"]').forEach(c=>{
+  // Mobile filter chips
+  document.querySelectorAll('.chip[data-g="mtype"], .chip[data-g="mbhk"], .chip[data-g="mfur"]').forEach(c=>{
     c.addEventListener('click',()=>{
-      document.querySelectorAll('.chip[data-g="mtype"]').forEach(x=>x.classList.remove('on'));
-      c.classList.add('on'); flt.type=c.dataset.v; draw();
+      document.querySelectorAll(`.chip[data-g="${c.dataset.g}"]`).forEach(x=>x.classList.remove('on'));
+      c.classList.add('on');
     });
   });
+  const mobMetro=document.getElementById('mob-metro-toggle');
+  if(mobMetro) mobMetro.addEventListener('click',()=>toggleMetro());
+  const mobMetroStn=document.getElementById('mob-metro-stn-toggle');
+  if(mobMetroStn) mobMetroStn.addEventListener('click',()=>toggleMetroStations());
+  const mobAqi=document.getElementById('mob-aqi-toggle');
+  if(mobAqi) mobAqi.addEventListener('click',()=>toggleAqi());
+  syncMobileFilters();
   // Wire empty state pin button
   const epb=document.getElementById('empty-pin-btn');
   if(epb) epb.addEventListener('click',startPin);
@@ -742,9 +797,80 @@ function copyMsg(){navigator.clipboard.writeText(document.getElementById('smsg')
 function shareWA(){window.open('https://wa.me/?text='+encodeURIComponent(document.getElementById('smsg').textContent.trim()),'_blank');}
 
 // ══ MAP ══
-const map=L.map('map',{zoomControl:true}).setView([28.6450,77.2000],11);
+const DELHI_BOUNDS=[[28.40,76.84],[28.90,77.52]];
+const map=L.map('map',{zoomControl:true,maxBounds:DELHI_BOUNDS,maxBoundsViscosity:.6}).setView([28.6139,77.2090],10);
 const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:20});
 tileLayer.addTo(map);
+
+const METRO_LINES=[
+  {name:'Yellow Line',color:'#d4af37',points:[[28.7428,77.1025],[28.7041,77.1025],[28.6938,77.2107],[28.6330,77.2197],[28.5681,77.2085],[28.5431,77.2062]]},
+  {name:'Blue Line',color:'#2c7be5',points:[[28.5921,77.0460],[28.6270,77.0827],[28.6322,77.2777]]},
+  {name:'Magenta Line',color:'#c73ea8',points:[[28.5921,77.0460],[28.5431,77.2062],[28.4897,77.0747]]}
+];
+const METRO_STATIONS=[
+  {name:'Rajiv Chowk',lat:28.6330,lng:77.2197},{name:'Kashmere Gate',lat:28.6675,lng:77.2273},
+  {name:'Vishwavidyalaya',lat:28.6938,lng:77.2107},{name:'GTB Nagar',lat:28.6895,lng:77.2101},
+  {name:'AIIMS',lat:28.5681,lng:77.2085},{name:'Hauz Khas',lat:28.5431,lng:77.2062},
+  {name:'Dwarka Sec-21',lat:28.5523,lng:77.0583},{name:'Laxmi Nagar',lat:28.6322,lng:77.2777}
+];
+const AQI_ZONES=[
+  {name:'North Delhi',lat:28.70,lng:77.20,aqi:185,color:'#f39c12'},
+  {name:'Central Delhi',lat:28.63,lng:77.22,aqi:210,color:'#e67e22'},
+  {name:'South Delhi',lat:28.55,lng:77.20,aqi:170,color:'#f1c40f'},
+  {name:'East Delhi',lat:28.63,lng:77.29,aqi:225,color:'#d35400'}
+];
+
+function initMetroLayer(){
+  metroLayer=L.layerGroup(METRO_LINES.map(line=>L.polyline(line.points,{color:line.color,weight:4,opacity:.85,dashArray:'4 6'}).bindTooltip(line.name)));
+}
+function setMetroEnabled(enabled){
+  metroEnabled=enabled;
+  if(!metroLayer) initMetroLayer();
+  if(enabled){metroLayer.addTo(map);}else{map.removeLayer(metroLayer);}
+  const desktopBtn=document.getElementById('metro-toggle');
+  if(desktopBtn) desktopBtn.classList.toggle('on',enabled);
+  const mobBtn=document.getElementById('mob-metro-toggle');
+  if(mobBtn) mobBtn.classList.toggle('on',enabled);
+  const status=enabled?'On':'Off';
+  const fv=document.getElementById('fv-metro');
+  if(fv) fv.textContent=status;
+}
+function toggleMetro(el){
+  setMetroEnabled(!metroEnabled);
+  if(el) el.classList.toggle('on', metroEnabled);
+}
+function initMetroStationLayer(){
+  metroStationLayer=L.layerGroup(METRO_STATIONS.map(s=>L.circleMarker([s.lat,s.lng],{radius:5,color:'#6c63ff',weight:2,fillColor:'#fff',fillOpacity:1}).bindTooltip(`🚉 ${s.name}`)));
+}
+function setMetroStationsEnabled(enabled){
+  metroStationsEnabled=enabled;
+  if(!metroStationLayer) initMetroStationLayer();
+  if(enabled){metroStationLayer.addTo(map);}else{map.removeLayer(metroStationLayer);}
+  ['metro-stn-toggle','mob-metro-stn-toggle'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',enabled);});
+}
+function toggleMetroStations(){ setMetroStationsEnabled(!metroStationsEnabled); }
+function initAqiLayer(){
+  aqiLayer=L.layerGroup(AQI_ZONES.map(z=>L.circle([z.lat,z.lng],{radius:3000,color:z.color,fillColor:z.color,fillOpacity:.18,weight:1.5}).bindTooltip(`${z.name}: AQI ${z.aqi}`)));
+}
+function setAqiEnabled(enabled){
+  aqiEnabled=enabled;
+  if(!aqiLayer) initAqiLayer();
+  if(enabled){aqiLayer.addTo(map);}else{map.removeLayer(aqiLayer);}
+  ['aqi-toggle','mob-aqi-toggle'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',enabled);});
+}
+function toggleAqi(){ setAqiEnabled(!aqiEnabled); }
+function analyzeVisibleArea(){
+  const b=map.getBounds();
+  const basePins=(USE_SUPABASE && window._dbPins)?window._dbPins:seed;
+  const inView=[...basePins,...userPins].filter(p=>b.contains([p.lat,p.lng]));
+  if(!inView.length){showToast('No pins in current map view.');return;}
+  const avg=Math.round(inView.reduce((s,p)=>s+p.rent,0)/inView.length);
+  const byBhk=['1','2','3','3+'].map(bhk=>{
+    const list=inView.filter(p=>p.bhk===bhk);
+    return list.length?`${bhk}BHK ₹${Math.round(list.reduce((s,p)=>s+p.rent,0)/list.length).toLocaleString('en-IN')}`:null;
+  }).filter(Boolean).join(' · ');
+  showToast(`Area stats: ${inView.length} pins · Avg ₹${avg.toLocaleString('en-IN')} ${byBhk?`· ${byBhk}`:''}`);
+}
 // Markers always show even if tiles fail to load
 
 function mkIcon(type){
@@ -807,6 +933,11 @@ function draw(){
   el('cnt-pg').textContent=all.filter(p=>p.type==='pg').length;
   el('cnt-fm').textContent=all.filter(p=>p.type==='flatmate').length;
   el('s-mine').textContent=userPins.length;
+  const sp=document.getElementById('sp-pill-count');
+  if(sp) sp.textContent=all.length;
+  const su=document.getElementById('s-updated');
+  if(su) su.textContent=lastSyncAt?timeAgo(lastSyncAt):'Now';
+  syncMobileFilters();
   // Empty state
   const emp=document.getElementById('empty-state');
   if(emp) emp.style.display=vis.length===0?'block':'none';
@@ -831,6 +962,9 @@ function openPinPanel(idx){
   let tags=`<div class="pp-tag"><span class="td" style="background:#6c63ff"></span>${p.bhk&&p.type!=='pg'?p.bhk+' BHK':'PG Room'}</div>`;
   tags+=`<div class="pp-tag"><span class="td" style="background:${tagColors[p.fur]||'#555'}"></span>${fl}</div>`;
   tags+=`<div class="pp-tag">📍 ${p.area}</div>`;
+  if(p.owner_type) tags+=`<div class="pp-tag">${p.owner_type==='owner'?'🟢 Owner Direct':p.owner_type==='broker'?'🟠 Broker':'🔵 Tenant'}</div>`;
+  if(p.photo_verified) tags+=`<div class="pp-tag">✅ Photo Verified</div>`;
+  if(p.agreement_uploaded) tags+=`<div class="pp-tag">📄 Agreement Uploaded</div>`;
   document.getElementById('pp-tags').innerHTML=tags;
 
   // Quote
@@ -846,6 +980,19 @@ function openPinPanel(idx){
   if(p.sqft)meta+=`<span class="pp-meta-item">📐 ${p.sqft} sq.ft</span>`;
   meta+=`<a class="pp-meta-item pp-dir-link" href="${gmUrl}" target="_blank">🗺 Get directions</a>`;
   document.getElementById('pp-meta').innerHTML=meta;
+  // Above-area-median warning
+  const near=all.filter(x=>x.type===p.type && x.bhk===p.bhk && Math.sqrt((x.lat-p.lat)**2+(x.lng-p.lng)**2)<0.03);
+  const med=near.length?near.map(x=>x.rent).sort((a,b)=>a-b)[Math.floor(near.length/2)]:null;
+  const nt=document.getElementById('pp-notice');
+  if(nt){
+    if(med && p.rent>med*1.2){
+      nt.style.display='block';
+      nt.innerHTML=`<strong>Heads up:</strong> This rent is ~${Math.round((p.rent/med-1)*100)}% above local median (₹${med.toLocaleString('en-IN')}).`;
+    }else{
+      nt.style.display='none';
+      nt.innerHTML='';
+    }
+  }
   // Trust badge
   const trustEl=document.getElementById('pp-trust');
   if(trustEl) trustEl.remove();
@@ -920,7 +1067,14 @@ function sharePin(){
   const txt=`Check out this ${p.type} in ${p.area} — ₹${p.rent.toLocaleString('en-IN')}/mo on KirayaMap! kirayamap.in`;
   navigator.clipboard.writeText(txt).then(()=>showToast('✅ Link copied!'));
 }
-function reportPin(){showToast('🚩 Reported — our team will review.');}
+function reportPin(){
+  const reason=prompt('Report this pin: fake rent, spam, wrong location, or duplicate?');
+  if(!reason)return;
+  const key='km_reports';
+  const prev=parseInt(localStorage.getItem(key)||'0');
+  localStorage.setItem(key,String(prev+1));
+  showToast('🚩 Report submitted. Thank you for keeping the map clean.');
+}
 
 // ══ INTEREST MODAL ══
 function openInterest(){document.getElementById('interest-modal').classList.add('open');}
@@ -1164,6 +1318,60 @@ function toggleZone(el,id){
 }
 buildZones();
 
+function buildMobileZones(){
+  const host=document.getElementById('mob-zone-list');
+  if(!host) return;
+  host.innerHTML=ZONES.map(z=>`<button class="chip ${activeZones.has(z.id)?'on':''}" data-zone="${z.id}">${z.label}</button>`).join('');
+  host.querySelectorAll('[data-zone]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      btn.classList.toggle('on');
+    });
+  });
+}
+
+function syncMobileFilters(){
+  document.querySelectorAll('.chip[data-g="mtype"]').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.type));
+  document.querySelectorAll('.chip[data-g="mbhk"]').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.bhk));
+  document.querySelectorAll('.chip[data-g="mfur"]').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.fur));
+  const min=document.getElementById('mob-min'),max=document.getElementById('mob-max');
+  if(min) min.value=flt.minRent;
+  if(max) max.value=flt.maxRent;
+  buildMobileZones();
+}
+
+function applyMobileFilters(){
+  const typeBtn=document.querySelector('.chip[data-g="mtype"].on');
+  const bhkBtn=document.querySelector('.chip[data-g="mbhk"].on');
+  const furBtn=document.querySelector('.chip[data-g="mfur"].on');
+  flt.type=typeBtn?typeBtn.dataset.v:'all';
+  flt.bhk=bhkBtn?bhkBtn.dataset.v:'all';
+  flt.fur=furBtn?furBtn.dataset.v:'all';
+  const mn=Math.max(MN,parseInt(document.getElementById('mob-min')?.value||MN));
+  const mx=Math.min(MX,parseInt(document.getElementById('mob-max')?.value||MX));
+  flt.minRent=Math.min(mn,mx-500);
+  flt.maxRent=Math.max(mx,flt.minRent+500);
+  activeZones.clear();
+  document.querySelectorAll('#mob-zone-list [data-zone].on').forEach(z=>activeZones.add(z.dataset.zone));
+
+  // keep desktop controls in sync
+  document.querySelectorAll('.tcard').forEach(c=>c.classList.toggle('on',c.dataset.type===flt.type));
+  document.querySelectorAll('.chip[data-g="bhk"]').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.bhk));
+  document.querySelectorAll('.fopt').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.fur));
+  document.getElementById('rmin').value=flt.minRent;
+  document.getElementById('rmax').value=flt.maxRent;
+  updateSlider(flt.minRent,flt.maxRent);
+  document.getElementById('fv-bhk').textContent=flt.bhk==='all'?'Any':`${flt.bhk} BHK`;
+  document.getElementById('fv-fur').textContent=flt.fur==='all'?'Any':(flt.fur==='furnished'?'Furnished':flt.fur==='semi'?'Semi':'Bare');
+  document.getElementById('fv-budget').textContent=flt.minRent===MN&&flt.maxRent===MX?'Any':`${fmt(flt.minRent)}–${fmt(flt.maxRent)}`;
+  document.querySelectorAll('.zi').forEach(el=>{
+    const on=activeZones.has(el.dataset.zone);
+    el.classList.toggle('on',on);
+    const cb=el.querySelector('.zcb'); if(cb) cb.textContent=on?'✓':'';
+  });
+  document.getElementById('fv-zone').textContent=activeZones.size?`${activeZones.size} selected`:'All Delhi';
+  draw();
+}
+
 function resetAll(){
   flt={type:'all',bhk:'all',fur:'all',minRent:MN,maxRent:MX};
   activeZones.clear();
@@ -1224,10 +1432,12 @@ async function submit(){
     note:document.getElementById('f-note').value,
     sqft:parseInt(document.getElementById('f-sqft').value)||null,
     time:'Just now',zone:'user',
+    owner_type:document.getElementById('f-owner-type').value||'owner',
     owner_whatsapp:document.getElementById('f-whatsapp').value.trim()||null,
     owner_email:document.getElementById('f-email').value.trim()||null,
   };
   // Save to Supabase if connected
+  let savedToSupabase=false;
   if(USE_SUPABASE){
     try{
       console.log('Saving to Supabase…', SUPABASE_URL);
@@ -1243,6 +1453,7 @@ async function submit(){
           lat:newPin.lat,lng:newPin.lng,type:newPin.type,
           bhk:newPin.bhk,rent:newPin.rent,furnishing:newPin.fur,
           area:newPin.area,zone:newPin.zone,note:newPin.note,sqft:newPin.sqft,
+          owner_type:newPin.owner_type,
           owner_whatsapp:newPin.owner_whatsapp,
           owner_email:newPin.owner_email
         })
@@ -1252,13 +1463,15 @@ async function submit(){
         console.error('Supabase error:',res.status,err);
       } else {
         console.log('✅ Saved to Supabase!');
+        savedToSupabase=true;
       }
     }catch(e){
       console.error('Supabase fetch failed:',e);
     }
   }
-  userPins.push(newPin);
+  if(!(USE_SUPABASE && savedToSupabase)) userPins.push(newPin);
   ['f-rent','f-area','f-sqft','f-note','f-whatsapp','f-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-owner-type').value='owner';
   hideLoading();
   closeModal();
   // Reset ALL filters so new pin is always visible
@@ -1269,7 +1482,11 @@ async function submit(){
   document.querySelectorAll('.chip').forEach(x=>{x.classList.remove('on');if(x.dataset.v==='all')x.classList.add('on');});
   document.querySelectorAll('.fopt').forEach(x=>{x.classList.remove('on');if(x.dataset.v==='all')x.classList.add('on');});
   document.querySelectorAll('.zi').forEach(x=>{x.classList.remove('on');x.querySelector('.zcb').textContent='';});
-  draw();
+  if(USE_SUPABASE && savedToSupabase){
+    await loadPins();
+  }else{
+    draw();
+  }
   localStorage.setItem('km_total_pins', String(parseInt(localStorage.getItem('km_total_pins')||'0')+1));
   showToast('✅ Pin added! Flying to your location…');document.getElementById('s-mine').textContent=userPins.length;
   // Fly to pin and open popup
@@ -1341,19 +1558,26 @@ function showAIMatches(currentPin){
     const fl = {furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
     const pidx = allPins.findIndex(x=>x.lat===p.lat&&x.lng===p.lng);
     const matchPct = Math.min(99, Math.round(p.score * 1.2));
+    const reasons=[];
+    if(p.type===currentPin.type) reasons.push('same listing type');
+    if(p.bhk===currentPin.bhk) reasons.push('same BHK');
+    if(Math.abs(p.rent-currentPin.rent)/currentPin.rent<0.2) reasons.push('similar budget');
+    const distKm=(Math.sqrt((p.lat-currentPin.lat)**2+(p.lng-currentPin.lng)**2)*111).toFixed(1);
+    reasons.push(`${distKm}km away`);
     return `<div onclick="openPinPanel(${pidx})" style="background:#252637;border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;border:1px solid #32334a;transition:border-color .15s;" onmouseover="this.style.borderColor='#6c63ff'" onmouseout="this.style.borderColor='#32334a'">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
         <span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;">${ico} ₹${Number(p.rent).toLocaleString('en-IN')}<span style="font-size:11px;font-weight:400;color:#9aa0a6;">/mo</span></span>
         <span style="font-size:11px;background:rgba(108,99,255,.2);color:#a09cf7;padding:2px 8px;border-radius:10px;">${matchPct}% match</span>
       </div>
       <div style="font-size:12px;color:#9aa0a6;">${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}</div>
+      <div style="font-size:11px;color:#777;margin-top:3px;">Why this match: ${reasons.join(', ')}</div>
     </div>`;
   }).join('');
 }
 
 // Load pins from Supabase if connected, then draw
 async function loadPins(){
-  if(!USE_SUPABASE){ draw(); return; }
+  if(!USE_SUPABASE){ lastSyncAt=Date.now(); draw(); return; }
   try{
     console.log('Loading pins from Supabase...');
     const res = await fetch(`${SUPABASE_URL}/rest/v1/pins?select=*&order=created_at.desc&limit=200`,{
@@ -1373,17 +1597,21 @@ async function loadPins(){
         rent: p.rent, fur: p.furnishing,
         area: p.area, note: p.note,
         sqft: p.sqft, zone: p.zone||'other',
+        owner_type: p.owner_type || 'owner',
+        photo_verified: !!p.photo_verified,
+        agreement_uploaded: !!p.agreement_uploaded,
         time: timeAgo(p.created_at)
       }));
       // Replace seed with real data
       window._dbPins = dbPins;
+      lastSyncAt=Date.now();
     } else {
       console.error('Failed to load pins:', res.status, await res.text());
-      window._dbPins = [];
+      window._dbPins = window._dbPins || [];
     }
   } catch(e){
     console.error('Load pins error:', e);
-    window._dbPins = [];
+    window._dbPins = window._dbPins || [];
   }
   draw();
 }
@@ -1402,6 +1630,11 @@ function timeAgo(ts){
 }
 
 loadPins();
+if(USE_SUPABASE){
+  syncTimer=setInterval(()=>{ if(!document.hidden) loadPins(); },15000);
+  window.addEventListener('focus',()=>loadPins());
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) loadPins(); });
+}
 
 window.addEventListener('load', ()=>{
   if(document.getElementById('app').classList.contains('show')){
