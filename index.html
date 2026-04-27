@@ -330,6 +330,7 @@
   <div class="sp">
     <div class="sp-logo">Kiraya<em>Map</em></div>
     <div class="sp-badge">AI Property Matchmaking · Delhi</div>
+    <div class="sp-pill"><span class="sp-dot"></span><span id="sp-pill-count">—</span>+ real rents pinned across Delhi</div>
     <div class="sp-pill"><span class="sp-dot"></span><span id="sp-pill-count">—</span> real rents pinned across Delhi</div>
     <div class="sp-hero">Find your place.<br><span>The honest way.</span></div>
     <div class="sp-desc">Real rents pinned anonymously across all Delhi — DU, coaching hubs, south campus &amp; budget zones. AI matches you to the right place.</div>
@@ -513,6 +514,9 @@
       <button class="fd-trigger" onclick="toggleFd('fd-map-overlay')">Map overlays<div class="fd-tr"><span class="fd-val" id="fv-metro">Off</span><span class="fd-arrow">▾</span></div></button>
       <div class="fd-body"><div class="chips">
         <button class="chip" id="metro-toggle" onclick="toggleMetro(this)">🚇 Metro lines</button>
+        <button class="chip" id="metro-stn-toggle" onclick="toggleMetroStations(this)">🚉 Metro stations</button>
+        <button class="chip" id="aqi-toggle" onclick="toggleAqi(this)">🌫 AQI layer</button>
+        <button class="chip" onclick="analyzeVisibleArea()">📊 Analyze visible area</button>
       </div></div>
     </div>
     <div class="rp-foot">
@@ -576,6 +580,7 @@
     <!-- AI MATCHES PANEL -->
     <div id="pp-matches" style="display:none;padding:0 20px 20px;">
       <div class="pp-sec-lbl" style="margin-bottom:10px;">AI Matched Listings</div>
+      <div style="font-size:11px;color:#777;line-height:1.5;margin-bottom:10px;">Match score uses listing type, budget similarity, BHK/furnishing overlap, and distance.</div>
       <div id="pp-matches-list"></div>
     </div>
   </div>
@@ -585,6 +590,7 @@
     <div class="si"><div class="snum" id="s-avg">₹10.8K</div><div class="slbl">Avg rent</div></div>
     <div class="si"><div class="snum" id="s-low">₹5K</div><div class="slbl">Lowest</div></div>
     <div class="si"><div class="snum" id="s-mine" style="color:#6c63ff">0</div><div class="slbl">Your pins</div></div>
+    <div class="si"><div class="snum" id="s-updated" style="color:#555">—</div><div class="slbl">Last updated</div></div>
   </div>
   <div id="banner">📍 Tap the map where your flat / PG is</div>
   <div id="hint-bar" style="display:none;position:fixed;bottom:54px;left:calc(50% - 150px);transform:translateX(-50%);z-index:490;background:rgba(26,26,26,.82);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;backdrop-filter:blur(6px);pointer-events:none;white-space:nowrap;animation:fadeUp .4s ease;">
@@ -613,6 +619,9 @@
         <select class="fs" id="f-fur2"><option value="furnished">Furnished</option><option value="semi">Semi-Furnished</option><option value="unfurnished">Unfurnished</option></select>
       </div>
       <div class="fg"><label class="fl">Area / Building Name</label><input class="fi" id="f-area" placeholder="e.g. Vijay Nagar, Satya Niketan, Lajpat Nagar"/></div>
+      <div class="fg"><label class="fl">Posted by</label>
+        <select class="fs" id="f-owner-type"><option value="owner">Owner (Direct)</option><option value="broker">Broker / Agent</option><option value="tenant">Current Tenant</option></select>
+      </div>
       <div class="fg"><label class="fl">Sq ft (optional)</label><input class="fi" id="f-sqft" type="number" placeholder="e.g. 850"/></div>
       <div class="fg"><label class="fl">Tenant quote — your honest take on the place</label><textarea class="fta" id="f-note" placeholder="e.g. Good ventilation, noisy lane, landlord helpful. No brokerage."></textarea></div>
       <div class="fg"><label class="fl">Your WhatsApp <span style="color:#bbb;font-weight:400">(optional — for direct tenant connect)</span></label><input class="fi" id="f-whatsapp" type="text" placeholder="+91 98765 43210"/></div>
@@ -667,6 +676,8 @@
     </div>
     <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Map overlays</div>
       <button class="chip" id="mob-metro-toggle" data-v="off">🚇 Metro lines</button>
+      <button class="chip" id="mob-metro-stn-toggle" data-v="off">🚉 Metro stations</button>
+      <button class="chip" id="mob-aqi-toggle" data-v="off">🌫 AQI layer</button>
     </div>
     <div style="display:flex;gap:8px;margin-top:16px;">
       <button onclick="resetAll();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Reset</button>
@@ -724,6 +735,7 @@ const ZONES=[
 let userPins=[],markers=[],activeZones=new Set(),curType='flat',pendingLL=null,pinMode=false;
 let flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
 let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
+let metroLayer=null, metroEnabled=false, metroStationLayer=null, metroStationsEnabled=false, aqiLayer=null, aqiEnabled=false, syncTimer=null, lastSyncAt=null;
 let metroLayer=null, metroEnabled=false, syncTimer=null;
 
 // ══ SPLASH ══
@@ -750,6 +762,10 @@ function enterApp(){
   });
   const mobMetro=document.getElementById('mob-metro-toggle');
   if(mobMetro) mobMetro.addEventListener('click',()=>toggleMetro());
+  const mobMetroStn=document.getElementById('mob-metro-stn-toggle');
+  if(mobMetroStn) mobMetroStn.addEventListener('click',()=>toggleMetroStations());
+  const mobAqi=document.getElementById('mob-aqi-toggle');
+  if(mobAqi) mobAqi.addEventListener('click',()=>toggleAqi());
   syncMobileFilters();
   // Wire empty state pin button
   const epb=document.getElementById('empty-pin-btn');
@@ -793,6 +809,18 @@ const METRO_LINES=[
   {name:'Blue Line',color:'#2c7be5',points:[[28.5921,77.0460],[28.6270,77.0827],[28.6322,77.2777]]},
   {name:'Magenta Line',color:'#c73ea8',points:[[28.5921,77.0460],[28.5431,77.2062],[28.4897,77.0747]]}
 ];
+const METRO_STATIONS=[
+  {name:'Rajiv Chowk',lat:28.6330,lng:77.2197},{name:'Kashmere Gate',lat:28.6675,lng:77.2273},
+  {name:'Vishwavidyalaya',lat:28.6938,lng:77.2107},{name:'GTB Nagar',lat:28.6895,lng:77.2101},
+  {name:'AIIMS',lat:28.5681,lng:77.2085},{name:'Hauz Khas',lat:28.5431,lng:77.2062},
+  {name:'Dwarka Sec-21',lat:28.5523,lng:77.0583},{name:'Laxmi Nagar',lat:28.6322,lng:77.2777}
+];
+const AQI_ZONES=[
+  {name:'North Delhi',lat:28.70,lng:77.20,aqi:185,color:'#f39c12'},
+  {name:'Central Delhi',lat:28.63,lng:77.22,aqi:210,color:'#e67e22'},
+  {name:'South Delhi',lat:28.55,lng:77.20,aqi:170,color:'#f1c40f'},
+  {name:'East Delhi',lat:28.63,lng:77.29,aqi:225,color:'#d35400'}
+];
 
 function initMetroLayer(){
   metroLayer=L.layerGroup(METRO_LINES.map(line=>L.polyline(line.points,{color:line.color,weight:4,opacity:.85,dashArray:'4 6'}).bindTooltip(line.name)));
@@ -812,6 +840,38 @@ function setMetroEnabled(enabled){
 function toggleMetro(el){
   setMetroEnabled(!metroEnabled);
   if(el) el.classList.toggle('on', metroEnabled);
+}
+function initMetroStationLayer(){
+  metroStationLayer=L.layerGroup(METRO_STATIONS.map(s=>L.circleMarker([s.lat,s.lng],{radius:5,color:'#6c63ff',weight:2,fillColor:'#fff',fillOpacity:1}).bindTooltip(`🚉 ${s.name}`)));
+}
+function setMetroStationsEnabled(enabled){
+  metroStationsEnabled=enabled;
+  if(!metroStationLayer) initMetroStationLayer();
+  if(enabled){metroStationLayer.addTo(map);}else{map.removeLayer(metroStationLayer);}
+  ['metro-stn-toggle','mob-metro-stn-toggle'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',enabled);});
+}
+function toggleMetroStations(){ setMetroStationsEnabled(!metroStationsEnabled); }
+function initAqiLayer(){
+  aqiLayer=L.layerGroup(AQI_ZONES.map(z=>L.circle([z.lat,z.lng],{radius:3000,color:z.color,fillColor:z.color,fillOpacity:.18,weight:1.5}).bindTooltip(`${z.name}: AQI ${z.aqi}`)));
+}
+function setAqiEnabled(enabled){
+  aqiEnabled=enabled;
+  if(!aqiLayer) initAqiLayer();
+  if(enabled){aqiLayer.addTo(map);}else{map.removeLayer(aqiLayer);}
+  ['aqi-toggle','mob-aqi-toggle'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',enabled);});
+}
+function toggleAqi(){ setAqiEnabled(!aqiEnabled); }
+function analyzeVisibleArea(){
+  const b=map.getBounds();
+  const basePins=(USE_SUPABASE && window._dbPins)?window._dbPins:seed;
+  const inView=[...basePins,...userPins].filter(p=>b.contains([p.lat,p.lng]));
+  if(!inView.length){showToast('No pins in current map view.');return;}
+  const avg=Math.round(inView.reduce((s,p)=>s+p.rent,0)/inView.length);
+  const byBhk=['1','2','3','3+'].map(bhk=>{
+    const list=inView.filter(p=>p.bhk===bhk);
+    return list.length?`${bhk}BHK ₹${Math.round(list.reduce((s,p)=>s+p.rent,0)/list.length).toLocaleString('en-IN')}`:null;
+  }).filter(Boolean).join(' · ');
+  showToast(`Area stats: ${inView.length} pins · Avg ₹${avg.toLocaleString('en-IN')} ${byBhk?`· ${byBhk}`:''}`);
 }
 // Markers always show even if tiles fail to load
 
@@ -877,6 +937,8 @@ function draw(){
   el('s-mine').textContent=userPins.length;
   const sp=document.getElementById('sp-pill-count');
   if(sp) sp.textContent=all.length;
+  const su=document.getElementById('s-updated');
+  if(su) su.textContent=lastSyncAt?timeAgo(lastSyncAt):'Now';
   syncMobileFilters();
   // Empty state
   const emp=document.getElementById('empty-state');
@@ -902,6 +964,9 @@ function openPinPanel(idx){
   let tags=`<div class="pp-tag"><span class="td" style="background:#6c63ff"></span>${p.bhk&&p.type!=='pg'?p.bhk+' BHK':'PG Room'}</div>`;
   tags+=`<div class="pp-tag"><span class="td" style="background:${tagColors[p.fur]||'#555'}"></span>${fl}</div>`;
   tags+=`<div class="pp-tag">📍 ${p.area}</div>`;
+  if(p.owner_type) tags+=`<div class="pp-tag">${p.owner_type==='owner'?'🟢 Owner Direct':p.owner_type==='broker'?'🟠 Broker':'🔵 Tenant'}</div>`;
+  if(p.photo_verified) tags+=`<div class="pp-tag">✅ Photo Verified</div>`;
+  if(p.agreement_uploaded) tags+=`<div class="pp-tag">📄 Agreement Uploaded</div>`;
   document.getElementById('pp-tags').innerHTML=tags;
 
   // Quote
@@ -917,6 +982,19 @@ function openPinPanel(idx){
   if(p.sqft)meta+=`<span class="pp-meta-item">📐 ${p.sqft} sq.ft</span>`;
   meta+=`<a class="pp-meta-item pp-dir-link" href="${gmUrl}" target="_blank">🗺 Get directions</a>`;
   document.getElementById('pp-meta').innerHTML=meta;
+  // Above-area-median warning
+  const near=all.filter(x=>x.type===p.type && x.bhk===p.bhk && Math.sqrt((x.lat-p.lat)**2+(x.lng-p.lng)**2)<0.03);
+  const med=near.length?near.map(x=>x.rent).sort((a,b)=>a-b)[Math.floor(near.length/2)]:null;
+  const nt=document.getElementById('pp-notice');
+  if(nt){
+    if(med && p.rent>med*1.2){
+      nt.style.display='block';
+      nt.innerHTML=`<strong>Heads up:</strong> This rent is ~${Math.round((p.rent/med-1)*100)}% above local median (₹${med.toLocaleString('en-IN')}).`;
+    }else{
+      nt.style.display='none';
+      nt.innerHTML='';
+    }
+  }
   // Trust badge
   const trustEl=document.getElementById('pp-trust');
   if(trustEl) trustEl.remove();
@@ -991,7 +1069,14 @@ function sharePin(){
   const txt=`Check out this ${p.type} in ${p.area} — ₹${p.rent.toLocaleString('en-IN')}/mo on KirayaMap! kirayamap.in`;
   navigator.clipboard.writeText(txt).then(()=>showToast('✅ Link copied!'));
 }
-function reportPin(){showToast('🚩 Reported — our team will review.');}
+function reportPin(){
+  const reason=prompt('Report this pin: fake rent, spam, wrong location, or duplicate?');
+  if(!reason)return;
+  const key='km_reports';
+  const prev=parseInt(localStorage.getItem(key)||'0');
+  localStorage.setItem(key,String(prev+1));
+  showToast('🚩 Report submitted. Thank you for keeping the map clean.');
+}
 
 // ══ INTEREST MODAL ══
 function openInterest(){document.getElementById('interest-modal').classList.add('open');}
@@ -1349,6 +1434,7 @@ async function submit(){
     note:document.getElementById('f-note').value,
     sqft:parseInt(document.getElementById('f-sqft').value)||null,
     time:'Just now',zone:'user',
+    owner_type:document.getElementById('f-owner-type').value||'owner',
     owner_whatsapp:document.getElementById('f-whatsapp').value.trim()||null,
     owner_email:document.getElementById('f-email').value.trim()||null,
   };
@@ -1369,6 +1455,7 @@ async function submit(){
           lat:newPin.lat,lng:newPin.lng,type:newPin.type,
           bhk:newPin.bhk,rent:newPin.rent,furnishing:newPin.fur,
           area:newPin.area,zone:newPin.zone,note:newPin.note,sqft:newPin.sqft,
+          owner_type:newPin.owner_type,
           owner_whatsapp:newPin.owner_whatsapp,
           owner_email:newPin.owner_email
         })
@@ -1386,6 +1473,7 @@ async function submit(){
   }
   if(!(USE_SUPABASE && savedToSupabase)) userPins.push(newPin);
   ['f-rent','f-area','f-sqft','f-note','f-whatsapp','f-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-owner-type').value='owner';
   hideLoading();
   closeModal();
   // Reset ALL filters so new pin is always visible
@@ -1472,19 +1560,26 @@ function showAIMatches(currentPin){
     const fl = {furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
     const pidx = allPins.findIndex(x=>x.lat===p.lat&&x.lng===p.lng);
     const matchPct = Math.min(99, Math.round(p.score * 1.2));
+    const reasons=[];
+    if(p.type===currentPin.type) reasons.push('same listing type');
+    if(p.bhk===currentPin.bhk) reasons.push('same BHK');
+    if(Math.abs(p.rent-currentPin.rent)/currentPin.rent<0.2) reasons.push('similar budget');
+    const distKm=(Math.sqrt((p.lat-currentPin.lat)**2+(p.lng-currentPin.lng)**2)*111).toFixed(1);
+    reasons.push(`${distKm}km away`);
     return `<div onclick="openPinPanel(${pidx})" style="background:#252637;border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;border:1px solid #32334a;transition:border-color .15s;" onmouseover="this.style.borderColor='#6c63ff'" onmouseout="this.style.borderColor='#32334a'">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
         <span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;">${ico} ₹${Number(p.rent).toLocaleString('en-IN')}<span style="font-size:11px;font-weight:400;color:#9aa0a6;">/mo</span></span>
         <span style="font-size:11px;background:rgba(108,99,255,.2);color:#a09cf7;padding:2px 8px;border-radius:10px;">${matchPct}% match</span>
       </div>
       <div style="font-size:12px;color:#9aa0a6;">${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}</div>
+      <div style="font-size:11px;color:#777;margin-top:3px;">Why this match: ${reasons.join(', ')}</div>
     </div>`;
   }).join('');
 }
 
 // Load pins from Supabase if connected, then draw
 async function loadPins(){
-  if(!USE_SUPABASE){ draw(); return; }
+  if(!USE_SUPABASE){ lastSyncAt=Date.now(); draw(); return; }
   try{
     console.log('Loading pins from Supabase...');
     const res = await fetch(`${SUPABASE_URL}/rest/v1/pins?select=*&order=created_at.desc&limit=200`,{
@@ -1504,10 +1599,14 @@ async function loadPins(){
         rent: p.rent, fur: p.furnishing,
         area: p.area, note: p.note,
         sqft: p.sqft, zone: p.zone||'other',
+        owner_type: p.owner_type || 'owner',
+        photo_verified: !!p.photo_verified,
+        agreement_uploaded: !!p.agreement_uploaded,
         time: timeAgo(p.created_at)
       }));
       // Replace seed with real data
       window._dbPins = dbPins;
+      lastSyncAt=Date.now();
     } else {
       console.error('Failed to load pins:', res.status, await res.text());
       window._dbPins = window._dbPins || [];
