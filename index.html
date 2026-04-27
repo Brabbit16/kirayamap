@@ -330,7 +330,7 @@
   <div class="sp">
     <div class="sp-logo">Kiraya<em>Map</em></div>
     <div class="sp-badge">AI Property Matchmaking · Delhi</div>
-    <div class="sp-pill"><span class="sp-dot"></span>36 real rents pinned across Delhi</div>
+    <div class="sp-pill"><span class="sp-dot"></span><span id="sp-pill-count">—</span> real rents pinned across Delhi</div>
     <div class="sp-hero">Find your place.<br><span>The honest way.</span></div>
     <div class="sp-desc">Real rents pinned anonymously across all Delhi — DU, coaching hubs, south campus &amp; budget zones. AI matches you to the right place.</div>
     <div class="sp-slbl">Share with your group</div>
@@ -447,7 +447,7 @@
         <div class="tcard on" data-type="all" onclick="selType(this,'all')">
           <span class="tcard-ico">🗺</span>
           <div><div class="tcard-lbl">All Listings</div><div class="tcard-sub">Flats · PGs · Flatmates</div></div>
-          <span class="tcard-cnt" id="cnt-all">36</span>
+          <span class="tcard-cnt" id="cnt-all">—</span>
         </div>
         <div class="tcard" data-type="flat" onclick="selType(this,'flat')">
           <span class="tcard-ico">🏠</span>
@@ -508,6 +508,13 @@
       <div class="fd-body"><div class="zl" id="zone-list"></div></div>
     </div>
 
+
+    <div class="fd" id="fd-map-overlay">
+      <button class="fd-trigger" onclick="toggleFd('fd-map-overlay')">Map overlays<div class="fd-tr"><span class="fd-val" id="fv-metro">Off</span><span class="fd-arrow">▾</span></div></button>
+      <div class="fd-body"><div class="chips">
+        <button class="chip" id="metro-toggle" onclick="toggleMetro(this)">🚇 Metro lines</button>
+      </div></div>
+    </div>
     <div class="rp-foot">
       <button class="btn-reset" onclick="resetAll()">Reset</button>
       <button class="btn-apply" onclick="draw()">Apply</button>
@@ -574,7 +581,7 @@
   </div>
 
   <div id="stats">
-    <div class="si"><div class="snum" id="s-pins">36</div><div class="slbl">Total pins</div></div>
+    <div class="si"><div class="snum" id="s-pins">—</div><div class="slbl">Total pins</div></div>
     <div class="si"><div class="snum" id="s-avg">₹10.8K</div><div class="slbl">Avg rent</div></div>
     <div class="si"><div class="snum" id="s-low">₹5K</div><div class="slbl">Lowest</div></div>
     <div class="si"><div class="snum" id="s-mine" style="color:#6c63ff">0</div><div class="slbl">Your pins</div></div>
@@ -631,9 +638,39 @@
         <button class="chip" data-g="mtype" data-v="flatmate">🤝 Flatmate</button>
       </div>
     </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">BHK</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="chip on" data-g="mbhk" data-v="all">Any</button>
+        <button class="chip" data-g="mbhk" data-v="1">1 BHK</button>
+        <button class="chip" data-g="mbhk" data-v="2">2 BHK</button>
+        <button class="chip" data-g="mbhk" data-v="3">3 BHK</button>
+        <button class="chip" data-g="mbhk" data-v="3+">3+</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Furnishing</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="chip on" data-g="mfur" data-v="all">Any</button>
+        <button class="chip" data-g="mfur" data-v="furnished">Furnished</button>
+        <button class="chip" data-g="mfur" data-v="semi">Semi</button>
+        <button class="chip" data-g="mfur" data-v="unfurnished">Bare</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Budget</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" id="mob-min" min="2000" max="50000" step="500" value="2000" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:13px;"/>
+        <span style="font-size:12px;color:var(--ink3);">to</span>
+        <input type="number" id="mob-max" min="2000" max="50000" step="500" value="50000" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:13px;"/>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Zones</div>
+      <div id="mob-zone-list" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Map overlays</div>
+      <button class="chip" id="mob-metro-toggle" data-v="off">🚇 Metro lines</button>
+    </div>
     <div style="display:flex;gap:8px;margin-top:16px;">
       <button onclick="resetAll();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Reset</button>
-      <button onclick="draw();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:2;padding:11px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Apply</button>
+      <button onclick="applyMobileFilters();document.getElementById('mob-sheet').classList.remove('open');document.getElementById('mob-overlay').classList.remove('show');" style="flex:2;padding:11px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Apply</button>
     </div>
   </div>
 
@@ -687,6 +724,7 @@ const ZONES=[
 let userPins=[],markers=[],activeZones=new Set(),curType='flat',pendingLL=null,pinMode=false;
 let flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
 let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
+let metroLayer=null, metroEnabled=false, syncTimer=null;
 
 // ══ SPLASH ══
 function showLoading(msg='Loading…'){const el=document.getElementById('km-loading');if(el){el.classList.add('show');document.getElementById('km-loading-text').textContent=msg;}}
@@ -703,13 +741,16 @@ function enterApp(){
   const msh=document.getElementById('mob-sheet');
   if(mbtn){mbtn.addEventListener('click',()=>{msh.classList.add('open');mov.classList.add('show');});}
   if(mov){mov.addEventListener('click',()=>{msh.classList.remove('open');mov.classList.remove('show');});}
-  // Mobile type chips
-  document.querySelectorAll('.chip[data-g="mtype"]').forEach(c=>{
+  // Mobile filter chips
+  document.querySelectorAll('.chip[data-g="mtype"], .chip[data-g="mbhk"], .chip[data-g="mfur"]').forEach(c=>{
     c.addEventListener('click',()=>{
-      document.querySelectorAll('.chip[data-g="mtype"]').forEach(x=>x.classList.remove('on'));
-      c.classList.add('on'); flt.type=c.dataset.v; draw();
+      document.querySelectorAll(`.chip[data-g="${c.dataset.g}"]`).forEach(x=>x.classList.remove('on'));
+      c.classList.add('on');
     });
   });
+  const mobMetro=document.getElementById('mob-metro-toggle');
+  if(mobMetro) mobMetro.addEventListener('click',()=>toggleMetro());
+  syncMobileFilters();
   // Wire empty state pin button
   const epb=document.getElementById('empty-pin-btn');
   if(epb) epb.addEventListener('click',startPin);
@@ -742,9 +783,36 @@ function copyMsg(){navigator.clipboard.writeText(document.getElementById('smsg')
 function shareWA(){window.open('https://wa.me/?text='+encodeURIComponent(document.getElementById('smsg').textContent.trim()),'_blank');}
 
 // ══ MAP ══
-const map=L.map('map',{zoomControl:true}).setView([28.6450,77.2000],11);
+const DELHI_BOUNDS=[[28.40,76.84],[28.90,77.52]];
+const map=L.map('map',{zoomControl:true,maxBounds:DELHI_BOUNDS,maxBoundsViscosity:.6}).setView([28.6139,77.2090],10);
 const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:20});
 tileLayer.addTo(map);
+
+const METRO_LINES=[
+  {name:'Yellow Line',color:'#d4af37',points:[[28.7428,77.1025],[28.7041,77.1025],[28.6938,77.2107],[28.6330,77.2197],[28.5681,77.2085],[28.5431,77.2062]]},
+  {name:'Blue Line',color:'#2c7be5',points:[[28.5921,77.0460],[28.6270,77.0827],[28.6322,77.2777]]},
+  {name:'Magenta Line',color:'#c73ea8',points:[[28.5921,77.0460],[28.5431,77.2062],[28.4897,77.0747]]}
+];
+
+function initMetroLayer(){
+  metroLayer=L.layerGroup(METRO_LINES.map(line=>L.polyline(line.points,{color:line.color,weight:4,opacity:.85,dashArray:'4 6'}).bindTooltip(line.name)));
+}
+function setMetroEnabled(enabled){
+  metroEnabled=enabled;
+  if(!metroLayer) initMetroLayer();
+  if(enabled){metroLayer.addTo(map);}else{map.removeLayer(metroLayer);}
+  const desktopBtn=document.getElementById('metro-toggle');
+  if(desktopBtn) desktopBtn.classList.toggle('on',enabled);
+  const mobBtn=document.getElementById('mob-metro-toggle');
+  if(mobBtn) mobBtn.classList.toggle('on',enabled);
+  const status=enabled?'On':'Off';
+  const fv=document.getElementById('fv-metro');
+  if(fv) fv.textContent=status;
+}
+function toggleMetro(el){
+  setMetroEnabled(!metroEnabled);
+  if(el) el.classList.toggle('on', metroEnabled);
+}
 // Markers always show even if tiles fail to load
 
 function mkIcon(type){
@@ -807,6 +875,9 @@ function draw(){
   el('cnt-pg').textContent=all.filter(p=>p.type==='pg').length;
   el('cnt-fm').textContent=all.filter(p=>p.type==='flatmate').length;
   el('s-mine').textContent=userPins.length;
+  const sp=document.getElementById('sp-pill-count');
+  if(sp) sp.textContent=all.length;
+  syncMobileFilters();
   // Empty state
   const emp=document.getElementById('empty-state');
   if(emp) emp.style.display=vis.length===0?'block':'none';
@@ -1164,6 +1235,60 @@ function toggleZone(el,id){
 }
 buildZones();
 
+function buildMobileZones(){
+  const host=document.getElementById('mob-zone-list');
+  if(!host) return;
+  host.innerHTML=ZONES.map(z=>`<button class="chip ${activeZones.has(z.id)?'on':''}" data-zone="${z.id}">${z.label}</button>`).join('');
+  host.querySelectorAll('[data-zone]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      btn.classList.toggle('on');
+    });
+  });
+}
+
+function syncMobileFilters(){
+  document.querySelectorAll('.chip[data-g="mtype"]').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.type));
+  document.querySelectorAll('.chip[data-g="mbhk"]').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.bhk));
+  document.querySelectorAll('.chip[data-g="mfur"]').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.fur));
+  const min=document.getElementById('mob-min'),max=document.getElementById('mob-max');
+  if(min) min.value=flt.minRent;
+  if(max) max.value=flt.maxRent;
+  buildMobileZones();
+}
+
+function applyMobileFilters(){
+  const typeBtn=document.querySelector('.chip[data-g="mtype"].on');
+  const bhkBtn=document.querySelector('.chip[data-g="mbhk"].on');
+  const furBtn=document.querySelector('.chip[data-g="mfur"].on');
+  flt.type=typeBtn?typeBtn.dataset.v:'all';
+  flt.bhk=bhkBtn?bhkBtn.dataset.v:'all';
+  flt.fur=furBtn?furBtn.dataset.v:'all';
+  const mn=Math.max(MN,parseInt(document.getElementById('mob-min')?.value||MN));
+  const mx=Math.min(MX,parseInt(document.getElementById('mob-max')?.value||MX));
+  flt.minRent=Math.min(mn,mx-500);
+  flt.maxRent=Math.max(mx,flt.minRent+500);
+  activeZones.clear();
+  document.querySelectorAll('#mob-zone-list [data-zone].on').forEach(z=>activeZones.add(z.dataset.zone));
+
+  // keep desktop controls in sync
+  document.querySelectorAll('.tcard').forEach(c=>c.classList.toggle('on',c.dataset.type===flt.type));
+  document.querySelectorAll('.chip[data-g="bhk"]').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.bhk));
+  document.querySelectorAll('.fopt').forEach(c=>c.classList.toggle('on',c.dataset.v===flt.fur));
+  document.getElementById('rmin').value=flt.minRent;
+  document.getElementById('rmax').value=flt.maxRent;
+  updateSlider(flt.minRent,flt.maxRent);
+  document.getElementById('fv-bhk').textContent=flt.bhk==='all'?'Any':`${flt.bhk} BHK`;
+  document.getElementById('fv-fur').textContent=flt.fur==='all'?'Any':(flt.fur==='furnished'?'Furnished':flt.fur==='semi'?'Semi':'Bare');
+  document.getElementById('fv-budget').textContent=flt.minRent===MN&&flt.maxRent===MX?'Any':`${fmt(flt.minRent)}–${fmt(flt.maxRent)}`;
+  document.querySelectorAll('.zi').forEach(el=>{
+    const on=activeZones.has(el.dataset.zone);
+    el.classList.toggle('on',on);
+    const cb=el.querySelector('.zcb'); if(cb) cb.textContent=on?'✓':'';
+  });
+  document.getElementById('fv-zone').textContent=activeZones.size?`${activeZones.size} selected`:'All Delhi';
+  draw();
+}
+
 function resetAll(){
   flt={type:'all',bhk:'all',fur:'all',minRent:MN,maxRent:MX};
   activeZones.clear();
@@ -1228,6 +1353,7 @@ async function submit(){
     owner_email:document.getElementById('f-email').value.trim()||null,
   };
   // Save to Supabase if connected
+  let savedToSupabase=false;
   if(USE_SUPABASE){
     try{
       console.log('Saving to Supabase…', SUPABASE_URL);
@@ -1252,12 +1378,13 @@ async function submit(){
         console.error('Supabase error:',res.status,err);
       } else {
         console.log('✅ Saved to Supabase!');
+        savedToSupabase=true;
       }
     }catch(e){
       console.error('Supabase fetch failed:',e);
     }
   }
-  userPins.push(newPin);
+  if(!(USE_SUPABASE && savedToSupabase)) userPins.push(newPin);
   ['f-rent','f-area','f-sqft','f-note','f-whatsapp','f-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   hideLoading();
   closeModal();
@@ -1269,7 +1396,11 @@ async function submit(){
   document.querySelectorAll('.chip').forEach(x=>{x.classList.remove('on');if(x.dataset.v==='all')x.classList.add('on');});
   document.querySelectorAll('.fopt').forEach(x=>{x.classList.remove('on');if(x.dataset.v==='all')x.classList.add('on');});
   document.querySelectorAll('.zi').forEach(x=>{x.classList.remove('on');x.querySelector('.zcb').textContent='';});
-  draw();
+  if(USE_SUPABASE && savedToSupabase){
+    await loadPins();
+  }else{
+    draw();
+  }
   localStorage.setItem('km_total_pins', String(parseInt(localStorage.getItem('km_total_pins')||'0')+1));
   showToast('✅ Pin added! Flying to your location…');document.getElementById('s-mine').textContent=userPins.length;
   // Fly to pin and open popup
@@ -1379,11 +1510,11 @@ async function loadPins(){
       window._dbPins = dbPins;
     } else {
       console.error('Failed to load pins:', res.status, await res.text());
-      window._dbPins = [];
+      window._dbPins = window._dbPins || [];
     }
   } catch(e){
     console.error('Load pins error:', e);
-    window._dbPins = [];
+    window._dbPins = window._dbPins || [];
   }
   draw();
 }
@@ -1402,6 +1533,11 @@ function timeAgo(ts){
 }
 
 loadPins();
+if(USE_SUPABASE){
+  syncTimer=setInterval(()=>{ if(!document.hidden) loadPins(); },15000);
+  window.addEventListener('focus',()=>loadPins());
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) loadPins(); });
+}
 
 window.addEventListener('load', ()=>{
   if(document.getElementById('app').classList.contains('show')){
