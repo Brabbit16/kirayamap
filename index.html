@@ -331,6 +331,7 @@
     <div class="sp-logo">Kiraya<em>Map</em></div>
     <div class="sp-badge">AI Property Matchmaking · Delhi</div>
     <div class="sp-pill"><span class="sp-dot"></span><span id="sp-pill-count">—</span>+ real rents pinned across Delhi</div>
+    <div class="sp-pill"><span class="sp-dot"></span><span id="sp-pill-count">—</span> real rents pinned across Delhi</div>
     <div class="sp-hero">Find your place.<br><span>The honest way.</span></div>
     <div class="sp-desc">Real rents pinned anonymously across all Delhi — DU, coaching hubs, south campus &amp; budget zones. AI matches you to the right place.</div>
     <div class="sp-slbl">Share with your group</div>
@@ -735,6 +736,7 @@ let userPins=[],markers=[],activeZones=new Set(),curType='flat',pendingLL=null,p
 let flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
 let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
 let metroLayer=null, metroEnabled=false, metroStationLayer=null, metroStationsEnabled=false, aqiLayer=null, aqiEnabled=false, syncTimer=null, lastSyncAt=null;
+let metroLayer=null, metroEnabled=false, syncTimer=null;
 
 // ══ SPLASH ══
 function showLoading(msg='Loading…'){const el=document.getElementById('km-loading');if(el){el.classList.add('show');document.getElementById('km-loading-text').textContent=msg;}}
