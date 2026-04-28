@@ -34,7 +34,8 @@
     @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
     .sp-hero{font-family:'Playfair Display',serif;font-size:25px;font-weight:600;line-height:1.35;color:#fff;margin-bottom:8px;}
     .sp-hero span{color:#a8c5b5;}
-    .sp-desc{font-size:13px;color:#666;line-height:1.6;margin-bottom:20px;max-width:340px;}
+    .sp-desc{font-size:13px;color:#666;line-height:1.6;margin-bottom:10px;max-width:340px;}
+    .sp-trust{font-size:11px;color:#555;line-height:1.5;margin-bottom:20px;max-width:340px;}
     .sp-slbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#555;margin-bottom:7px;}
     .sp-sbox{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:13px 15px;display:flex;gap:12px;margin-bottom:18px;}
     .sp-stxt{font-size:12px;color:#aaa;line-height:1.55;flex:1;}
@@ -331,14 +332,15 @@
     <div class="sp-logo">Kiraya<em>Map</em></div>
     <div class="sp-badge">AI Property Matchmaking · Delhi</div>
     <div class="sp-pill"><span class="sp-dot"></span><span id="sp-pill-count">—</span> real rents pinned across Delhi</div>
-    <div class="sp-hero">Find your place.<br><span>The honest way.</span></div>
-    <div class="sp-desc">Real rents pinned anonymously across all Delhi — DU, coaching hubs, south campus &amp; budget zones. AI matches you to the right place.</div>
+    <div class="sp-hero">Find your place.<br><span>See real Delhi rents on a live map</span></div>
+    <div class="sp-desc">Real rents pinned anonymously across Delhi — DU, coaching hubs &amp; budget zones.</div>
+    <div class="sp-trust">No fake listings • Real user-submitted rents</div>
     <div class="sp-slbl">Share with your group</div>
     <div class="sp-sbox">
       <div class="sp-stxt" id="smsg">Finally a real rent map for all Delhi People. No BS. Anonymous pins, AI matching. 👉 kirayamap.in</div>
       <button class="cp-btn" onclick="copyMsg()">⧉</button>
     </div>
-    <button class="btn-enter" onclick="enterApp()">Open the Map →</button>
+    <button class="btn-enter" onclick="enterApp()">See the map →</button>
     <button class="btn-wa" onclick="shareWA()" style="background:transparent;border:1px solid #2a2a2a;color:#888;margin-bottom:9px;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Share with friends
@@ -725,6 +727,10 @@ let userPins=[],markers=[],activeZones=new Set(),curType='flat',pendingLL=null,p
 let flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
 let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
 let metroLayer=null, metroEnabled=false, syncTimer=null;
+const INTERESTS_TABLE_CANDIDATES=['interests','pin_interests','interested_users'];
+const COMMENTS_TABLE_CANDIDATES=['comments','pin_comments'];
+let RESOLVED_INTERESTS_TABLE=null;
+let RESOLVED_COMMENTS_TABLE=null;
 
 // ══ SPLASH ══
 function showLoading(msg='Loading…'){const el=document.getElementById('km-loading');if(el){el.classList.add('show');document.getElementById('km-loading-text').textContent=msg;}}
@@ -934,6 +940,9 @@ function openPinPanel(idx){
 
   // Comments
   renderComments(idx);
+  if(USE_SUPABASE && p.id){
+    loadCommentsForPin(p.id, idx);
+  }
 
   document.getElementById('pin-panel').classList.add('open');
   document.getElementById('int-rent').textContent=`₹${p.rent.toLocaleString('en-IN')}/month`;
@@ -976,14 +985,22 @@ function renderComments(idx){
   if(!list.length){el.innerHTML='<div class="comment-empty">No comments yet — be the first!</div>';return;}
   el.innerHTML=list.map(c=>`<div class="comment-item"><div class="comment-txt">${c.text}</div><div class="comment-time">${c.time}</div></div>`).join('');
 }
-function postComment(){
+async function postComment(){
   const ci=document.getElementById('ci');
   if(!ci.value.trim()||!activePinData)return;
   const idx=activePinData.idx;
+  const txt=ci.value.trim();
   if(!pinComments[idx])pinComments[idx]=[];
-  pinComments[idx].push({text:ci.value.trim(),time:'Just now'});
+  pinComments[idx].push({text:txt,time:'Just now'});
   ci.value='';
   renderComments(idx);
+  if(USE_SUPABASE && activePinData.id){
+    const ok=await saveCommentToSupabase({
+      pin_id:activePinData.id,
+      text:txt
+    });
+    if(!ok) showToast('⚠️ Comment saved locally. Set correct comments table in config.');
+  }
 }
 
 function sharePin(){
@@ -995,15 +1012,35 @@ function reportPin(){showToast('🚩 Reported — our team will review.');}
 
 // ══ INTEREST MODAL ══
 function openInterest(){document.getElementById('interest-modal').classList.add('open');}
-function submitInterest(){
+async function submitInterest(){
   const email=document.getElementById('int-email').value.trim();
   if(!email){showToast('⚠️ Please enter your email.');return;}
   showLoading('Sending your interest to owner…');
-  setTimeout(()=>{
-    hideLoading();
-    document.getElementById('interest-modal').classList.remove('open');
-    showToast('✅ Interest sent! Check your email for matches.',4000);
-  },900);
+  let saved=true;
+  if(USE_SUPABASE){
+    if(!activePinData){
+      saved=false;
+    }else{
+      saved=await saveInterestToSupabase({
+        pin_id:activePinData.id||null,
+        pin_lat:activePinData.lat,
+        pin_lng:activePinData.lng,
+        listing_type:activePinData.type,
+        listing_area:activePinData.area,
+        listing_rent:activePinData.rent,
+        owner_email:activePinData.owner_email||null,
+        seeker_email:email
+      });
+    }
+  }
+  hideLoading();
+  if(!saved){
+    showToast('⚠️ Could not save interest to Supabase. Set correct interests table in config.');
+    return;
+  }
+  document.getElementById('interest-modal').classList.remove('open');
+  document.getElementById('int-email').value='';
+  showToast('✅ Interest sent! Check your email for matches.',4000);
 }
 
 // ══ FIND FLAT / TENANT ══
@@ -1504,7 +1541,9 @@ async function loadPins(){
         rent: p.rent, fur: p.furnishing,
         area: p.area, note: p.note,
         sqft: p.sqft, zone: p.zone||'other',
-        time: timeAgo(p.created_at)
+        time: timeAgo(p.created_at),
+        owner_whatsapp:p.owner_whatsapp||null,
+        owner_email:p.owner_email||null
       }));
       // Replace seed with real data
       window._dbPins = dbPins;
@@ -1530,6 +1569,114 @@ function timeAgo(ts){
   if(hrs < 24) return hrs + ' hours ago';
   if(days === 1) return '1 day ago';
   return days + ' days ago';
+}
+
+function sbHeaders(extra={}){
+  return {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    ...extra
+  };
+}
+
+async function saveInterestToSupabase(payload){
+  const tables=RESOLVED_INTERESTS_TABLE?[RESOLVED_INTERESTS_TABLE]:INTERESTS_TABLE_CANDIDATES;
+  const payloadVariants=[
+    payload,
+    { pin_id:payload.pin_id||null, seeker_email:payload.seeker_email },
+    { pin_id:payload.pin_id||null, email:payload.seeker_email }
+  ];
+  for(const t of tables){
+    for(const body of payloadVariants){
+      try{
+        const res=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{
+          method:'POST',
+          headers:sbHeaders({
+            'Content-Type':'application/json',
+            'Prefer':'return=representation'
+          }),
+          body:JSON.stringify(body)
+        });
+        if(res.ok){
+          RESOLVED_INTERESTS_TABLE=t;
+          return true;
+        }
+        console.warn(`Interest insert failed on ${t}:`, res.status, await res.text());
+      }catch(e){
+        console.warn(`Interest insert error on ${t}:`, e);
+      }
+    }
+  }
+  console.error('Supabase interest insert failed for all candidate tables:', INTERESTS_TABLE_CANDIDATES);
+  return false;
+}
+
+async function saveCommentToSupabase(payload){
+  const tables=RESOLVED_COMMENTS_TABLE?[RESOLVED_COMMENTS_TABLE]:COMMENTS_TABLE_CANDIDATES;
+  const payloadVariants=[
+    payload,
+    { pin_id:payload.pin_id, comment:payload.text },
+    { listing_id:payload.pin_id, text:payload.text },
+    { listing_id:payload.pin_id, comment:payload.text }
+  ];
+  for(const t of tables){
+    for(const body of payloadVariants){
+      try{
+        const res=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{
+          method:'POST',
+          headers:sbHeaders({
+            'Content-Type':'application/json',
+            'Prefer':'return=representation'
+          }),
+          body:JSON.stringify(body)
+        });
+        if(res.ok){
+          RESOLVED_COMMENTS_TABLE=t;
+          return true;
+        }
+        console.warn(`Comment insert failed on ${t}:`, res.status, await res.text());
+      }catch(e){
+        console.warn(`Comment insert error on ${t}:`, e);
+      }
+    }
+  }
+  console.error('Supabase comment insert failed for all candidate tables:', COMMENTS_TABLE_CANDIDATES);
+  return false;
+}
+
+async function loadCommentsForPin(pinId, idx){
+  const tables=RESOLVED_COMMENTS_TABLE?[RESOLVED_COMMENTS_TABLE]:COMMENTS_TABLE_CANDIDATES;
+  const queries=[
+    `pin_id=eq.${pinId}`,
+    `listing_id=eq.${pinId}`
+  ];
+  for(const t of tables){
+    for(const q of queries){
+      try{
+        const res=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=*&${q}&order=created_at.desc&limit=50`,{
+          headers:sbHeaders()
+        });
+        if(!res.ok){
+          console.warn(`Comment load failed on ${t} (${q}):`, res.status, await res.text());
+          continue;
+        }
+        const rows=await res.json();
+        RESOLVED_COMMENTS_TABLE=t;
+        pinComments[idx]=rows
+          .slice()
+          .reverse()
+          .map(c=>({
+            text:c.text||c.comment||'',
+            time:timeAgo(c.created_at)
+          }))
+          .filter(c=>c.text);
+        renderComments(idx);
+        return;
+      }catch(e){
+        console.warn(`Comment load error on ${t} (${q}):`, e);
+      }
+    }
+  }
 }
 
 loadPins();
