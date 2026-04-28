@@ -731,6 +731,8 @@ const INTERESTS_TABLE_CANDIDATES=['interests','pin_interests','interested_users'
 const COMMENTS_TABLE_CANDIDATES=['comments','pin_comments'];
 let RESOLVED_INTERESTS_TABLE=null;
 let RESOLVED_COMMENTS_TABLE=null;
+const INTERESTS_TABLE='interests';
+const COMMENTS_TABLE='comments';
 
 // ══ SPLASH ══
 function showLoading(msg='Loading…'){const el=document.getElementById('km-loading');if(el){el.classList.add('show');document.getElementById('km-loading-text').textContent=msg;}}
@@ -1000,6 +1002,7 @@ async function postComment(){
       text:txt
     });
     if(!ok) showToast('⚠️ Comment saved locally. Set correct comments table in config.');
+    if(!ok) showToast('⚠️ Comment saved locally only. Supabase write failed.');
   }
 }
 
@@ -1036,6 +1039,7 @@ async function submitInterest(){
   hideLoading();
   if(!saved){
     showToast('⚠️ Could not save interest to Supabase. Set correct interests table in config.');
+    showToast('⚠️ Could not save interest to Supabase. Check console/table config.');
     return;
   }
   document.getElementById('interest-modal').classList.remove('open');
@@ -1676,6 +1680,68 @@ async function loadCommentsForPin(pinId, idx){
         console.warn(`Comment load error on ${t} (${q}):`, e);
       }
     }
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/${INTERESTS_TABLE}`,{
+      method:'POST',
+      headers:sbHeaders({
+        'Content-Type':'application/json',
+        'Prefer':'return=representation'
+      }),
+      body:JSON.stringify(payload)
+    });
+    if(!res.ok){
+      console.error('Supabase interest insert failed:', res.status, await res.text());
+      return false;
+    }
+    return true;
+  }catch(e){
+    console.error('Supabase interest insert error:', e);
+    return false;
+  }
+}
+
+async function saveCommentToSupabase(payload){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/${COMMENTS_TABLE}`,{
+      method:'POST',
+      headers:sbHeaders({
+        'Content-Type':'application/json',
+        'Prefer':'return=representation'
+      }),
+      body:JSON.stringify(payload)
+    });
+    if(!res.ok){
+      console.error('Supabase comment insert failed:', res.status, await res.text());
+      return false;
+    }
+    return true;
+  }catch(e){
+    console.error('Supabase comment insert error:', e);
+    return false;
+  }
+}
+
+async function loadCommentsForPin(pinId, idx){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/${COMMENTS_TABLE}?select=*&pin_id=eq.${pinId}&order=created_at.desc&limit=50`,{
+      headers:sbHeaders()
+    });
+    if(!res.ok){
+      console.error('Supabase comment load failed:', res.status, await res.text());
+      return;
+    }
+    const rows=await res.json();
+    pinComments[idx]=rows
+      .slice()
+      .reverse()
+      .map(c=>({
+        text:c.text||c.comment||'',
+        time:timeAgo(c.created_at)
+      }))
+      .filter(c=>c.text);
+    renderComments(idx);
+  }catch(e){
+    console.error('Supabase comment load error:', e);
   }
 }
 
