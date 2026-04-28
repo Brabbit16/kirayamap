@@ -727,6 +727,8 @@ let userPins=[],markers=[],activeZones=new Set(),curType='flat',pendingLL=null,p
 let flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
 let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
 let metroLayer=null, metroEnabled=false, syncTimer=null;
+const INTERESTS_TABLE='interests';
+const COMMENTS_TABLE='comments';
 
 // ══ SPLASH ══
 function showLoading(msg='Loading…'){const el=document.getElementById('km-loading');if(el){el.classList.add('show');document.getElementById('km-loading-text').textContent=msg;}}
@@ -936,6 +938,9 @@ function openPinPanel(idx){
 
   // Comments
   renderComments(idx);
+  if(USE_SUPABASE && p.id){
+    loadCommentsForPin(p.id, idx);
+  }
 
   document.getElementById('pin-panel').classList.add('open');
   document.getElementById('int-rent').textContent=`₹${p.rent.toLocaleString('en-IN')}/month`;
@@ -978,14 +983,22 @@ function renderComments(idx){
   if(!list.length){el.innerHTML='<div class="comment-empty">No comments yet — be the first!</div>';return;}
   el.innerHTML=list.map(c=>`<div class="comment-item"><div class="comment-txt">${c.text}</div><div class="comment-time">${c.time}</div></div>`).join('');
 }
-function postComment(){
+async function postComment(){
   const ci=document.getElementById('ci');
   if(!ci.value.trim()||!activePinData)return;
   const idx=activePinData.idx;
+  const txt=ci.value.trim();
   if(!pinComments[idx])pinComments[idx]=[];
-  pinComments[idx].push({text:ci.value.trim(),time:'Just now'});
+  pinComments[idx].push({text:txt,time:'Just now'});
   ci.value='';
   renderComments(idx);
+  if(USE_SUPABASE && activePinData.id){
+    const ok=await saveCommentToSupabase({
+      pin_id:activePinData.id,
+      text:txt
+    });
+    if(!ok) showToast('⚠️ Comment saved locally only. Supabase write failed.');
+  }
 }
 
 function sharePin(){
@@ -997,15 +1010,35 @@ function reportPin(){showToast('🚩 Reported — our team will review.');}
 
 // ══ INTEREST MODAL ══
 function openInterest(){document.getElementById('interest-modal').classList.add('open');}
-function submitInterest(){
+async function submitInterest(){
   const email=document.getElementById('int-email').value.trim();
   if(!email){showToast('⚠️ Please enter your email.');return;}
   showLoading('Sending your interest to owner…');
-  setTimeout(()=>{
-    hideLoading();
-    document.getElementById('interest-modal').classList.remove('open');
-    showToast('✅ Interest sent! Check your email for matches.',4000);
-  },900);
+  let saved=true;
+  if(USE_SUPABASE){
+    if(!activePinData){
+      saved=false;
+    }else{
+      saved=await saveInterestToSupabase({
+        pin_id:activePinData.id||null,
+        pin_lat:activePinData.lat,
+        pin_lng:activePinData.lng,
+        listing_type:activePinData.type,
+        listing_area:activePinData.area,
+        listing_rent:activePinData.rent,
+        owner_email:activePinData.owner_email||null,
+        seeker_email:email
+      });
+    }
+  }
+  hideLoading();
+  if(!saved){
+    showToast('⚠️ Could not save interest to Supabase. Check console/table config.');
+    return;
+  }
+  document.getElementById('interest-modal').classList.remove('open');
+  document.getElementById('int-email').value='';
+  showToast('✅ Interest sent! Check your email for matches.',4000);
 }
 
 // ══ FIND FLAT / TENANT ══
@@ -1506,7 +1539,9 @@ async function loadPins(){
         rent: p.rent, fur: p.furnishing,
         area: p.area, note: p.note,
         sqft: p.sqft, zone: p.zone||'other',
-        time: timeAgo(p.created_at)
+        time: timeAgo(p.created_at),
+        owner_whatsapp:p.owner_whatsapp||null,
+        owner_email:p.owner_email||null
       }));
       // Replace seed with real data
       window._dbPins = dbPins;
@@ -1532,6 +1567,80 @@ function timeAgo(ts){
   if(hrs < 24) return hrs + ' hours ago';
   if(days === 1) return '1 day ago';
   return days + ' days ago';
+}
+
+function sbHeaders(extra={}){
+  return {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    ...extra
+  };
+}
+
+async function saveInterestToSupabase(payload){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/${INTERESTS_TABLE}`,{
+      method:'POST',
+      headers:sbHeaders({
+        'Content-Type':'application/json',
+        'Prefer':'return=representation'
+      }),
+      body:JSON.stringify(payload)
+    });
+    if(!res.ok){
+      console.error('Supabase interest insert failed:', res.status, await res.text());
+      return false;
+    }
+    return true;
+  }catch(e){
+    console.error('Supabase interest insert error:', e);
+    return false;
+  }
+}
+
+async function saveCommentToSupabase(payload){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/${COMMENTS_TABLE}`,{
+      method:'POST',
+      headers:sbHeaders({
+        'Content-Type':'application/json',
+        'Prefer':'return=representation'
+      }),
+      body:JSON.stringify(payload)
+    });
+    if(!res.ok){
+      console.error('Supabase comment insert failed:', res.status, await res.text());
+      return false;
+    }
+    return true;
+  }catch(e){
+    console.error('Supabase comment insert error:', e);
+    return false;
+  }
+}
+
+async function loadCommentsForPin(pinId, idx){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/${COMMENTS_TABLE}?select=*&pin_id=eq.${pinId}&order=created_at.desc&limit=50`,{
+      headers:sbHeaders()
+    });
+    if(!res.ok){
+      console.error('Supabase comment load failed:', res.status, await res.text());
+      return;
+    }
+    const rows=await res.json();
+    pinComments[idx]=rows
+      .slice()
+      .reverse()
+      .map(c=>({
+        text:c.text||c.comment||'',
+        time:timeAgo(c.created_at)
+      }))
+      .filter(c=>c.text);
+    renderComments(idx);
+  }catch(e){
+    console.error('Supabase comment load error:', e);
+  }
 }
 
 loadPins();
