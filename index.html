@@ -21,15 +21,14 @@
     }
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
     html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);overflow:hidden;}
+
+    /* ══ SPLASH ══ */
     #splash{position:fixed;inset:0;z-index:9999;background:#111;display:flex;align-items:center;justify-content:center;padding:24px;}
     .sp{width:100%;max-width:400px;display:flex;flex-direction:column;animation:fadeUp .5s ease both;}
     @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
     .sp-logo{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#fff;margin-bottom:4px;}
     .sp-logo em{font-style:normal;color:#a8c5b5;}
-    .sp-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:26px;}
-    .sp-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(168,197,181,.1);border:1px solid rgba(168,197,181,.2);border-radius:40px;padding:7px 14px;margin-bottom:20px;font-size:12px;color:#a8c5b5;}
-    .sp-dot{width:6px;height:6px;border-radius:50%;background:#a8c5b5;animation:blink 2s infinite;}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .sp-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:18px;}
     .sp-hero{font-family:'Playfair Display',serif;font-size:25px;font-weight:600;line-height:1.35;color:#fff;margin-bottom:8px;}
     .sp-hero span{color:#a8c5b5;}
     .sp-desc{font-size:13px;color:#666;line-height:1.6;margin-bottom:10px;max-width:340px;}
@@ -43,6 +42,97 @@
     .btn-enter{width:100%;padding:13px;border-radius:12px;border:none;background:#fff;color:var(--ink);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:9px;}
     .btn-how{width:100%;padding:12px;border-radius:12px;border:1px solid #2a2a2a;background:transparent;color:#666;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
     .sp-tos{font-size:11px;color:#444;text-align:center;margin-top:12px;}.sp-tos a{color:#666;}
+
+    /* ══ LIVE TICKER ══ */
+    .sp-ticker-wrap{
+      width:100%;
+      overflow:hidden;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:10px;
+      margin-bottom:20px;
+      position:relative;
+      height:38px;
+      display:flex;
+      align-items:center;
+    }
+    /* fade edges */
+    .sp-ticker-wrap::before{
+      content:'';position:absolute;left:56px;top:0;bottom:0;width:30px;
+      background:linear-gradient(to right,#111,transparent);
+      z-index:2;pointer-events:none;
+    }
+    .sp-ticker-wrap::after{
+      content:'';position:absolute;right:0;top:0;bottom:0;width:40px;
+      background:linear-gradient(to left,#111,transparent);
+      z-index:2;pointer-events:none;
+    }
+    .sp-ticker-live{
+      position:absolute;left:0;top:0;bottom:0;
+      display:flex;align-items:center;gap:6px;
+      padding:0 10px;
+      background:#111;
+      border-right:1px solid rgba(255,255,255,.07);
+      z-index:3;flex-shrink:0;
+      width:56px;
+    }
+    .sp-ticker-live-dot{
+      width:6px;height:6px;border-radius:50%;
+      background:#a8c5b5;
+      flex-shrink:0;
+      animation:livePulse 1.4s ease infinite;
+    }
+    @keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(168,197,181,.5)}50%{opacity:.5;box-shadow:0 0 0 4px rgba(168,197,181,0)}}
+    .sp-ticker-live-txt{
+      font-size:9px;letter-spacing:1px;text-transform:uppercase;
+      color:#a8c5b5;font-weight:600;white-space:nowrap;
+    }
+    .sp-ticker-scroll{
+      display:flex;
+      align-items:center;
+      padding-left:10px;
+      overflow:hidden;
+      flex:1;
+      height:100%;
+    }
+    .sp-ticker-track{
+      display:flex;
+      align-items:center;
+      gap:0;
+      white-space:nowrap;
+      animation:tickerMove 40s linear infinite;
+      will-change:transform;
+    }
+    .sp-ticker-track:hover{animation-play-state:paused;}
+    @keyframes tickerMove{
+      0%{transform:translateX(0)}
+      100%{transform:translateX(-50%)}
+    }
+    .sp-ticker-item{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:0 20px 0 0;
+      cursor:default;
+    }
+    .sp-ticker-rent{
+      font-family:'Playfair Display',serif;
+      font-size:13px;font-weight:700;
+      color:#f9ab00;
+      letter-spacing:.3px;
+    }
+    .sp-ticker-area{
+      font-size:12px;color:#ccc;font-weight:500;
+    }
+    .sp-ticker-tag{
+      font-size:10px;color:#777;
+    }
+    .sp-ticker-time{
+      font-size:10px;color:#555;
+    }
+    .sp-ticker-dot{
+      font-size:10px;color:#333;flex-shrink:0;
+    }
+
+    /* ══ HOW MODAL ══ */
     .overlay{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;}
     .overlay.open{display:flex;}
     .modal-card{background:#fff;border-radius:20px;width:100%;max-width:420px;padding:28px 24px;animation:fadeUp .22s ease;max-height:92vh;overflow-y:auto;}
@@ -276,14 +366,35 @@
 </head>
 <body>
 
+<!-- ══ SPLASH ══ -->
 <div id="splash">
   <div class="sp">
     <div class="sp-logo">Kiraya<em>Map</em></div>
     <div class="sp-badge">AI Property Matchmaking · Delhi</div>
-    <div class="sp-pill"><span class="sp-dot"></span><span id="sp-pill-count">—</span> real rents pinned across Delhi</div>
+
+    <!-- ══ LIVE TICKER BAR ══ -->
+    <div class="sp-ticker-wrap">
+      <div class="sp-ticker-live">
+        <span class="sp-ticker-live-dot"></span>
+        <span class="sp-ticker-live-txt">LIVE</span>
+      </div>
+      <div class="sp-ticker-scroll">
+        <div class="sp-ticker-track" id="sp-ticker-track">
+          <!-- filled by JS -->
+          <span class="sp-ticker-item">
+            <span class="sp-ticker-rent">₹18K</span>
+            <span class="sp-ticker-area">Vijay Nagar</span>
+            <span class="sp-ticker-tag">· 2BHK</span>
+            <span class="sp-ticker-time">2 hr ago</span>
+          </span>
+          <span class="sp-ticker-dot">·</span>
+        </div>
+      </div>
+    </div>
+
     <div class="sp-hero">Find your place.<br><span>See real Delhi rents on a live map</span></div>
     <div class="sp-desc">Real rents pinned anonymously across Delhi — DU, coaching hubs &amp; budget zones.</div>
-    <div class="sp-trust">No fake listings • Real user-submitted rents</div>
+    <div class="sp-trust">No fake listings • Real user-submitted rents • <span id="sp-pill-count">—</span> pins live</div>
     <div class="sp-slbl">Share with your group</div>
     <div class="sp-sbox">
       <div class="sp-stxt" id="smsg">Finally a real rent map for all Delhi People. No BS. Anonymous pins, AI matching. 👉 kirayamap.in</div>
@@ -299,6 +410,7 @@
   </div>
 </div>
 
+<!-- ══ HOW TO USE ══ -->
 <div id="how-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
   <div class="modal-card" style="position:relative;">
     <button onclick="closeHow()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:#999;line-height:1;">✕</button>
@@ -313,6 +425,7 @@
   </div>
 </div>
 
+<!-- ══ FIND FLAT/TENANT ══ -->
 <div class="overlay" id="find-modal">
   <div class="modal-card">
     <button class="btn-find-close" onclick="document.getElementById('find-modal').classList.remove('open')">✕</button>
@@ -333,6 +446,7 @@
   </div>
 </div>
 
+<!-- ══ INTEREST MODAL ══ -->
 <div class="overlay" id="interest-modal">
   <div class="modal-card">
     <div class="mc-title">I'm Interested</div>
@@ -355,6 +469,7 @@
   </div>
 </div>
 
+<!-- ══ APP ══ -->
 <div id="app">
   <div id="topbar">
     <div class="logo">Kiraya<em>Map</em><span class="logo-ai">AI</span></div>
@@ -615,59 +730,103 @@ const SUPABASE_URL = 'https://nefyaqjolvglodomshcx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lZnlhcWpvbHZnbG9kb21zaGN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTQ1MDcsImV4cCI6MjA5MjY5MDUwN30.N2oNOSvUGa0oDELrMYn4ib5541zxz58F7NXTiuYCaxk';
 const USE_SUPABASE = true;
 
-// ════════════════════════════════════════
-// SUPABASE HELPERS
-// ════════════════════════════════════════
-function sbH(extra={}) {
-  return { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, ...extra };
+function sbH(extra={}){return{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,...extra};}
+
+async function saveInterest(payload){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/interests`,{method:'POST',headers:sbH({'Content-Type':'application/json','Prefer':'return=minimal'}),body:JSON.stringify({pin_id:payload.pin_id||null,name:payload.name||null,email:payload.email,phone:payload.phone||null,message:payload.message||null})});
+    if(res.ok||res.status===201){console.log('✅ Interest saved');return true;}
+    console.error('Interest failed:',res.status,await res.text());return false;
+  }catch(e){console.error('Interest error:',e.message);return false;}
 }
 
-// interests table columns: id, pin_id, name, email, phone, message, created_at
-async function saveInterest(payload) {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/interests`, {
-      method: 'POST',
-      headers: sbH({'Content-Type':'application/json','Prefer':'return=minimal'}),
-      body: JSON.stringify({
-        pin_id:  payload.pin_id  || null,
-        name:    payload.name    || null,
-        email:   payload.email,           // ← matches your "email" column
-        phone:   payload.phone   || null, // ← matches your "phone" column
-        message: payload.message || null
-      })
-    });
-    if (res.ok || res.status === 201) { console.log('✅ Interest saved'); return true; }
-    console.error('Interest failed:', res.status, await res.text());
+async function saveComment(pinId,text){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/comments`,{method:'POST',headers:sbH({'Content-Type':'application/json','Prefer':'return=minimal'}),body:JSON.stringify({pin_id:pinId,text:text})});
+    if(res.ok||res.status===201){return true;}
     return false;
-  } catch(e) { console.error('Interest error:', e.message); return false; }
+  }catch(e){return false;}
 }
 
-// comments table columns: id, pin_id, text, created_at (from our SQL setup)
-async function saveComment(pinId, text) {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
-      method: 'POST',
-      headers: sbH({'Content-Type':'application/json','Prefer':'return=minimal'}),
-      body: JSON.stringify({ pin_id: pinId, text: text })
-    });
-    if (res.ok || res.status === 201) { console.log('✅ Comment saved'); return true; }
-    console.error('Comment failed:', res.status, await res.text());
-    return false;
-  } catch(e) { console.error('Comment error:', e.message); return false; }
-}
-
-async function loadComments(pinId, idx) {
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/comments?select=*&pin_id=eq.${pinId}&order=created_at.asc&limit=50`,
-      { headers: sbH() }
-    );
-    if (!res.ok) { console.warn('Comments load failed:', res.status); return; }
-    const rows = await res.json();
-    pinComments[idx] = rows.map(c => ({ text: c.text||'', time: timeAgo(c.created_at) })).filter(c=>c.text);
+async function loadComments(pinId,idx){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/comments?select=*&pin_id=eq.${pinId}&order=created_at.asc&limit=50`,{headers:sbH()});
+    if(!res.ok)return;
+    const rows=await res.json();
+    pinComments[idx]=rows.map(c=>({text:c.text||'',time:timeAgo(c.created_at)})).filter(c=>c.text);
     renderComments(idx);
-    console.log(`✅ Loaded ${pinComments[idx].length} comments`);
-  } catch(e) { console.error('loadComments error:', e.message); }
+  }catch(e){}
+}
+
+// ════════════════════════════════════════
+// TICKER — live scrolling rent bar
+// ════════════════════════════════════════
+const TICKER_SEED=[
+  {rent:18000,area:'Vijay Nagar',type:'flat',bhk:'2',time:'2 hr ago'},
+  {rent:8500,area:'Hudson Lane',type:'pg',bhk:'1',time:'1 day ago'},
+  {rent:7500,area:'Saket',type:'pg',bhk:'1',time:'2 hr ago'},
+  {rent:14000,area:'Lajpat Nagar',type:'flat',bhk:'1',time:'just now'},
+  {rent:6000,area:'DU North',type:'pg',bhk:'1',time:'2 min ago'},
+  {rent:22000,area:'Gurugram',type:'flat',bhk:'2',time:'5 hr ago'},
+  {rent:28000,area:'Kamla Nagar',type:'flat',bhk:'3',time:'5 hr ago'},
+  {rent:10000,area:'GTB Nagar',type:'flatmate',bhk:'2',time:'3 days ago'},
+  {rent:9000,area:'Satya Niketan',type:'pg',bhk:'1',time:'1 day ago'},
+  {rent:12000,area:'Mukherjee Nagar',type:'flat',bhk:'1',time:'4 hr ago'},
+  {rent:6500,area:'Rohini',type:'pg',bhk:'1',time:'1 week ago'},
+  {rent:32000,area:'Moti Bagh',type:'flat',bhk:'3',time:'3 days ago'},
+];
+
+function fmtRent(r){
+  if(r>=1000) return '₹'+(r%1000===0?(r/1000)+'K':((r/1000).toFixed(1))+'K');
+  return '₹'+r;
+}
+
+function buildTickerHTML(pins){
+  const TYPE_TAG={flat:'Flat',pg:'PG',flatmate:'Flatmate'};
+  // Double for seamless loop
+  const items=[...pins,...pins].map(p=>`
+    <span class="sp-ticker-item">
+      <span class="sp-ticker-rent">${fmtRent(p.rent)}</span>
+      <span class="sp-ticker-area">${p.area}</span>
+      <span class="sp-ticker-tag">· ${p.type==='pg'?'PG':p.type==='flatmate'?'Flatmate':p.bhk+' BHK'}</span>
+      <span class="sp-ticker-time">${p.time}</span>
+    </span>
+    <span class="sp-ticker-dot">&nbsp;·&nbsp;</span>
+  `).join('');
+  return items;
+}
+
+async function loadTicker(){
+  const track=document.getElementById('sp-ticker-track');
+  if(!track)return;
+  // Show seed immediately
+  track.innerHTML=buildTickerHTML(TICKER_SEED);
+  // Fetch live data
+  try{
+    const res=await fetch(
+      `${SUPABASE_URL}/rest/v1/pins?select=rent,area,type,bhk,created_at&order=created_at.desc&limit=40`,
+      {headers:sbH()}
+    );
+    if(res.ok){
+      const data=await res.json();
+      if(data&&data.length>=4){
+        const livePins=data.map(p=>({
+          rent:p.rent,
+          area:p.area||'Delhi',
+          type:p.type||'flat',
+          bhk:p.bhk||'1',
+          time:timeAgo(p.created_at)
+        }));
+        track.innerHTML=buildTickerHTML(livePins);
+        // Update pin count in header
+        const pc=document.getElementById('sp-pill-count');
+        if(pc)pc.textContent=data.length;
+        // Adjust speed — more items = faster scroll so density looks right
+        const speed=Math.max(25,livePins.length*2.5);
+        track.style.animationDuration=speed+'s';
+      }
+    }
+  }catch(e){console.log('Ticker fetch error:',e.message);}
 }
 
 // ════════════════════════════════════════
@@ -718,7 +877,7 @@ let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
 let metroLayer=null,metroEnabled=false,syncTimer=null;
 
 // ════════════════════════════════════════
-// LOADING / TOAST / UTIL
+// UTIL
 // ════════════════════════════════════════
 function showLoading(msg='Loading…'){document.getElementById('km-loading').classList.add('show');document.getElementById('km-loading-text').textContent=msg;}
 function hideLoading(){document.getElementById('km-loading').classList.remove('show');}
@@ -735,7 +894,7 @@ function timeAgo(ts){
   if(!ts)return'Recently';
   const d=Date.now()-new Date(ts).getTime();
   const m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000);
-  if(m<1)return'Just now';if(m<60)return m+' mins ago';if(h<24)return h+' hr ago';if(dy===1)return'1 day ago';return dy+' days ago';
+  if(m<1)return'just now';if(m<60)return m+' min ago';if(h<24)return h+' hr ago';if(dy===1)return'1 day ago';return dy+' days ago';
 }
 
 // ════════════════════════════════════════
@@ -851,10 +1010,8 @@ function openPinPanel(idx){
   document.getElementById('pp-rating-val').textContent=r?`${r} ★ (you rated)`:'No ratings yet — tap to rate ›';
   document.getElementById('star-row').style.display='none';
   document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',r&&i<r));
-  // Comments: show cache then load from DB
   renderComments(idx);
-  if(USE_SUPABASE&&p.id) loadComments(p.id,idx); // ← FIXED: now actually loads from DB
-  // WhatsApp button
+  if(USE_SUPABASE&&p.id)loadComments(p.id,idx);
   const ctaBtns=document.getElementById('pp-contact-btns');ctaBtns.innerHTML='';
   if(p.owner_whatsapp){
     const waMsg=encodeURIComponent(`Hi! I saw your ${p.type} in ${p.area} (₹${Number(p.rent).toLocaleString('en-IN')}/mo) on KirayaMap. I'm interested!`);
@@ -882,45 +1039,34 @@ async function postComment(){
   const ci=document.getElementById('ci');
   if(!ci.value.trim()||!activePinData)return;
   const idx=activePinData.idx;
-  const txt=ci.value.trim();
-  ci.value='';
+  const txt=ci.value.trim();ci.value='';
   if(!pinComments[idx])pinComments[idx]=[];
-  pinComments[idx].push({text:txt,time:'Just now'});
+  pinComments[idx].push({text:txt,time:'just now'});
   renderComments(idx);
-  if(USE_SUPABASE&&activePinData.id){
-    const ok=await saveComment(activePinData.id,txt);
-    if(!ok)showToast('⚠️ Comment saved locally. Check Supabase comments table.');
-  }
+  if(USE_SUPABASE&&activePinData.id)await saveComment(activePinData.id,txt);
 }
 
 function sharePin(){const p=activePinData;if(!p)return;navigator.clipboard.writeText(`Check out this ${p.type} in ${p.area} — ₹${Number(p.rent).toLocaleString('en-IN')}/mo on KirayaMap! kirayamap.in`).then(()=>showToast('✅ Link copied!'));}
 function reportPin(){showToast('🚩 Reported — our team will review.');}
 
 // ════════════════════════════════════════
-// INTEREST MODAL — matches your columns: pin_id, name, email, phone, message
+// INTEREST
 // ════════════════════════════════════════
 function openInterest(){document.getElementById('interest-modal').classList.add('open');}
-
 async function submitInterest(){
   const email=document.getElementById('int-email').value.trim();
   if(!email||!email.includes('@')){showToast('⚠️ Please enter a valid email.');return;}
   if(!activePinData){showToast('⚠️ No listing selected.');return;}
   showLoading('Sending your interest…');
-  const ok=await saveInterest({
-    pin_id:  activePinData.id||null,
-    name:    document.getElementById('int-name').value.trim()||null,
-    email:   email,
-    phone:   document.getElementById('int-phone').value.trim()||null,
-    message: document.getElementById('int-msg').value.trim()||null,
-  });
+  const ok=await saveInterest({pin_id:activePinData.id||null,name:document.getElementById('int-name').value.trim()||null,email,phone:document.getElementById('int-phone').value.trim()||null,message:document.getElementById('int-msg').value.trim()||null});
   hideLoading();
   document.getElementById('interest-modal').classList.remove('open');
   ['int-name','int-email','int-phone','int-msg'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  showToast(ok?'✅ Interest sent! Owner will be notified.':'⚠️ Could not save. Check Supabase interests table.',4000);
+  showToast(ok?'✅ Interest sent! Owner will be notified.':'⚠️ Could not save interest.',4000);
 }
 
 // ════════════════════════════════════════
-// FIND FLAT / TENANT
+// FIND / MATCH
 // ════════════════════════════════════════
 function selectRole(el,role){document.querySelectorAll('.find-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedRole=role;}
 function startFindFlow(){
@@ -976,7 +1122,7 @@ async function geocode(q,localAlready){
     if(data.length){html+='<div class="dd-sec"><div class="dd-lbl">Places in Delhi</div>';data.forEach(r=>{const name=r.display_name.split(',')[0];const sub=r.display_name.split(',').slice(1,3).join(',').trim();html+=`<div class="dd-item" onclick="selectPlace(${r.lat},${r.lon},'${name.replace(/'/g,"\\'")}')"><span class="dd-ico">📍</span><div><div class="dd-name">${name}</div><div class="dd-sub">${sub}</div></div></div>`;});html+='</div>';}
     if(!localAlready.length&&!data.length)html='<div style="padding:14px;font-size:13px;color:#999;text-align:center">No results found</div>';
     dd.innerHTML=html;dd.classList.add('open');
-  }catch(e){console.log('Geocode error',e);}
+  }catch(e){}
   finally{spin.style.display='none';document.getElementById('si-clr').style.display=document.getElementById('si').value?'block':'none';}
 }
 function distLL(a,b,c,d){return Math.sqrt((a-c)**2+(b-d)**2);}
@@ -1095,9 +1241,6 @@ map.on('click',e=>{
   document.getElementById('modal').classList.add('open');
 });
 
-// ════════════════════════════════════════
-// SUBMIT PIN
-// ════════════════════════════════════════
 function seltype(el,t){document.querySelectorAll('.tbtn2').forEach(b=>b.classList.remove('on'));el.classList.add('on');curType=t;document.getElementById('bhkrow').style.display=t==='pg'?'none':'block';}
 function closeModal(){document.getElementById('modal').classList.remove('open');pendingLL=null;}
 
@@ -1110,18 +1253,13 @@ async function submit(){
   if(totalPins>=7){showToast('⚠️ Max 7 pins per device reached.');return;}
   if(!pendingLL){showToast('⚠️ No location — tap the map first');return;}
   showLoading('Adding your pin to the map…');
-  const lat=pendingLL.lat, lng=pendingLL.lng;
-  const newPin={lat,lng,type:curType,bhk:curType==='pg'?'1':document.getElementById('f-bhk').value,rent,fur:document.getElementById('f-fur2').value,area:document.getElementById('f-area').value.trim()||'Delhi',note:document.getElementById('f-note').value.trim(),sqft:parseInt(document.getElementById('f-sqft').value)||null,time:'Just now',zone:'user',owner_whatsapp:document.getElementById('f-whatsapp').value.trim()||null,owner_email:ownerEmail};
+  const lat=pendingLL.lat,lng=pendingLL.lng;
+  const newPin={lat,lng,type:curType,bhk:curType==='pg'?'1':document.getElementById('f-bhk').value,rent,fur:document.getElementById('f-fur2').value,area:document.getElementById('f-area').value.trim()||'Delhi',note:document.getElementById('f-note').value.trim(),sqft:parseInt(document.getElementById('f-sqft').value)||null,time:'just now',zone:'user',owner_whatsapp:document.getElementById('f-whatsapp').value.trim()||null,owner_email:ownerEmail};
   let savedToSupabase=false;
   try{
-    console.log('Saving pin to Supabase…');
-    const res=await fetch(`${SUPABASE_URL}/rest/v1/pins`,{
-      method:'POST',
-      headers:sbH({'Content-Type':'application/json','Prefer':'return=minimal'}),
-      body:JSON.stringify({lat,lng,type:newPin.type,bhk:newPin.bhk,rent:newPin.rent,furnishing:newPin.fur,area:newPin.area,zone:newPin.zone,note:newPin.note,sqft:newPin.sqft,owner_whatsapp:newPin.owner_whatsapp,owner_email:newPin.owner_email})
-    });
-    if(res.ok||res.status===201){console.log('✅ Pin saved to Supabase!');savedToSupabase=true;}
-    else{const err=await res.text();console.error('Pin insert failed:',res.status,err);}
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/pins`,{method:'POST',headers:sbH({'Content-Type':'application/json','Prefer':'return=minimal'}),body:JSON.stringify({lat,lng,type:newPin.type,bhk:newPin.bhk,rent:newPin.rent,furnishing:newPin.fur,area:newPin.area,zone:newPin.zone,note:newPin.note,sqft:newPin.sqft,owner_whatsapp:newPin.owner_whatsapp,owner_email:newPin.owner_email})});
+    if(res.ok||res.status===201){savedToSupabase=true;}
+    else{console.error('Pin insert failed:',res.status,await res.text());}
   }catch(e){console.error('Pin fetch failed:',e.message);}
   if(!savedToSupabase)userPins.push(newPin);
   ['f-rent','f-area','f-sqft','f-note','f-whatsapp','f-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1156,33 +1294,30 @@ function showAIMatches(currentPin){
   ml.innerHTML=scored.map(p=>{
     const ico={flat:'🏠',pg:'🛏',flatmate:'🤝'}[p.type];const fl={furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
     const pidx=all.findIndex(x=>x.lat===p.lat&&x.lng===p.lng);const pct=Math.min(99,Math.round(p.score*1.2));
-    return `<div onclick="openPinPanel(${pidx})" style="background:#252637;border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;border:1px solid #32334a;transition:border-color .15s;" onmouseover="this.style.borderColor='#6c63ff'" onmouseout="this.style.borderColor='#32334a'"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;">${ico} ₹${Number(p.rent).toLocaleString('en-IN')}<span style="font-size:11px;font-weight:400;color:#9aa0a6;">/mo</span></span><span style="font-size:11px;background:rgba(108,99,255,.2);color:#a09cf7;padding:2px 8px;border-radius:10px;">${pct}% match</span></div><div style="font-size:12px;color:#9aa0a6;">${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}</div></div>`;
+    return`<div onclick="openPinPanel(${pidx})" style="background:#252637;border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;border:1px solid #32334a;transition:border-color .15s;" onmouseover="this.style.borderColor='#6c63ff'" onmouseout="this.style.borderColor='#32334a'"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;">${ico} ₹${Number(p.rent).toLocaleString('en-IN')}<span style="font-size:11px;font-weight:400;color:#9aa0a6;">/mo</span></span><span style="font-size:11px;background:rgba(108,99,255,.2);color:#a09cf7;padding:2px 8px;border-radius:10px;">${pct}% match</span></div><div style="font-size:12px;color:#9aa0a6;">${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}</div></div>`;
   }).join('');
 }
 
 // ════════════════════════════════════════
-// LOAD PINS — includes owner_whatsapp + owner_email
+// LOAD PINS
 // ════════════════════════════════════════
 async function loadPins(){
   try{
-    console.log('Loading pins from Supabase...');
     const res=await fetch(`${SUPABASE_URL}/rest/v1/pins?select=*&order=created_at.desc&limit=200`,{headers:sbH()});
     if(res.ok){
       const data=await res.json();
-      console.log('✅ Loaded',data.length,'pins from Supabase');
-      window._dbPins=data.map(p=>({
-        id:p.id,lat:p.lat,lng:p.lng,type:p.type,bhk:p.bhk,rent:p.rent,
-        fur:p.furnishing,area:p.area,note:p.note,sqft:p.sqft,
-        zone:p.zone||'other',time:timeAgo(p.created_at),
-        owner_whatsapp:p.owner_whatsapp||null,  // ← FIXED
-        owner_email:p.owner_email||null          // ← FIXED
-      }));
-    }else{console.error('Failed to load pins:',res.status,await res.text());window._dbPins=window._dbPins||[];}
-  }catch(e){console.error('Load pins error:',e.message);window._dbPins=window._dbPins||[];}
+      window._dbPins=data.map(p=>({id:p.id,lat:p.lat,lng:p.lng,type:p.type,bhk:p.bhk,rent:p.rent,fur:p.furnishing,area:p.area,note:p.note,sqft:p.sqft,zone:p.zone||'other',time:timeAgo(p.created_at),owner_whatsapp:p.owner_whatsapp||null,owner_email:p.owner_email||null}));
+    }else{window._dbPins=window._dbPins||[];}
+  }catch(e){window._dbPins=window._dbPins||[];}
   draw();
 }
 
-loadPins();
+// ════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════
+// Load ticker immediately on splash
+loadTicker();
+
 syncTimer=setInterval(()=>{if(!document.hidden)loadPins();},15000);
 window.addEventListener('focus',()=>loadPins());
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadPins();});
