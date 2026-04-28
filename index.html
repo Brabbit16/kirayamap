@@ -727,6 +727,10 @@ let userPins=[],markers=[],activeZones=new Set(),curType='flat',pendingLL=null,p
 let flt={type:'all',bhk:'all',fur:'all',minRent:2000,maxRent:50000};
 let selectedRole=null,activePinData=null,pinComments={},pinRatings={};
 let metroLayer=null, metroEnabled=false, syncTimer=null;
+const INTERESTS_TABLE_CANDIDATES=['interests','pin_interests','interested_users'];
+const COMMENTS_TABLE_CANDIDATES=['comments','pin_comments'];
+let RESOLVED_INTERESTS_TABLE=null;
+let RESOLVED_COMMENTS_TABLE=null;
 const INTERESTS_TABLE='interests';
 const COMMENTS_TABLE='comments';
 
@@ -997,6 +1001,7 @@ async function postComment(){
       pin_id:activePinData.id,
       text:txt
     });
+    if(!ok) showToast('⚠️ Comment saved locally. Set correct comments table in config.');
     if(!ok) showToast('⚠️ Comment saved locally only. Supabase write failed.');
   }
 }
@@ -1033,6 +1038,7 @@ async function submitInterest(){
   }
   hideLoading();
   if(!saved){
+    showToast('⚠️ Could not save interest to Supabase. Set correct interests table in config.');
     showToast('⚠️ Could not save interest to Supabase. Check console/table config.');
     return;
   }
@@ -1578,6 +1584,102 @@ function sbHeaders(extra={}){
 }
 
 async function saveInterestToSupabase(payload){
+  const tables=RESOLVED_INTERESTS_TABLE?[RESOLVED_INTERESTS_TABLE]:INTERESTS_TABLE_CANDIDATES;
+  const payloadVariants=[
+    payload,
+    { pin_id:payload.pin_id||null, seeker_email:payload.seeker_email },
+    { pin_id:payload.pin_id||null, email:payload.seeker_email }
+  ];
+  for(const t of tables){
+    for(const body of payloadVariants){
+      try{
+        const res=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{
+          method:'POST',
+          headers:sbHeaders({
+            'Content-Type':'application/json',
+            'Prefer':'return=representation'
+          }),
+          body:JSON.stringify(body)
+        });
+        if(res.ok){
+          RESOLVED_INTERESTS_TABLE=t;
+          return true;
+        }
+        console.warn(`Interest insert failed on ${t}:`, res.status, await res.text());
+      }catch(e){
+        console.warn(`Interest insert error on ${t}:`, e);
+      }
+    }
+  }
+  console.error('Supabase interest insert failed for all candidate tables:', INTERESTS_TABLE_CANDIDATES);
+  return false;
+}
+
+async function saveCommentToSupabase(payload){
+  const tables=RESOLVED_COMMENTS_TABLE?[RESOLVED_COMMENTS_TABLE]:COMMENTS_TABLE_CANDIDATES;
+  const payloadVariants=[
+    payload,
+    { pin_id:payload.pin_id, comment:payload.text },
+    { listing_id:payload.pin_id, text:payload.text },
+    { listing_id:payload.pin_id, comment:payload.text }
+  ];
+  for(const t of tables){
+    for(const body of payloadVariants){
+      try{
+        const res=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{
+          method:'POST',
+          headers:sbHeaders({
+            'Content-Type':'application/json',
+            'Prefer':'return=representation'
+          }),
+          body:JSON.stringify(body)
+        });
+        if(res.ok){
+          RESOLVED_COMMENTS_TABLE=t;
+          return true;
+        }
+        console.warn(`Comment insert failed on ${t}:`, res.status, await res.text());
+      }catch(e){
+        console.warn(`Comment insert error on ${t}:`, e);
+      }
+    }
+  }
+  console.error('Supabase comment insert failed for all candidate tables:', COMMENTS_TABLE_CANDIDATES);
+  return false;
+}
+
+async function loadCommentsForPin(pinId, idx){
+  const tables=RESOLVED_COMMENTS_TABLE?[RESOLVED_COMMENTS_TABLE]:COMMENTS_TABLE_CANDIDATES;
+  const queries=[
+    `pin_id=eq.${pinId}`,
+    `listing_id=eq.${pinId}`
+  ];
+  for(const t of tables){
+    for(const q of queries){
+      try{
+        const res=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=*&${q}&order=created_at.desc&limit=50`,{
+          headers:sbHeaders()
+        });
+        if(!res.ok){
+          console.warn(`Comment load failed on ${t} (${q}):`, res.status, await res.text());
+          continue;
+        }
+        const rows=await res.json();
+        RESOLVED_COMMENTS_TABLE=t;
+        pinComments[idx]=rows
+          .slice()
+          .reverse()
+          .map(c=>({
+            text:c.text||c.comment||'',
+            time:timeAgo(c.created_at)
+          }))
+          .filter(c=>c.text);
+        renderComments(idx);
+        return;
+      }catch(e){
+        console.warn(`Comment load error on ${t} (${q}):`, e);
+      }
+    }
   try{
     const res=await fetch(`${SUPABASE_URL}/rest/v1/${INTERESTS_TABLE}`,{
       method:'POST',
