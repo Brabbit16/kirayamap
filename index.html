@@ -466,23 +466,44 @@
 
 <!-- ══ INTEREST MODAL ══ -->
 <div class="overlay" id="interest-modal">
-  <div class="modal-card">
-    <div class="mc-title">I'm Interested</div>
-    <div class="mc-sub">We'll notify the owner and recommend similar listings.</div>
-    <div class="interest-pin-preview">
-      <div class="ipr-rent" id="int-rent">₹—</div>
-      <div class="ipr-det" id="int-det">—</div>
+  <div class="modal-card" style="max-width:420px;position:relative;">
+    <!-- Close button -->
+    <button onclick="document.getElementById('interest-modal').classList.remove('open')" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:#999;line-height:1;z-index:1;">✕</button>
+
+    <div class="mc-title" style="margin-bottom:2px;">Express Interest</div>
+    <div class="mc-sub" style="margin-bottom:14px;">We'll notify the owner directly. You'll also get similar listings by email.</div>
+
+    <!-- Pin preview card -->
+    <div style="background:#f7f6f3;border-radius:12px;padding:14px 16px;margin-bottom:18px;border:1px solid #ece9e3;display:flex;align-items:center;gap:12px;">
+      <div style="font-size:24px;" id="int-type-ico">🛏</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#1a1a1a;" id="int-rent">₹—</div>
+        <div style="font-size:12px;color:#555;margin-top:2px;" id="int-det">—</div>
+      </div>
     </div>
-    <label class="int-label">Your Name</label>
+
+    <!-- How it works -->
+    <div style="background:#e6f2ec;border-radius:10px;padding:10px 13px;font-size:12px;color:#2d6a4f;margin-bottom:16px;line-height:1.6;">
+      📧 <b>What happens next:</b> We email the owner your details. They contact you directly. We also send you 3–5 similar listings nearby.
+    </div>
+
+    <label class="int-label">Your Name *</label>
     <input class="int-input" id="int-name" type="text" placeholder="What should we call you?"/>
+
     <label class="int-label">Your Email *</label>
     <input class="int-input" id="int-email" type="email" placeholder="you@example.com"/>
-    <label class="int-label">Your WhatsApp (optional)</label>
+
+    <label class="int-label">Your WhatsApp *</label>
     <input class="int-input" id="int-phone" type="text" placeholder="+91 98765 43210"/>
+
     <label class="int-label">Message to owner (optional)</label>
-    <input class="int-input" id="int-msg" type="text" placeholder="e.g. Can I visit this weekend?"/>
-    <div class="int-note">📧 Your contact is only shared with the owner of this specific listing.</div>
-    <button class="btn-interest" onclick="submitInterest()">Send Interest &amp; Get Matches</button>
+    <input class="int-input" id="int-msg" type="text" placeholder="e.g. When can I visit? Any brokerage?" style="margin-bottom:4px;"/>
+
+    <div style="font-size:11px;color:#999;margin-bottom:16px;">🔒 Your contact is only shared with the owner of this specific listing. We never spam.</div>
+
+    <button class="btn-interest" onclick="submitInterest()" style="margin-bottom:8px;">
+      📩 Send Interest to Owner
+    </button>
     <button class="btn-int-cancel" onclick="document.getElementById('interest-modal').classList.remove('open')">Cancel</button>
   </div>
 </div>
@@ -893,405 +914,106 @@ const seed=[
 ];
 
 const PG_PINS = [
-  {lat:28.69151,lng:77.2005,type:'pg',bhk:'1',rent:10500,fur:'furnished',area:'GTB Nagar',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'6 days ago',zone:'north'},
-  {lat:28.69218,lng:77.21784,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Outram Lines',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'13 days ago',zone:'north'},
-  {lat:28.68419,lng:77.21204,type:'pg',bhk:'1',rent:15000,fur:'semi',area:'GTB Nagar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'34 days ago',zone:'north'},
-  {lat:28.68755,lng:77.20898,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Vijay Nagar',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'44 days ago',zone:'north'},
-  {lat:28.68761,lng:77.20556,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Mall Road',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'6 days ago',zone:'north'},
-  {lat:28.68646,lng:77.20688,type:'pg',bhk:'1',rent:10500,fur:'furnished',area:'Vijay Nagar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'7 days ago',zone:'north'},
-  {lat:28.69752,lng:77.20757,type:'pg',bhk:'1',rent:15000,fur:'semi',area:'Chhatra Marg',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'23 days ago',zone:'north'},
-  {lat:28.69039,lng:77.21409,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'GTB Nagar',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'5 days ago',zone:'north'},
-  {lat:28.6954,lng:77.21733,type:'pg',bhk:'1',rent:12000,fur:'semi',area:'Chhatra Marg',note:'Single rooms available. Quiet locality.',sqft:null,time:'23 days ago',zone:'north'},
-  {lat:28.68293,lng:77.20711,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Hudson Lane',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'34 days ago',zone:'north'},
-  {lat:28.69312,lng:77.20327,type:'pg',bhk:'1',rent:12000,fur:'semi',area:'Chhatra Marg',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'14 days ago',zone:'north'},
-  {lat:28.69232,lng:77.21686,type:'pg',bhk:'1',rent:7000,fur:'semi',area:'GTB Nagar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'25 days ago',zone:'north'},
-  {lat:28.68482,lng:77.20422,type:'pg',bhk:'1',rent:15500,fur:'semi',area:'Mall Road',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'25 days ago',zone:'north'},
-  {lat:28.69592,lng:77.21286,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Chhatra Marg',note:'No curfew. Working professionals welcome.',sqft:null,time:'35 days ago',zone:'north'},
-  {lat:28.6897,lng:77.21494,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Outram Lines',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'8 days ago',zone:'north'},
-  {lat:28.68917,lng:77.20182,type:'pg',bhk:'1',rent:7000,fur:'semi',area:'Hudson Lane',note:'No curfew. Working professionals welcome.',sqft:null,time:'43 days ago',zone:'north'},
-  {lat:28.6876,lng:77.20127,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Model Town',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'35 days ago',zone:'north'},
-  {lat:28.69549,lng:77.20023,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Chhatra Marg',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'7 days ago',zone:'north'},
-  {lat:28.68528,lng:77.20316,type:'pg',bhk:'1',rent:6000,fur:'semi',area:'Chhatra Marg',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'32 days ago',zone:'north'},
-  {lat:28.69643,lng:77.21741,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'GTB Nagar',note:'No curfew. Working professionals welcome.',sqft:null,time:'10 days ago',zone:'north'},
-  {lat:28.68971,lng:77.21557,type:'pg',bhk:'1',rent:14500,fur:'furnished',area:'Vijay Nagar',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'1 day ago',zone:'north'},
-  {lat:28.68201,lng:77.20726,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'GTB Nagar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'36 days ago',zone:'north'},
-  {lat:28.69705,lng:77.20171,type:'pg',bhk:'1',rent:14000,fur:'furnished',area:'Hudson Lane',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'8 days ago',zone:'north'},
-  {lat:28.68231,lng:77.20951,type:'pg',bhk:'1',rent:15000,fur:'furnished',area:'Kamla Nagar',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'38 days ago',zone:'north'},
-  {lat:28.68762,lng:77.20424,type:'pg',bhk:'1',rent:15000,fur:'furnished',area:'GTB Nagar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'42 days ago',zone:'north'},
-  {lat:28.6917,lng:77.20876,type:'pg',bhk:'1',rent:14500,fur:'furnished',area:'Model Town',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'4 days ago',zone:'north'},
-  {lat:28.68609,lng:77.21177,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'GTB Nagar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'40 days ago',zone:'north'},
-  {lat:28.68106,lng:77.20135,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Mall Road',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'17 days ago',zone:'north'},
-  {lat:28.69204,lng:77.20428,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Model Town',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'26 days ago',zone:'north'},
-  {lat:28.68343,lng:77.20194,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Mall Road',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'3 days ago',zone:'north'},
-  {lat:28.69212,lng:77.21968,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Vijay Nagar',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'6 days ago',zone:'north'},
-  {lat:28.68448,lng:77.2038,type:'pg',bhk:'1',rent:13500,fur:'furnished',area:'Kamla Nagar',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'29 days ago',zone:'north'},
-  {lat:28.6845,lng:77.21847,type:'pg',bhk:'1',rent:13500,fur:'semi',area:'Hudson Lane',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'34 days ago',zone:'north'},
-  {lat:28.69505,lng:77.21938,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Kamla Nagar',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'13 days ago',zone:'north'},
-  {lat:28.69556,lng:77.21805,type:'pg',bhk:'1',rent:8500,fur:'unfurnished',area:'Outram Lines',note:'Meals included, AC room. Good water supply.',sqft:null,time:'16 days ago',zone:'north'},
-  {lat:28.69668,lng:77.2157,type:'pg',bhk:'1',rent:10500,fur:'unfurnished',area:'Outram Lines',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'35 days ago',zone:'north'},
-  {lat:28.69191,lng:77.20973,type:'pg',bhk:'1',rent:9000,fur:'unfurnished',area:'Chhatra Marg',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'37 days ago',zone:'north'},
-  {lat:28.69324,lng:77.20122,type:'pg',bhk:'1',rent:11000,fur:'semi',area:'Vijay Nagar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'32 days ago',zone:'north'},
-  {lat:28.69655,lng:77.21062,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Hudson Lane',note:'Triple sharing available. Very affordable.',sqft:null,time:'4 days ago',zone:'north'},
-  {lat:28.69215,lng:77.2047,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'GTB Nagar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'39 days ago',zone:'north'},
-  {lat:28.68148,lng:77.21315,type:'pg',bhk:'1',rent:15500,fur:'furnished',area:'Mall Road',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'45 days ago',zone:'north'},
-  {lat:28.68566,lng:77.20531,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Chhatra Marg',note:'Single rooms available. Quiet locality.',sqft:null,time:'4 days ago',zone:'north'},
-  {lat:28.68017,lng:77.21242,type:'pg',bhk:'1',rent:15000,fur:'furnished',area:'Hudson Lane',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'32 days ago',zone:'north'},
-  {lat:28.68477,lng:77.21867,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'GTB Nagar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'28 days ago',zone:'north'},
-  {lat:28.69501,lng:77.21407,type:'pg',bhk:'1',rent:14500,fur:'semi',area:'Vijay Nagar',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'19 days ago',zone:'north'},
-  {lat:28.69677,lng:77.20207,type:'pg',bhk:'1',rent:8000,fur:'unfurnished',area:'Chhatra Marg',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'35 days ago',zone:'north'},
-  {lat:28.6828,lng:77.20564,type:'pg',bhk:'1',rent:9500,fur:'semi',area:'Mall Road',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'16 days ago',zone:'north'},
-  {lat:28.6891,lng:77.20502,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Hudson Lane',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'17 days ago',zone:'north'},
-  {lat:28.68079,lng:77.20667,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Chhatra Marg',note:'Triple sharing available. Very affordable.',sqft:null,time:'35 days ago',zone:'north'},
-  {lat:28.6927,lng:77.21122,type:'pg',bhk:'1',rent:8000,fur:'unfurnished',area:'Hudson Lane',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'34 days ago',zone:'north'},
-  {lat:28.63879,lng:77.18423,type:'pg',bhk:'1',rent:16000,fur:'furnished',area:'Old Rajinder Nagar',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'19 days ago',zone:'coaching'},
-  {lat:28.64602,lng:77.19833,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Rajinder Nagar',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'42 days ago',zone:'coaching'},
-  {lat:28.64026,lng:77.1945,type:'pg',bhk:'1',rent:13500,fur:'furnished',area:'Patel Nagar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'15 days ago',zone:'coaching'},
-  {lat:28.65702,lng:77.19941,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Karol Bagh',note:'Meals included, AC room. Good water supply.',sqft:null,time:'21 days ago',zone:'coaching'},
-  {lat:28.65521,lng:77.18529,type:'pg',bhk:'1',rent:18000,fur:'furnished',area:'Ramjas Road',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'44 days ago',zone:'coaching'},
-  {lat:28.64038,lng:77.1968,type:'pg',bhk:'1',rent:14500,fur:'semi',area:'Old Rajinder Nagar',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'29 days ago',zone:'coaching'},
-  {lat:28.64569,lng:77.19551,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Old Rajinder Nagar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'25 days ago',zone:'coaching'},
-  {lat:28.64522,lng:77.19661,type:'pg',bhk:'1',rent:11500,fur:'furnished',area:'Rajinder Nagar',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'43 days ago',zone:'coaching'},
-  {lat:28.65959,lng:77.18841,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Mukherjee Nagar',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'16 days ago',zone:'coaching'},
-  {lat:28.63884,lng:77.18991,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Ramjas Road',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'32 days ago',zone:'coaching'},
-  {lat:28.64054,lng:77.19749,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'Rajinder Nagar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'Today',zone:'coaching'},
-  {lat:28.64944,lng:77.19516,type:'pg',bhk:'1',rent:18000,fur:'furnished',area:'Old Rajinder Nagar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'42 days ago',zone:'coaching'},
-  {lat:28.65826,lng:77.19058,type:'pg',bhk:'1',rent:18000,fur:'unfurnished',area:'Mukherjee Nagar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'32 days ago',zone:'coaching'},
-  {lat:28.6448,lng:77.18521,type:'pg',bhk:'1',rent:13500,fur:'semi',area:'Ramjas Road',note:'Near coaching centre. Study-friendly.',sqft:null,time:'12 days ago',zone:'coaching'},
-  {lat:28.64725,lng:77.19851,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Patel Nagar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'35 days ago',zone:'coaching'},
-  {lat:28.65634,lng:77.1826,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Karol Bagh',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'20 days ago',zone:'coaching'},
-  {lat:28.64823,lng:77.18605,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Patel Nagar',note:'Near university. Many students. Lively lane.',sqft:null,time:'10 days ago',zone:'coaching'},
-  {lat:28.65249,lng:77.18209,type:'pg',bhk:'1',rent:18000,fur:'furnished',area:'Ramjas Road',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'15 days ago',zone:'coaching'},
-  {lat:28.6528,lng:77.18062,type:'pg',bhk:'1',rent:10500,fur:'furnished',area:'Old Rajinder Nagar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'30 days ago',zone:'coaching'},
-  {lat:28.65145,lng:77.19421,type:'pg',bhk:'1',rent:14500,fur:'semi',area:'Karol Bagh',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'45 days ago',zone:'coaching'},
-  {lat:28.65332,lng:77.18736,type:'pg',bhk:'1',rent:11000,fur:'semi',area:'Old Rajinder Nagar',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'6 days ago',zone:'coaching'},
-  {lat:28.65513,lng:77.18047,type:'pg',bhk:'1',rent:15500,fur:'semi',area:'Karol Bagh',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'7 days ago',zone:'coaching'},
-  {lat:28.64804,lng:77.19504,type:'pg',bhk:'1',rent:18000,fur:'semi',area:'Patel Nagar',note:'New building. Lift, parking. Modern facilities.',sqft:null,time:'28 days ago',zone:'coaching'},
-  {lat:28.65148,lng:77.19298,type:'pg',bhk:'1',rent:15500,fur:'furnished',area:'Karol Bagh',note:'New building. Lift, parking. Modern facilities.',sqft:null,time:'10 days ago',zone:'coaching'},
-  {lat:28.65436,lng:77.18687,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Old Rajinder Nagar',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'33 days ago',zone:'coaching'},
-  {lat:28.64866,lng:77.18098,type:'pg',bhk:'1',rent:14000,fur:'furnished',area:'Mukherjee Nagar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'17 days ago',zone:'coaching'},
-  {lat:28.64539,lng:77.19733,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Old Rajinder Nagar',note:'No curfew. Working professionals welcome.',sqft:null,time:'44 days ago',zone:'coaching'},
-  {lat:28.64136,lng:77.18035,type:'pg',bhk:'1',rent:14000,fur:'furnished',area:'Karol Bagh',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'26 days ago',zone:'coaching'},
-  {lat:28.63937,lng:77.19582,type:'pg',bhk:'1',rent:13500,fur:'furnished',area:'Patel Nagar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'36 days ago',zone:'coaching'},
-  {lat:28.64637,lng:77.17515,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Rajinder Nagar',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'26 days ago',zone:'coaching'},
-  {lat:28.64984,lng:77.19337,type:'pg',bhk:'1',rent:17000,fur:'furnished',area:'Old Rajinder Nagar',note:'Near university. Many students. Lively lane.',sqft:null,time:'27 days ago',zone:'coaching'},
-  {lat:28.64868,lng:77.18472,type:'pg',bhk:'1',rent:18000,fur:'semi',area:'Ramjas Road',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'29 days ago',zone:'coaching'},
-  {lat:28.65823,lng:77.19952,type:'pg',bhk:'1',rent:16000,fur:'semi',area:'Mukherjee Nagar',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'42 days ago',zone:'coaching'},
-  {lat:28.6386,lng:77.19107,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Karol Bagh',note:'Triple sharing available. Very affordable.',sqft:null,time:'24 days ago',zone:'coaching'},
-  {lat:28.6452,lng:77.18637,type:'pg',bhk:'1',rent:12500,fur:'semi',area:'Karol Bagh',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'26 days ago',zone:'coaching'},
-  {lat:28.64355,lng:77.17705,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Ramjas Road',note:'New building. Lift, parking. Modern facilities.',sqft:null,time:'22 days ago',zone:'coaching'},
-  {lat:28.64293,lng:77.17672,type:'pg',bhk:'1',rent:17500,fur:'furnished',area:'Mukherjee Nagar',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'15 days ago',zone:'coaching'},
-  {lat:28.64239,lng:77.17551,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Old Rajinder Nagar',note:'No curfew. Working professionals welcome.',sqft:null,time:'7 days ago',zone:'coaching'},
-  {lat:28.65041,lng:77.18045,type:'pg',bhk:'1',rent:11000,fur:'semi',area:'Rajinder Nagar',note:'Triple sharing available. Very affordable.',sqft:null,time:'45 days ago',zone:'coaching'},
-  {lat:28.64052,lng:77.19548,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Mukherjee Nagar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'19 days ago',zone:'coaching'},
-  {lat:28.65067,lng:77.1977,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Karol Bagh',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'37 days ago',zone:'coaching'},
-  {lat:28.65319,lng:77.19068,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Ramjas Road',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'43 days ago',zone:'coaching'},
-  {lat:28.65121,lng:77.17803,type:'pg',bhk:'1',rent:16500,fur:'furnished',area:'Mukherjee Nagar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'42 days ago',zone:'coaching'},
-  {lat:28.64615,lng:77.18765,type:'pg',bhk:'1',rent:12500,fur:'semi',area:'Mukherjee Nagar',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'6 days ago',zone:'coaching'},
-  {lat:28.64754,lng:77.18405,type:'pg',bhk:'1',rent:14500,fur:'furnished',area:'Ramjas Road',note:'No curfew. Working professionals welcome.',sqft:null,time:'33 days ago',zone:'coaching'},
-  {lat:28.57855,lng:77.1785,type:'pg',bhk:'1',rent:21000,fur:'furnished',area:'RK Puram',note:'Single rooms available. Quiet locality.',sqft:null,time:'37 days ago',zone:'south'},
-  {lat:28.54927,lng:77.20759,type:'pg',bhk:'1',rent:21500,fur:'unfurnished',area:'Munirka',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'15 days ago',zone:'south'},
-  {lat:28.56952,lng:77.19349,type:'pg',bhk:'1',rent:19000,fur:'furnished',area:'Safdarjung',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'20 days ago',zone:'south'},
-  {lat:28.54564,lng:77.17561,type:'pg',bhk:'1',rent:21000,fur:'furnished',area:'Gautam Nagar',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'38 days ago',zone:'south'},
-  {lat:28.56745,lng:77.17881,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'IIT Gate',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'26 days ago',zone:'south'},
-  {lat:28.55852,lng:77.20291,type:'pg',bhk:'1',rent:19500,fur:'semi',area:'RK Puram',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'28 days ago',zone:'south'},
-  {lat:28.5713,lng:77.16965,type:'pg',bhk:'1',rent:11500,fur:'furnished',area:'Safdarjung',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'42 days ago',zone:'south'},
-  {lat:28.56243,lng:77.18866,type:'pg',bhk:'1',rent:16500,fur:'unfurnished',area:'Green Park',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'35 days ago',zone:'south'},
-  {lat:28.55189,lng:77.20014,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Gautam Nagar',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'12 days ago',zone:'south'},
-  {lat:28.55125,lng:77.20214,type:'pg',bhk:'1',rent:20500,fur:'furnished',area:'Hauz Khas',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'30 days ago',zone:'south'},
-  {lat:28.54961,lng:77.19448,type:'pg',bhk:'1',rent:20500,fur:'semi',area:'Gautam Nagar',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'18 days ago',zone:'south'},
-  {lat:28.54755,lng:77.17397,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Hauz Khas',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'3 days ago',zone:'south'},
-  {lat:28.56124,lng:77.19987,type:'pg',bhk:'1',rent:10000,fur:'unfurnished',area:'RK Puram',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'36 days ago',zone:'south'},
-  {lat:28.54994,lng:77.18894,type:'pg',bhk:'1',rent:13500,fur:'furnished',area:'Hauz Khas',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'30 days ago',zone:'south'},
-  {lat:28.54279,lng:77.16827,type:'pg',bhk:'1',rent:16000,fur:'semi',area:'Munirka',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'3 days ago',zone:'south'},
-  {lat:28.54437,lng:77.20556,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Munirka',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'26 days ago',zone:'south'},
-  {lat:28.56347,lng:77.20454,type:'pg',bhk:'1',rent:11500,fur:'unfurnished',area:'Safdarjung',note:'Single rooms available. Quiet locality.',sqft:null,time:'19 days ago',zone:'south'},
-  {lat:28.57413,lng:77.2145,type:'pg',bhk:'1',rent:13000,fur:'unfurnished',area:'Satya Niketan',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'6 days ago',zone:'south'},
-  {lat:28.5778,lng:77.17539,type:'pg',bhk:'1',rent:11500,fur:'furnished',area:'Gautam Nagar',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'15 days ago',zone:'south'},
-  {lat:28.5453,lng:77.16875,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Safdarjung',note:'Single rooms available. Quiet locality.',sqft:null,time:'30 days ago',zone:'south'},
-  {lat:28.55023,lng:77.17657,type:'pg',bhk:'1',rent:19500,fur:'unfurnished',area:'Gautam Nagar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'4 days ago',zone:'south'},
-  {lat:28.56687,lng:77.2112,type:'pg',bhk:'1',rent:21000,fur:'furnished',area:'IIT Gate',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'14 days ago',zone:'south'},
-  {lat:28.5652,lng:77.21042,type:'pg',bhk:'1',rent:21500,fur:'furnished',area:'Hauz Khas',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'19 days ago',zone:'south'},
-  {lat:28.56299,lng:77.20621,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'RK Puram',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'19 days ago',zone:'south'},
-  {lat:28.56739,lng:77.21213,type:'pg',bhk:'1',rent:16000,fur:'furnished',area:'RK Puram',note:'Single rooms available. Quiet locality.',sqft:null,time:'2 days ago',zone:'south'},
-  {lat:28.57536,lng:77.20173,type:'pg',bhk:'1',rent:18000,fur:'furnished',area:'Gautam Nagar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'43 days ago',zone:'south'},
-  {lat:28.57311,lng:77.19376,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Gautam Nagar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'11 days ago',zone:'south'},
-  {lat:28.55776,lng:77.19758,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Hauz Khas',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'31 days ago',zone:'south'},
-  {lat:28.5787,lng:77.1885,type:'pg',bhk:'1',rent:14500,fur:'semi',area:'Green Park',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'10 days ago',zone:'south'},
-  {lat:28.55185,lng:77.19968,type:'pg',bhk:'1',rent:12500,fur:'semi',area:'Safdarjung',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'29 days ago',zone:'south'},
-  {lat:28.5417,lng:77.17762,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'Safdarjung',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'Today',zone:'south'},
-  {lat:28.56562,lng:77.19213,type:'pg',bhk:'1',rent:15000,fur:'furnished',area:'Satya Niketan',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'39 days ago',zone:'south'},
-  {lat:28.56977,lng:77.19627,type:'pg',bhk:'1',rent:20500,fur:'furnished',area:'Satya Niketan',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'8 days ago',zone:'south'},
-  {lat:28.57696,lng:77.18691,type:'pg',bhk:'1',rent:19500,fur:'furnished',area:'RK Puram',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'40 days ago',zone:'south'},
-  {lat:28.56357,lng:77.17696,type:'pg',bhk:'1',rent:10500,fur:'furnished',area:'Gautam Nagar',note:'New building. Lift, parking. Modern facilities.',sqft:null,time:'26 days ago',zone:'south'},
-  {lat:28.54191,lng:77.21461,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'RK Puram',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'9 days ago',zone:'south'},
-  {lat:28.55893,lng:77.20083,type:'pg',bhk:'1',rent:16500,fur:'semi',area:'Gautam Nagar',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'30 days ago',zone:'south'},
-  {lat:28.54824,lng:77.19256,type:'pg',bhk:'1',rent:14500,fur:'furnished',area:'IIT Gate',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'8 days ago',zone:'south'},
-  {lat:28.57429,lng:77.17881,type:'pg',bhk:'1',rent:21000,fur:'unfurnished',area:'Safdarjung',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'32 days ago',zone:'south'},
-  {lat:28.54922,lng:77.16513,type:'pg',bhk:'1',rent:20000,fur:'semi',area:'Gautam Nagar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'42 days ago',zone:'south'},
-  {lat:28.55856,lng:77.17243,type:'pg',bhk:'1',rent:17000,fur:'furnished',area:'RK Puram',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'34 days ago',zone:'south'},
-  {lat:28.55384,lng:77.21164,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'IIT Gate',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'26 days ago',zone:'south'},
-  {lat:28.53983,lng:77.20224,type:'pg',bhk:'1',rent:19500,fur:'unfurnished',area:'Safdarjung',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'41 days ago',zone:'south'},
-  {lat:28.57919,lng:77.18977,type:'pg',bhk:'1',rent:8500,fur:'unfurnished',area:'Hauz Khas',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'21 days ago',zone:'south'},
-  {lat:28.57453,lng:77.20871,type:'pg',bhk:'1',rent:15000,fur:'unfurnished',area:'Munirka',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'Today',zone:'south'},
-  {lat:28.55696,lng:77.25255,type:'pg',bhk:'1',rent:17500,fur:'furnished',area:'Kalkaji',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'16 days ago',zone:'south'},
-  {lat:28.53201,lng:77.2681,type:'pg',bhk:'1',rent:17500,fur:'unfurnished',area:'Lajpat Nagar',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'34 days ago',zone:'south'},
-  {lat:28.5347,lng:77.24742,type:'pg',bhk:'1',rent:19000,fur:'unfurnished',area:'Sarita Vihar',note:'Near university. Many students. Lively lane.',sqft:null,time:'2 days ago',zone:'south'},
-  {lat:28.55013,lng:77.24291,type:'pg',bhk:'1',rent:18000,fur:'semi',area:'Govind Puri',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'27 days ago',zone:'south'},
-  {lat:28.57359,lng:77.27182,type:'pg',bhk:'1',rent:18500,fur:'furnished',area:'Sarita Vihar',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'44 days ago',zone:'south'},
-  {lat:28.52947,lng:77.23159,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Sarita Vihar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'23 days ago',zone:'south'},
-  {lat:28.53799,lng:77.24343,type:'pg',bhk:'1',rent:14000,fur:'semi',area:'Saket',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'10 days ago',zone:'south'},
-  {lat:28.52138,lng:77.26352,type:'pg',bhk:'1',rent:13500,fur:'furnished',area:'Saket',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'37 days ago',zone:'south'},
-  {lat:28.5193,lng:77.25536,type:'pg',bhk:'1',rent:11000,fur:'semi',area:'Malviya Nagar',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'29 days ago',zone:'south'},
-  {lat:28.56858,lng:77.26727,type:'pg',bhk:'1',rent:9500,fur:'unfurnished',area:'Lajpat Nagar',note:'Single rooms available. Quiet locality.',sqft:null,time:'37 days ago',zone:'south'},
-  {lat:28.52945,lng:77.28291,type:'pg',bhk:'1',rent:18500,fur:'semi',area:'Govind Puri',note:'Single rooms available. Quiet locality.',sqft:null,time:'12 days ago',zone:'south'},
-  {lat:28.57496,lng:77.27693,type:'pg',bhk:'1',rent:8500,fur:'semi',area:'Kalkaji',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'36 days ago',zone:'south'},
-  {lat:28.52923,lng:77.26846,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Sarita Vihar',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'Today',zone:'south'},
-  {lat:28.54679,lng:77.26772,type:'pg',bhk:'1',rent:19000,fur:'semi',area:'Lajpat Nagar',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'18 days ago',zone:'south'},
-  {lat:28.56042,lng:77.24266,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Kalkaji',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'16 days ago',zone:'south'},
-  {lat:28.55405,lng:77.26965,type:'pg',bhk:'1',rent:18000,fur:'semi',area:'South Extension',note:'No curfew. Working professionals welcome.',sqft:null,time:'40 days ago',zone:'south'},
-  {lat:28.55201,lng:77.24699,type:'pg',bhk:'1',rent:14000,fur:'furnished',area:'Lajpat Nagar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'8 days ago',zone:'south'},
-  {lat:28.51586,lng:77.24623,type:'pg',bhk:'1',rent:19000,fur:'furnished',area:'Malviya Nagar',note:'Triple sharing available. Very affordable.',sqft:null,time:'34 days ago',zone:'south'},
-  {lat:28.56697,lng:77.25012,type:'pg',bhk:'1',rent:15000,fur:'furnished',area:'Govind Puri',note:'Triple sharing available. Very affordable.',sqft:null,time:'30 days ago',zone:'south'},
-  {lat:28.57288,lng:77.24623,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Sarita Vihar',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'4 days ago',zone:'south'},
-  {lat:28.51915,lng:77.28316,type:'pg',bhk:'1',rent:18000,fur:'unfurnished',area:'South Extension',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'35 days ago',zone:'south'},
-  {lat:28.53378,lng:77.27349,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Govind Puri',note:'New building. Lift, parking. Modern facilities.',sqft:null,time:'23 days ago',zone:'south'},
-  {lat:28.55373,lng:77.26698,type:'pg',bhk:'1',rent:16500,fur:'unfurnished',area:'Malviya Nagar',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'6 days ago',zone:'south'},
-  {lat:28.55386,lng:77.25593,type:'pg',bhk:'1',rent:17000,fur:'unfurnished',area:'Saket',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'14 days ago',zone:'south'},
-  {lat:28.5521,lng:77.26495,type:'pg',bhk:'1',rent:14500,fur:'semi',area:'South Extension',note:'Near coaching centre. Study-friendly.',sqft:null,time:'7 days ago',zone:'south'},
-  {lat:28.51909,lng:77.28204,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Malviya Nagar',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'34 days ago',zone:'south'},
-  {lat:28.51882,lng:77.25495,type:'pg',bhk:'1',rent:18000,fur:'unfurnished',area:'South Extension',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'26 days ago',zone:'south'},
-  {lat:28.54818,lng:77.26996,type:'pg',bhk:'1',rent:14000,fur:'semi',area:'South Extension',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'39 days ago',zone:'south'},
-  {lat:28.53653,lng:77.28233,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'South Extension',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'28 days ago',zone:'south'},
-  {lat:28.57179,lng:77.27705,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'South Extension',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'41 days ago',zone:'south'},
-  {lat:28.53331,lng:77.2519,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Lajpat Nagar',note:'Single rooms available. Quiet locality.',sqft:null,time:'13 days ago',zone:'south'},
-  {lat:28.55171,lng:77.26284,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Lajpat Nagar',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'8 days ago',zone:'south'},
-  {lat:28.56115,lng:77.24129,type:'pg',bhk:'1',rent:19500,fur:'semi',area:'Saket',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'14 days ago',zone:'south'},
-  {lat:28.53136,lng:77.23812,type:'pg',bhk:'1',rent:17000,fur:'unfurnished',area:'Lajpat Nagar',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'9 days ago',zone:'south'},
-  {lat:28.57419,lng:77.25971,type:'pg',bhk:'1',rent:10000,fur:'unfurnished',area:'Lajpat Nagar',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'8 days ago',zone:'south'},
-  {lat:28.51097,lng:77.27345,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Saket',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'16 days ago',zone:'south'},
-  {lat:28.51341,lng:77.27079,type:'pg',bhk:'1',rent:15500,fur:'furnished',area:'Lajpat Nagar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'28 days ago',zone:'south'},
-  {lat:28.56057,lng:77.25823,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Malviya Nagar',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'39 days ago',zone:'south'},
-  {lat:28.51282,lng:77.27308,type:'pg',bhk:'1',rent:18000,fur:'furnished',area:'Saket',note:'Near coaching centre. Study-friendly.',sqft:null,time:'1 day ago',zone:'south'},
-  {lat:28.51395,lng:77.25634,type:'pg',bhk:'1',rent:13500,fur:'furnished',area:'Malviya Nagar',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'45 days ago',zone:'south'},
-  {lat:28.65594,lng:77.27831,type:'pg',bhk:'1',rent:5000,fur:'furnished',area:'Preet Vihar',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'8 days ago',zone:'budget'},
-  {lat:28.62738,lng:77.30349,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Yamuna Vihar',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'38 days ago',zone:'budget'},
-  {lat:28.63888,lng:77.29542,type:'pg',bhk:'1',rent:9500,fur:'semi',area:'Shakarpur',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'7 days ago',zone:'budget'},
-  {lat:28.65338,lng:77.30429,type:'pg',bhk:'1',rent:11000,fur:'unfurnished',area:'Mayur Vihar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'27 days ago',zone:'budget'},
-  {lat:28.63532,lng:77.28528,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Vivek Vihar',note:'Single rooms available. Quiet locality.',sqft:null,time:'6 days ago',zone:'budget'},
-  {lat:28.62906,lng:77.28906,type:'pg',bhk:'1',rent:6500,fur:'semi',area:'Preet Vihar',note:'No curfew. Working professionals welcome.',sqft:null,time:'30 days ago',zone:'budget'},
-  {lat:28.61802,lng:77.31243,type:'pg',bhk:'1',rent:5500,fur:'semi',area:'Shakarpur',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'23 days ago',zone:'budget'},
-  {lat:28.65153,lng:77.30004,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Mayur Vihar',note:'New building. Lift, parking. Modern facilities.',sqft:null,time:'7 days ago',zone:'budget'},
-  {lat:28.63349,lng:77.31431,type:'pg',bhk:'1',rent:10500,fur:'furnished',area:'Shakarpur',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'18 days ago',zone:'budget'},
-  {lat:28.64202,lng:77.29082,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Mayur Vihar',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'30 days ago',zone:'budget'},
-  {lat:28.62509,lng:77.27987,type:'pg',bhk:'1',rent:11500,fur:'furnished',area:'Mayur Vihar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'17 days ago',zone:'budget'},
-  {lat:28.64083,lng:77.31132,type:'pg',bhk:'1',rent:11500,fur:'semi',area:'Mayur Vihar',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'39 days ago',zone:'budget'},
-  {lat:28.64537,lng:77.30005,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Yamuna Vihar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'11 days ago',zone:'budget'},
-  {lat:28.6273,lng:77.30931,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Preet Vihar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'9 days ago',zone:'budget'},
-  {lat:28.64048,lng:77.29304,type:'pg',bhk:'1',rent:5500,fur:'unfurnished',area:'Yamuna Vihar',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'5 days ago',zone:'budget'},
-  {lat:28.64858,lng:77.28468,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Shakarpur',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'19 days ago',zone:'budget'},
-  {lat:28.64747,lng:77.30996,type:'pg',bhk:'1',rent:9000,fur:'unfurnished',area:'Mayur Vihar',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'9 days ago',zone:'budget'},
-  {lat:28.62208,lng:77.3028,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Laxmi Nagar',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'27 days ago',zone:'budget'},
-  {lat:28.63685,lng:77.29489,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Nirman Vihar',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'22 days ago',zone:'budget'},
-  {lat:28.63435,lng:77.28775,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Mayur Vihar',note:'Near university. Many students. Lively lane.',sqft:null,time:'19 days ago',zone:'budget'},
-  {lat:28.61704,lng:77.29279,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Laxmi Nagar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'13 days ago',zone:'budget'},
-  {lat:28.64953,lng:77.30939,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Preet Vihar',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'27 days ago',zone:'budget'},
-  {lat:28.62291,lng:77.29211,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Nirman Vihar',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'42 days ago',zone:'budget'},
-  {lat:28.65128,lng:77.27824,type:'pg',bhk:'1',rent:11500,fur:'furnished',area:'Yamuna Vihar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'29 days ago',zone:'budget'},
-  {lat:28.65645,lng:77.31379,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Shakarpur',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'40 days ago',zone:'budget'},
-  {lat:28.6338,lng:77.28018,type:'pg',bhk:'1',rent:4500,fur:'semi',area:'Preet Vihar',note:'Triple sharing available. Very affordable.',sqft:null,time:'39 days ago',zone:'budget'},
-  {lat:28.6357,lng:77.30603,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Laxmi Nagar',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'15 days ago',zone:'budget'},
-  {lat:28.63461,lng:77.29302,type:'pg',bhk:'1',rent:5000,fur:'semi',area:'Shakarpur',note:'Near coaching centre. Study-friendly.',sqft:null,time:'14 days ago',zone:'budget'},
-  {lat:28.62999,lng:77.28257,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Yamuna Vihar',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'12 days ago',zone:'budget'},
-  {lat:28.65577,lng:77.29072,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Vivek Vihar',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'15 days ago',zone:'budget'},
-  {lat:28.61963,lng:77.28652,type:'pg',bhk:'1',rent:6000,fur:'semi',area:'Mayur Vihar',note:'No curfew. Working professionals welcome.',sqft:null,time:'41 days ago',zone:'budget'},
-  {lat:28.61839,lng:77.31781,type:'pg',bhk:'1',rent:9500,fur:'semi',area:'Shakarpur',note:'Single rooms available. Quiet locality.',sqft:null,time:'37 days ago',zone:'budget'},
-  {lat:28.6352,lng:77.31659,type:'pg',bhk:'1',rent:9000,fur:'unfurnished',area:'Yamuna Vihar',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'20 days ago',zone:'budget'},
-  {lat:28.65389,lng:77.30322,type:'pg',bhk:'1',rent:5500,fur:'furnished',area:'Shakarpur',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'40 days ago',zone:'budget'},
-  {lat:28.62863,lng:77.28736,type:'pg',bhk:'1',rent:5000,fur:'furnished',area:'Preet Vihar',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'29 days ago',zone:'budget'},
-  {lat:28.63534,lng:77.27756,type:'pg',bhk:'1',rent:11500,fur:'semi',area:'Preet Vihar',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'5 days ago',zone:'budget'},
-  {lat:28.64268,lng:77.29782,type:'pg',bhk:'1',rent:8500,fur:'unfurnished',area:'Mayur Vihar',note:'New building. Lift, parking. Modern facilities.',sqft:null,time:'2 days ago',zone:'budget'},
-  {lat:28.63524,lng:77.31144,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'Nirman Vihar',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'32 days ago',zone:'budget'},
-  {lat:28.62179,lng:77.27778,type:'pg',bhk:'1',rent:5500,fur:'unfurnished',area:'Vivek Vihar',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'5 days ago',zone:'budget'},
-  {lat:28.6377,lng:77.28277,type:'pg',bhk:'1',rent:6500,fur:'unfurnished',area:'Yamuna Vihar',note:'Single rooms available. Quiet locality.',sqft:null,time:'33 days ago',zone:'budget'},
-  {lat:28.63852,lng:77.28214,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Preet Vihar',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'21 days ago',zone:'budget'},
-  {lat:28.64555,lng:77.27736,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Yamuna Vihar',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'6 days ago',zone:'budget'},
-  {lat:28.64011,lng:77.2924,type:'pg',bhk:'1',rent:6500,fur:'unfurnished',area:'Yamuna Vihar',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'38 days ago',zone:'budget'},
-  {lat:28.6543,lng:77.29,type:'pg',bhk:'1',rent:9500,fur:'unfurnished',area:'Yamuna Vihar',note:'No curfew. Working professionals welcome.',sqft:null,time:'19 days ago',zone:'budget'},
-  {lat:28.65855,lng:77.30643,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Nirman Vihar',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'5 days ago',zone:'budget'},
-  {lat:28.63393,lng:77.11202,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Uttam Nagar',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'43 days ago',zone:'other'},
-  {lat:28.66106,lng:77.08794,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Ramesh Nagar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'19 days ago',zone:'other'},
-  {lat:28.62811,lng:77.09821,type:'pg',bhk:'1',rent:13000,fur:'unfurnished',area:'Uttam Nagar',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'9 days ago',zone:'other'},
-  {lat:28.62347,lng:77.15178,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Ramesh Nagar',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'33 days ago',zone:'other'},
-  {lat:28.6217,lng:77.10862,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Ramesh Nagar',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'11 days ago',zone:'other'},
-  {lat:28.65741,lng:77.14554,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Punjabi Bagh',note:'Single rooms available. Quiet locality.',sqft:null,time:'23 days ago',zone:'other'},
-  {lat:28.65044,lng:77.10019,type:'pg',bhk:'1',rent:12500,fur:'semi',area:'Ramesh Nagar',note:'Near coaching centre. Study-friendly.',sqft:null,time:'28 days ago',zone:'other'},
-  {lat:28.63053,lng:77.10033,type:'pg',bhk:'1',rent:12500,fur:'semi',area:'Uttam Nagar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'36 days ago',zone:'other'},
-  {lat:28.6643,lng:77.11924,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Rajouri Garden',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'10 days ago',zone:'other'},
-  {lat:28.65676,lng:77.14811,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Tilak Nagar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'23 days ago',zone:'other'},
-  {lat:28.64495,lng:77.08872,type:'pg',bhk:'1',rent:13500,fur:'furnished',area:'Janakpuri',note:'Near coaching centre. Study-friendly.',sqft:null,time:'10 days ago',zone:'other'},
-  {lat:28.63228,lng:77.15695,type:'pg',bhk:'1',rent:7500,fur:'unfurnished',area:'Rajouri Garden',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'14 days ago',zone:'other'},
-  {lat:28.65675,lng:77.15519,type:'pg',bhk:'1',rent:5500,fur:'furnished',area:'Rajouri Garden',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'23 days ago',zone:'other'},
-  {lat:28.63061,lng:77.16453,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Uttam Nagar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'6 days ago',zone:'other'},
-  {lat:28.65776,lng:77.13525,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Uttam Nagar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'30 days ago',zone:'other'},
-  {lat:28.65132,lng:77.0918,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Rajouri Garden',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'5 days ago',zone:'other'},
-  {lat:28.62086,lng:77.09833,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Ramesh Nagar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'27 days ago',zone:'other'},
-  {lat:28.625,lng:77.10449,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Janakpuri',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'40 days ago',zone:'other'},
-  {lat:28.65573,lng:77.11885,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Rajouri Garden',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'40 days ago',zone:'other'},
-  {lat:28.64319,lng:77.10056,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Tilak Nagar',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'22 days ago',zone:'other'},
-  {lat:28.63083,lng:77.11541,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Ramesh Nagar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'33 days ago',zone:'other'},
-  {lat:28.64448,lng:77.14685,type:'pg',bhk:'1',rent:13500,fur:'furnished',area:'Ramesh Nagar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'30 days ago',zone:'other'},
-  {lat:28.62196,lng:77.11288,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Tilak Nagar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'4 days ago',zone:'other'},
-  {lat:28.63552,lng:77.1423,type:'pg',bhk:'1',rent:6500,fur:'semi',area:'Ramesh Nagar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'8 days ago',zone:'other'},
-  {lat:28.622,lng:77.12641,type:'pg',bhk:'1',rent:8000,fur:'unfurnished',area:'Punjabi Bagh',note:'Single rooms available. Quiet locality.',sqft:null,time:'30 days ago',zone:'other'},
-  {lat:28.64843,lng:77.14898,type:'pg',bhk:'1',rent:6000,fur:'unfurnished',area:'Punjabi Bagh',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'2 days ago',zone:'other'},
-  {lat:28.6332,lng:77.08372,type:'pg',bhk:'1',rent:8500,fur:'unfurnished',area:'Janakpuri',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'32 days ago',zone:'other'},
-  {lat:28.63792,lng:77.14931,type:'pg',bhk:'1',rent:13000,fur:'semi',area:'Tilak Nagar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'12 days ago',zone:'other'},
-  {lat:28.63287,lng:77.15328,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Punjabi Bagh',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'23 days ago',zone:'other'},
-  {lat:28.63966,lng:77.114,type:'pg',bhk:'1',rent:12000,fur:'unfurnished',area:'Rajouri Garden',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'31 days ago',zone:'other'},
-  {lat:28.65114,lng:77.11122,type:'pg',bhk:'1',rent:13500,fur:'semi',area:'Tilak Nagar',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'5 days ago',zone:'other'},
-  {lat:28.63938,lng:77.16458,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Ramesh Nagar',note:'Near coaching centre. Study-friendly.',sqft:null,time:'5 days ago',zone:'other'},
-  {lat:28.63476,lng:77.10513,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Ramesh Nagar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'44 days ago',zone:'other'},
-  {lat:28.63998,lng:77.11801,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Ramesh Nagar',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'3 days ago',zone:'other'},
-  {lat:28.62338,lng:77.13419,type:'pg',bhk:'1',rent:11000,fur:'semi',area:'Ramesh Nagar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'1 day ago',zone:'other'},
-  {lat:28.62643,lng:77.13164,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Janakpuri',note:'No curfew. Working professionals welcome.',sqft:null,time:'41 days ago',zone:'other'},
-  {lat:28.63648,lng:77.11254,type:'pg',bhk:'1',rent:5500,fur:'semi',area:'Ramesh Nagar',note:'No curfew. Working professionals welcome.',sqft:null,time:'23 days ago',zone:'other'},
-  {lat:28.63674,lng:77.14486,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Ramesh Nagar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'41 days ago',zone:'other'},
-  {lat:28.63254,lng:77.16164,type:'pg',bhk:'1',rent:5500,fur:'furnished',area:'Punjabi Bagh',note:'Triple sharing available. Very affordable.',sqft:null,time:'24 days ago',zone:'other'},
-  {lat:28.66111,lng:77.09001,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Punjabi Bagh',note:'Single rooms available. Quiet locality.',sqft:null,time:'39 days ago',zone:'other'},
-  {lat:28.71071,lng:77.14499,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Rohini Sec 7',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'4 days ago',zone:'other'},
-  {lat:28.71986,lng:77.14392,type:'pg',bhk:'1',rent:8500,fur:'unfurnished',area:'Rohini Sec 3',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'20 days ago',zone:'other'},
-  {lat:28.73173,lng:77.13257,type:'pg',bhk:'1',rent:9500,fur:'unfurnished',area:'Prashant Vihar',note:'Near coaching centre. Study-friendly.',sqft:null,time:'10 days ago',zone:'other'},
-  {lat:28.73415,lng:77.14564,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Rohini Sec 7',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'7 days ago',zone:'other'},
-  {lat:28.74918,lng:77.13752,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Paschim Vihar',note:'Near university. Many students. Lively lane.',sqft:null,time:'35 days ago',zone:'other'},
-  {lat:28.72648,lng:77.11804,type:'pg',bhk:'1',rent:9500,fur:'unfurnished',area:'Rohini Sec 7',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'4 days ago',zone:'other'},
-  {lat:28.71201,lng:77.14998,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Kohat Enclave',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'26 days ago',zone:'other'},
-  {lat:28.74028,lng:77.09443,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Pitampura',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'29 days ago',zone:'other'},
-  {lat:28.73241,lng:77.11067,type:'pg',bhk:'1',rent:12000,fur:'semi',area:'Paschim Vihar',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'37 days ago',zone:'other'},
-  {lat:28.70501,lng:77.14798,type:'pg',bhk:'1',rent:8500,fur:'semi',area:'Prashant Vihar',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'33 days ago',zone:'other'},
-  {lat:28.70342,lng:77.09988,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Shalimar Bagh',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'33 days ago',zone:'other'},
-  {lat:28.74422,lng:77.14076,type:'pg',bhk:'1',rent:7000,fur:'unfurnished',area:'Rohini Sec 7',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'17 days ago',zone:'other'},
-  {lat:28.70188,lng:77.10817,type:'pg',bhk:'1',rent:9500,fur:'semi',area:'Rohini Sec 3',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'37 days ago',zone:'other'},
-  {lat:28.74679,lng:77.09925,type:'pg',bhk:'1',rent:10500,fur:'unfurnished',area:'Prashant Vihar',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'21 days ago',zone:'other'},
-  {lat:28.74134,lng:77.12382,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Paschim Vihar',note:'Meals included, AC room. Good water supply.',sqft:null,time:'41 days ago',zone:'other'},
-  {lat:28.73741,lng:77.10588,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Paschim Vihar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'40 days ago',zone:'other'},
-  {lat:28.69667,lng:77.14334,type:'pg',bhk:'1',rent:9500,fur:'unfurnished',area:'Pitampura',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'30 days ago',zone:'other'},
-  {lat:28.70847,lng:77.13844,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Pitampura',note:'Single rooms available. Quiet locality.',sqft:null,time:'3 days ago',zone:'other'},
-  {lat:28.70369,lng:77.11494,type:'pg',bhk:'1',rent:9000,fur:'semi',area:'Rohini Sec 7',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'20 days ago',zone:'other'},
-  {lat:28.74238,lng:77.10916,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Pitampura',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'23 days ago',zone:'other'},
-  {lat:28.72332,lng:77.09637,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Kohat Enclave',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'15 days ago',zone:'other'},
-  {lat:28.70275,lng:77.09304,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Kohat Enclave',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'10 days ago',zone:'other'},
-  {lat:28.73974,lng:77.14603,type:'pg',bhk:'1',rent:11000,fur:'semi',area:'Pitampura',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'31 days ago',zone:'other'},
-  {lat:28.74978,lng:77.11801,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Pitampura',note:'Near university. Many students. Lively lane.',sqft:null,time:'25 days ago',zone:'other'},
-  {lat:28.7228,lng:77.148,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Prashant Vihar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'18 days ago',zone:'other'},
-  {lat:28.72222,lng:77.14294,type:'pg',bhk:'1',rent:10500,fur:'furnished',area:'Shalimar Bagh',note:'Near university. Many students. Lively lane.',sqft:null,time:'Today',zone:'other'},
-  {lat:28.74159,lng:77.11586,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Pitampura',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'25 days ago',zone:'other'},
-  {lat:28.71513,lng:77.11403,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Prashant Vihar',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'18 days ago',zone:'other'},
-  {lat:28.69904,lng:77.12026,type:'pg',bhk:'1',rent:11500,fur:'semi',area:'Prashant Vihar',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'39 days ago',zone:'other'},
-  {lat:28.73242,lng:77.09713,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Rohini Sec 3',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'21 days ago',zone:'other'},
-  {lat:28.72568,lng:77.11194,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Rohini Sec 7',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'32 days ago',zone:'other'},
-  {lat:28.69721,lng:77.09233,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Pitampura',note:'Near university. Many students. Lively lane.',sqft:null,time:'9 days ago',zone:'other'},
-  {lat:28.72834,lng:77.12093,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Prashant Vihar',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'39 days ago',zone:'other'},
-  {lat:28.73566,lng:77.10795,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Prashant Vihar',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'45 days ago',zone:'other'},
-  {lat:28.72596,lng:77.11849,type:'pg',bhk:'1',rent:5000,fur:'semi',area:'Pitampura',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'26 days ago',zone:'other'},
-  {lat:28.7271,lng:77.13781,type:'pg',bhk:'1',rent:11000,fur:'semi',area:'Paschim Vihar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'38 days ago',zone:'other'},
-  {lat:28.7211,lng:77.14802,type:'pg',bhk:'1',rent:11500,fur:'semi',area:'Paschim Vihar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'3 days ago',zone:'other'},
-  {lat:28.72709,lng:77.10023,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'Shalimar Bagh',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'24 days ago',zone:'other'},
-  {lat:28.70313,lng:77.13084,type:'pg',bhk:'1',rent:5500,fur:'furnished',area:'Prashant Vihar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'1 day ago',zone:'other'},
-  {lat:28.71926,lng:77.11513,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Shalimar Bagh',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'39 days ago',zone:'other'},
-  {lat:28.61142,lng:77.08737,type:'pg',bhk:'1',rent:11500,fur:'semi',area:'Bindapur',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'33 days ago',zone:'other'},
-  {lat:28.57933,lng:77.0545,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Dwarka Mor',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'11 days ago',zone:'other'},
-  {lat:28.59068,lng:77.06699,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'Dwarka Sec 12',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'43 days ago',zone:'other'},
-  {lat:28.59895,lng:77.0766,type:'pg',bhk:'1',rent:10500,fur:'unfurnished',area:'Dwarka Mor',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'17 days ago',zone:'other'},
-  {lat:28.59511,lng:77.04849,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Dwarka Sec 12',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'45 days ago',zone:'other'},
-  {lat:28.59201,lng:77.06379,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Bindapur',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'36 days ago',zone:'other'},
-  {lat:28.60045,lng:77.05778,type:'pg',bhk:'1',rent:8500,fur:'semi',area:'Dwarka Sec 12',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'18 days ago',zone:'other'},
-  {lat:28.57189,lng:77.09232,type:'pg',bhk:'1',rent:6000,fur:'semi',area:'Dwarka Sec 12',note:'Single rooms available. Quiet locality.',sqft:null,time:'30 days ago',zone:'other'},
-  {lat:28.57963,lng:77.08468,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Nawada',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'6 days ago',zone:'other'},
-  {lat:28.59771,lng:77.07021,type:'pg',bhk:'1',rent:7500,fur:'unfurnished',area:'Dwarka Sec 6',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'14 days ago',zone:'other'},
-  {lat:28.59871,lng:77.03815,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Dwarka Sec 12',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'43 days ago',zone:'other'},
-  {lat:28.60468,lng:77.03531,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'Dwarka Sec 10',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'30 days ago',zone:'other'},
-  {lat:28.59149,lng:77.04697,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Dwarka Sec 12',note:'Near coaching centre. Study-friendly.',sqft:null,time:'5 days ago',zone:'other'},
-  {lat:28.59935,lng:77.04893,type:'pg',bhk:'1',rent:11500,fur:'unfurnished',area:'Bindapur',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'11 days ago',zone:'other'},
-  {lat:28.5888,lng:77.08526,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Dwarka Mor',note:'Near university. Many students. Lively lane.',sqft:null,time:'18 days ago',zone:'other'},
-  {lat:28.60945,lng:77.03556,type:'pg',bhk:'1',rent:10000,fur:'unfurnished',area:'Nawada',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'21 days ago',zone:'other'},
-  {lat:28.58281,lng:77.09435,type:'pg',bhk:'1',rent:10000,fur:'unfurnished',area:'Nawada',note:'Near university. Many students. Lively lane.',sqft:null,time:'8 days ago',zone:'other'},
-  {lat:28.6083,lng:77.06308,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Dwarka Sec 6',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'29 days ago',zone:'other'},
-  {lat:28.59917,lng:77.07812,type:'pg',bhk:'1',rent:5500,fur:'semi',area:'Bindapur',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'36 days ago',zone:'other'},
-  {lat:28.60035,lng:77.04659,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Bindapur',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'32 days ago',zone:'other'},
-  {lat:28.58476,lng:77.05905,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Dwarka Sec 10',note:'No curfew. Working professionals welcome.',sqft:null,time:'15 days ago',zone:'other'},
-  {lat:28.57031,lng:77.05801,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Dwarka Sec 12',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'36 days ago',zone:'other'},
-  {lat:28.57051,lng:77.07422,type:'pg',bhk:'1',rent:11000,fur:'semi',area:'Dwarka Sec 10',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'29 days ago',zone:'other'},
-  {lat:28.58381,lng:77.05932,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Bindapur',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'7 days ago',zone:'other'},
-  {lat:28.59874,lng:77.09144,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Nawada',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'8 days ago',zone:'other'},
-  {lat:28.59152,lng:77.0623,type:'pg',bhk:'1',rent:10500,fur:'semi',area:'Dwarka Sec 12',note:'Rooftop access. Power backup. Near metro.',sqft:null,time:'30 days ago',zone:'other'},
-  {lat:28.60408,lng:77.08312,type:'pg',bhk:'1',rent:12500,fur:'furnished',area:'Dwarka Sec 10',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'38 days ago',zone:'other'},
-  {lat:28.60929,lng:77.03991,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Nawada',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'36 days ago',zone:'other'},
-  {lat:28.57505,lng:77.08473,type:'pg',bhk:'1',rent:13000,fur:'semi',area:'Nawada',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'9 days ago',zone:'other'},
-  {lat:28.5774,lng:77.08627,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Dwarka Sec 6',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'37 days ago',zone:'other'},
-  {lat:28.592,lng:77.08893,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Dwarka Sec 6',note:'Single rooms available. Quiet locality.',sqft:null,time:'26 days ago',zone:'other'},
-  {lat:28.59056,lng:77.03846,type:'pg',bhk:'1',rent:9500,fur:'semi',area:'Bindapur',note:'Near coaching centre. Study-friendly.',sqft:null,time:'25 days ago',zone:'other'},
-  {lat:28.58145,lng:77.03518,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Nawada',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'22 days ago',zone:'other'},
-  {lat:28.60152,lng:77.06747,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Dwarka Sec 6',note:'Near university. Many students. Lively lane.',sqft:null,time:'26 days ago',zone:'other'},
-  {lat:28.5781,lng:77.04313,type:'pg',bhk:'1',rent:11000,fur:'unfurnished',area:'Bindapur',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'23 days ago',zone:'other'},
-  {lat:28.67968,lng:77.2153,type:'pg',bhk:'1',rent:14000,fur:'semi',area:'Civil Lines',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'42 days ago',zone:'coaching'},
-  {lat:28.67435,lng:77.20532,type:'pg',bhk:'1',rent:13500,fur:'unfurnished',area:'Paharganj',note:'Triple sharing available. Very affordable.',sqft:null,time:'25 days ago',zone:'coaching'},
-  {lat:28.6588,lng:77.22911,type:'pg',bhk:'1',rent:11500,fur:'furnished',area:'Paharganj',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'19 days ago',zone:'coaching'},
-  {lat:28.65584,lng:77.22876,type:'pg',bhk:'1',rent:15000,fur:'semi',area:'Kashmere Gate',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'15 days ago',zone:'coaching'},
-  {lat:28.65573,lng:77.2062,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Nabi Karim',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'42 days ago',zone:'coaching'},
-  {lat:28.65387,lng:77.23064,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Karol Bagh',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'38 days ago',zone:'coaching'},
-  {lat:28.63651,lng:77.22391,type:'pg',bhk:'1',rent:19500,fur:'semi',area:'Paharganj',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'25 days ago',zone:'coaching'},
-  {lat:28.65475,lng:77.22159,type:'pg',bhk:'1',rent:9000,fur:'unfurnished',area:'Karol Bagh',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'14 days ago',zone:'coaching'},
-  {lat:28.67171,lng:77.22926,type:'pg',bhk:'1',rent:13000,fur:'semi',area:'Kashmere Gate',note:'Private room. Attached bathroom. No sharing.',sqft:null,time:'20 days ago',zone:'coaching'},
-  {lat:28.64566,lng:77.23505,type:'pg',bhk:'1',rent:19000,fur:'furnished',area:'Kashmere Gate',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'17 days ago',zone:'coaching'},
-  {lat:28.63774,lng:77.23794,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Nabi Karim',note:'Boys and girls both welcome. Mixed PG.',sqft:null,time:'31 days ago',zone:'coaching'},
-  {lat:28.63711,lng:77.21378,type:'pg',bhk:'1',rent:18500,fur:'semi',area:'Nabi Karim',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'20 days ago',zone:'coaching'},
-  {lat:28.66633,lng:77.21633,type:'pg',bhk:'1',rent:13000,fur:'semi',area:'Civil Lines',note:'Triple sharing available. Very affordable.',sqft:null,time:'30 days ago',zone:'coaching'},
-  {lat:28.64584,lng:77.20901,type:'pg',bhk:'1',rent:19500,fur:'unfurnished',area:'Karol Bagh',note:'Single rooms available. Quiet locality.',sqft:null,time:'35 days ago',zone:'coaching'},
-  {lat:28.65357,lng:77.21666,type:'pg',bhk:'1',rent:16500,fur:'furnished',area:'Karol Bagh',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'13 days ago',zone:'coaching'},
-  {lat:28.64986,lng:77.20316,type:'pg',bhk:'1',rent:15500,fur:'furnished',area:'Daryaganj',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'12 days ago',zone:'coaching'},
-  {lat:28.63732,lng:77.21509,type:'pg',bhk:'1',rent:18000,fur:'unfurnished',area:'Kashmere Gate',note:'Girls only. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'12 days ago',zone:'coaching'},
-  {lat:28.67121,lng:77.2235,type:'pg',bhk:'1',rent:19000,fur:'furnished',area:'Kashmere Gate',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'21 days ago',zone:'coaching'},
-  {lat:28.64864,lng:77.23636,type:'pg',bhk:'1',rent:11500,fur:'furnished',area:'Karol Bagh',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'30 days ago',zone:'coaching'},
-  {lat:28.67615,lng:77.22783,type:'pg',bhk:'1',rent:19500,fur:'unfurnished',area:'Karol Bagh',note:'Semi-furnished. Geyser, Wi-Fi included.',sqft:null,time:'35 days ago',zone:'coaching'},
-  {lat:28.64947,lng:77.21132,type:'pg',bhk:'1',rent:15500,fur:'furnished',area:'Kashmere Gate',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'16 days ago',zone:'coaching'},
-  {lat:28.65118,lng:77.23531,type:'pg',bhk:'1',rent:15500,fur:'furnished',area:'Paharganj',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'20 days ago',zone:'coaching'},
-  {lat:28.67614,lng:77.21483,type:'pg',bhk:'1',rent:15000,fur:'unfurnished',area:'Paharganj',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'9 days ago',zone:'coaching'},
-  {lat:28.63573,lng:77.22213,type:'pg',bhk:'1',rent:17500,fur:'furnished',area:'Kashmere Gate',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'9 days ago',zone:'coaching'},
-  {lat:28.64383,lng:77.2092,type:'pg',bhk:'1',rent:17500,fur:'semi',area:'Karol Bagh',note:'Near university. Many students. Lively lane.',sqft:null,time:'43 days ago',zone:'coaching'},
-  {lat:28.65019,lng:77.23053,type:'pg',bhk:'1',rent:16000,fur:'semi',area:'Nabi Karim',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'29 days ago',zone:'coaching'},
-  {lat:28.64257,lng:77.2318,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Karol Bagh',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'11 days ago',zone:'coaching'},
-  {lat:28.67626,lng:77.22169,type:'pg',bhk:'1',rent:18500,fur:'furnished',area:'Paharganj',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'4 days ago',zone:'coaching'},
-  {lat:28.67753,lng:77.22673,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Civil Lines',note:'No curfew. Working professionals welcome.',sqft:null,time:'14 days ago',zone:'coaching'},
-  {lat:28.63806,lng:77.20604,type:'pg',bhk:'1',rent:11500,fur:'furnished',area:'Kashmere Gate',note:'Single rooms available. Quiet locality.',sqft:null,time:'39 days ago',zone:'coaching'},
-  {lat:28.75826,lng:77.21603,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Wazirabad',note:'Near university. Many students. Lively lane.',sqft:null,time:'34 days ago',zone:'other'},
-  {lat:28.7531,lng:77.16071,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Wazirabad',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'18 days ago',zone:'other'},
-  {lat:28.72103,lng:77.20879,type:'pg',bhk:'1',rent:7000,fur:'unfurnished',area:'Sant Nagar',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'33 days ago',zone:'other'},
-  {lat:28.72893,lng:77.17152,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Jahangirpuri',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'25 days ago',zone:'other'},
-  {lat:28.72474,lng:77.21756,type:'pg',bhk:'1',rent:7500,fur:'unfurnished',area:'Badli',note:'AC rooms. Attached bath. No brokerage.',sqft:null,time:'14 days ago',zone:'other'},
-  {lat:28.738,lng:77.20968,type:'pg',bhk:'1',rent:4000,fur:'semi',area:'Wazirabad',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'5 days ago',zone:'other'},
-  {lat:28.74432,lng:77.18263,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Burari',note:'Food twice a day. Laundry included. Hygienic.',sqft:null,time:'10 days ago',zone:'other'},
-  {lat:28.72496,lng:77.21072,type:'pg',bhk:'1',rent:9000,fur:'unfurnished',area:'Jahangirpuri',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'6 days ago',zone:'other'},
-  {lat:28.77369,lng:77.21515,type:'pg',bhk:'1',rent:5500,fur:'unfurnished',area:'Sant Nagar',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'30 days ago',zone:'other'},
-  {lat:28.73627,lng:77.21545,type:'pg',bhk:'1',rent:6000,fur:'semi',area:'Badli',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'11 days ago',zone:'other'},
-  {lat:28.77573,lng:77.17887,type:'pg',bhk:'1',rent:5000,fur:'semi',area:'Badli',note:'No curfew. Working professionals welcome.',sqft:null,time:'45 days ago',zone:'other'},
-  {lat:28.76925,lng:77.21573,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Sant Nagar',note:'Walking distance to metro. Shared kitchen.',sqft:null,time:'24 days ago',zone:'other'},
-  {lat:28.76062,lng:77.19243,type:'pg',bhk:'1',rent:6500,fur:'semi',area:'Wazirabad',note:'No curfew. Working professionals welcome.',sqft:null,time:'44 days ago',zone:'other'},
-  {lat:28.76345,lng:77.19005,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Burari',note:'Food included. Wi-Fi, laundry. Students preferred.',sqft:null,time:'4 days ago',zone:'other'},
-  {lat:28.74044,lng:77.20614,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Bhalswa',note:'Strict no-drinking policy. Good for students.',sqft:null,time:'40 days ago',zone:'other'},
-  {lat:28.7364,lng:77.21956,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Sant Nagar',note:'Budget sharing. Basic amenities. Near bus stop.',sqft:null,time:'24 days ago',zone:'other'},
-  {lat:28.74591,lng:77.20078,type:'pg',bhk:'1',rent:9000,fur:'semi',area:'Bhalswa',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'18 days ago',zone:'other'},
-  {lat:28.76788,lng:77.20279,type:'pg',bhk:'1',rent:4000,fur:'furnished',area:'Jahangirpuri',note:'No curfew. Working professionals welcome.',sqft:null,time:'40 days ago',zone:'other'},
-  {lat:28.72926,lng:77.18338,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Burari',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'19 days ago',zone:'other'},
-  {lat:28.74668,lng:77.20568,type:'pg',bhk:'1',rent:4500,fur:'furnished',area:'Sant Nagar',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'28 days ago',zone:'other'},
-  {lat:28.75342,lng:77.19075,type:'pg',bhk:'1',rent:4500,fur:'furnished',area:'Burari',note:'Boys PG. Near metro. Shared kitchen available.',sqft:null,time:'5 days ago',zone:'other'},
-  {lat:28.75582,lng:77.20707,type:'pg',bhk:'1',rent:6500,fur:'furnished',area:'Burari',note:'Near coaching centre. Study-friendly.',sqft:null,time:'5 days ago',zone:'other'},
-  {lat:28.76349,lng:77.19357,type:'pg',bhk:'1',rent:5500,fur:'furnished',area:'Badli',note:'Meals optional. Clean and well-maintained.',sqft:null,time:'24 days ago',zone:'other'},
-  {lat:28.73017,lng:77.17614,type:'pg',bhk:'1',rent:5500,fur:'furnished',area:'Bhalswa',note:'No curfew. Working professionals welcome.',sqft:null,time:'27 days ago',zone:'other'},
-  {lat:28.73656,lng:77.17799,type:'pg',bhk:'1',rent:4000,fur:'unfurnished',area:'Jahangirpuri',note:'Vegetarian meals only. Homely atmosphere.',sqft:null,time:'40 days ago',zone:'other'},
-  {lat:28.74975,lng:77.197,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Burari',note:'No curfew. Working professionals welcome.',sqft:null,time:'25 days ago',zone:'other'},
-  {lat:28.73993,lng:77.19721,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Bhalswa',note:'Girls hostel style. CCTV, guards. Very safe.',sqft:null,time:'41 days ago',zone:'other'},
-  {lat:28.77845,lng:77.16817,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Badli',note:'Corner room. Good ventilation. Peaceful street.',sqft:null,time:'20 days ago',zone:'other'},
-  {lat:28.73066,lng:77.18389,type:'pg',bhk:'1',rent:6000,fur:'semi',area:'Jahangirpuri',note:'24hr water supply. Washing machine. CCTV.',sqft:null,time:'31 days ago',zone:'other'},
+  {lat:28.6921,lng:77.2104,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Hudson Lane',note:'Meals included, AC room. Boys only. Lane gets noisy at night.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6892,lng:77.2091,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Vijay Nagar',note:'Girls PG. Safe area, 24hr security. Curfew 10pm.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6858,lng:77.2122,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'GTB Nagar',note:'Near metro. Shared kitchen. Working professionals welcome.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6876,lng:77.2067,type:'pg',bhk:'1',rent:6500,fur:'semi',area:'Kamla Nagar',note:'Triple sharing. Super affordable. Near DU gate.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6905,lng:77.2148,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Chhatra Marg',note:'Walking distance to Arts Faculty. Quiet street.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6843,lng:77.205,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Kamla Nagar',note:'Double sharing. Clean washrooms. Near market.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6868,lng:77.2088,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Mall Road',note:'Private room. Attached bath. No brokerage.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6932,lng:77.208,type:'pg',bhk:'1',rent:8000,fur:'unfurnished',area:'Mukherjee Nagar',note:'Budget PG. Near coaching centres. Very basic.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6915,lng:77.2035,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Shakti Nagar',note:'Girls PG. Homely food. Curfew 10pm. Safe area.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.688,lng:77.211,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Vijay Nagar',note:'No curfew. Working professionals. Good ventilation.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.685,lng:77.216,type:'pg',bhk:'1',rent:7000,fur:'semi',area:'Outram Lines',note:'Veg meals included. Study-friendly. Near DU.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.694,lng:77.2062,type:'pg',bhk:'1',rent:8500,fur:'semi',area:'Model Town',note:'Near Aggarwal Sweets. 2km to yellow line metro.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.6421,lng:77.188,type:'pg',bhk:'1',rent:14000,fur:'furnished',area:'Old Rajinder Nagar',note:'Near UPSC coaching. Private room. Food optional.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.6513,lng:77.1907,type:'pg',bhk:'1',rent:16000,fur:'furnished',area:'Karol Bagh',note:'Premium PG. AC, laundry, meals. Working women only.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.649,lng:77.186,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'Patel Nagar',note:'Boys PG. Near metro. Basic amenities.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.644,lng:77.192,type:'pg',bhk:'1',rent:18000,fur:'furnished',area:'Rajinder Nagar',note:'Luxury PG. Gym, Wi-Fi, meals. No curfew.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.647,lng:77.184,type:'pg',bhk:'1',rent:9000,fur:'unfurnished',area:'Ramjas Road',note:'Budget sharing. Clean. Near IAS coaching.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.653,lng:77.195,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Karol Bagh',note:'Twin sharing. AC. Near metro station.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.656,lng:77.187,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Baljit Nagar',note:'Simple PG. Meals twice a day. Students only.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.642,lng:77.196,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Naraina',note:'Mixed PG. Rooftop. Power backup. Near market.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.648,lng:77.19,type:'pg',bhk:'1',rent:7500,fur:'furnished',area:'Saraswati Vihar',note:'Girls hostel. CCTV. Guards. Very safe locality.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.651,lng:77.183,type:'pg',bhk:'1',rent:9500,fur:'semi',area:'Moti Nagar',note:'Corner room. Good ventilation. Quiet street.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.5655,lng:77.1921,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Satya Niketan',note:'Girls PG. 5 min walk to LSR. Very safe.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.5401,lng:77.1659,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Munirka',note:'Near JNU gate. Vegetarian meals. Students only.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.5459,lng:77.1926,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'IIT Gate',note:'Near IIT Delhi. Professionals preferred.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.5431,lng:77.2062,type:'pg',bhk:'1',rent:15000,fur:'furnished',area:'Hauz Khas',note:'Premium locality. AC. Wi-Fi. Food included.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.5628,lng:77.1942,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Satya Niketan',note:'Boys PG. Gym access. Near South Campus.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.538,lng:77.17,type:'pg',bhk:'1',rent:7500,fur:'unfurnished',area:'Munirka',note:'Budget option. Sharing. Near DTC bus stop.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.549,lng:77.188,type:'pg',bhk:'1',rent:18000,fur:'furnished',area:'Vasant Vihar',note:'Luxury PG. Gated colony. 24hr security.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.56,lng:77.196,type:'pg',bhk:'1',rent:12000,fur:'semi',area:'RK Puram',note:'Clean. Well maintained. Near sector market.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.552,lng:77.182,type:'pg',bhk:'1',rent:14000,fur:'furnished',area:'Safdarjung',note:'Private room. Attached bath. Near AIIMS.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.556,lng:77.2,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Gautam Nagar',note:'Girls only. Near AIIMS metro. Homely food.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.547,lng:77.176,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Green Park',note:'Modern building. Lift. Washing machine.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.534,lng:77.172,type:'pg',bhk:'1',rent:10000,fur:'semi',area:'Vasant Kunj',note:'Budget PG. Near bus stand. Basic amenities.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.5694,lng:77.243,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Lajpat Nagar',note:'Near market. Great connectivity. Lively area.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.5483,lng:77.259,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Kalkaji',note:'Girls PG. Near metro. Very clean.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.538,lng:77.25,type:'pg',bhk:'1',rent:7000,fur:'unfurnished',area:'Govind Puri',note:'Budget PG. Near Govind Puri metro. Basic.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.529,lng:77.24,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Sarita Vihar',note:'Working women PG. Safe. Food optional.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.55,lng:77.214,type:'pg',bhk:'1',rent:14000,fur:'furnished',area:'Malviya Nagar',note:'Premium. AC. Meals included. No curfew.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.5244,lng:77.2066,type:'pg',bhk:'1',rent:16000,fur:'furnished',area:'Saket',note:'Near Select City Walk. Fully furnished.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.56,lng:77.228,type:'pg',bhk:'1',rent:18000,fur:'furnished',area:'South Extension',note:'Upscale PG. Private room. Near market.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.545,lng:77.235,type:'pg',bhk:'1',rent:15000,fur:'furnished',area:'Greater Kailash',note:'GK PG. Spacious. Near metro. Good food.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.532,lng:77.258,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Okhla',note:'Near industrial area. Working men. Basic.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.518,lng:77.275,type:'pg',bhk:'1',rent:5500,fur:'unfurnished',area:'Badarpur',note:'Very affordable. Basic amenities. Sharing.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.6312,lng:77.2763,type:'pg',bhk:'1',rent:7000,fur:'unfurnished',area:'Laxmi Nagar',note:'Very affordable. Metro right outside. Bit congested.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.6239,lng:77.2731,type:'pg',bhk:'1',rent:5000,fur:'unfurnished',area:'Shakarpur',note:'Cheapest in east Delhi. Sharing. No frills.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.645,lng:77.289,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Mayur Vihar',note:'Near metro. Clean. Working professionals.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.638,lng:77.296,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Patparganj',note:'Girls PG. Near Anand Vihar. Basic furnishing.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.652,lng:77.302,type:'pg',bhk:'1',rent:6500,fur:'unfurnished',area:'Vivek Vihar',note:'Budget option. Shared rooms. Near market.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.662,lng:77.315,type:'pg',bhk:'1',rent:5500,fur:'unfurnished',area:'Yamuna Vihar',note:'Very cheap. Basic. Near Shahdara metro.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.648,lng:77.282,type:'pg',bhk:'1',rent:7000,fur:'semi',area:'Nirman Vihar',note:'Near Nirman Vihar metro. Clean rooms.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.635,lng:77.31,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Preet Vihar',note:'Working professionals. Near IT offices.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.628,lng:77.285,type:'pg',bhk:'1',rent:6000,fur:'unfurnished',area:'Krishna Nagar',note:'Local PG. Sharing. Near market. Affordable.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.655,lng:77.32,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Anand Vihar',note:'Near ISBT. AC room. Good for travellers.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.627,lng:77.0827,type:'pg',bhk:'1',rent:9000,fur:'semi',area:'Janakpuri',note:'Near IPU campus. Good transport.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.616,lng:77.09,type:'pg',bhk:'1',rent:6500,fur:'unfurnished',area:'Uttam Nagar',note:'Budget PG. Near Uttam Nagar metro.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.638,lng:77.12,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Tilak Nagar',note:'Clean. Near metro. Working women welcome.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.6481,lng:77.124,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Rajouri Garden',note:'Near mall. Good connectivity. AC rooms.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.632,lng:77.105,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Subhash Nagar',note:'Boys PG. Near metro. Basic amenities.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.656,lng:77.135,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Punjabi Bagh',note:'Good locality. Meals included. Safe area.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.62,lng:77.07,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Dwarka Mor',note:'Near metro. Girls PG. 24hr security.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.642,lng:77.145,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Ramesh Nagar',note:'Near metro. Mixed PG. Good food.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.61,lng:77.06,type:'pg',bhk:'1',rent:6000,fur:'unfurnished',area:'Bindapur',note:'Very affordable. Near Dwarka. Basic.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.658,lng:77.155,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Tagore Garden',note:'Quiet area. Clean. Near metro.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.7341,lng:77.1008,type:'pg',bhk:'1',rent:6000,fur:'furnished',area:'Rohini East',note:'Budget PG near Rohini metro. Shared kitchen.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.7495,lng:77.0766,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Rohini Sec 3',note:'Near IPU campus. Family-friendly area.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.72,lng:77.13,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Pitampura',note:'Co-living. Modern amenities. Near metro.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.705,lng:77.12,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Kohat Enclave',note:'Private room. Food included. 500 sq ft.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.715,lng:77.145,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Prashant Vihar',note:'Near metro. AC. Washing machine. Clean.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.728,lng:77.16,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Shalimar Bagh',note:'Girls PG. Near VIPS college. Very safe.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.74,lng:77.09,type:'pg',bhk:'1',rent:7000,fur:'semi',area:'Rohini Sec 7',note:'Affordable. Near park. Quiet locality.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.76,lng:77.11,type:'pg',bhk:'1',rent:4500,fur:'unfurnished',area:'Bawana Road',note:'Cheapest in north. Very basic. Sharing only.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.71,lng:77.16,type:'pg',bhk:'1',rent:10000,fur:'furnished',area:'Paschim Vihar',note:'Well connected. Near metro. AC rooms.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.73,lng:77.17,type:'pg',bhk:'1',rent:8500,fur:'semi',area:'Ashok Vihar',note:'Near metro. Mixed PG. Good ventilation.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.5921,lng:77.046,type:'pg',bhk:'1',rent:7000,fur:'furnished',area:'Dwarka Sec 6',note:'Near IPU Dwarka. Girls hostel style. Curfew 9pm.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.6017,lng:77.0749,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Dwarka Sec 8',note:'Clean. Near metro. Boys only.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.58,lng:77.065,type:'pg',bhk:'1',rent:9500,fur:'furnished',area:'Dwarka Sec 12',note:'Premium PG. AC. Gym. Near sector market.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.6079,lng:77.1016,type:'pg',bhk:'1',rent:7500,fur:'semi',area:'Dwarka Sec 9',note:'Budget option. Sharing. Near DTC stop.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.57,lng:77.055,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Dwarka Sec 21',note:'Near airport metro. Working professionals.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.615,lng:77.068,type:'pg',bhk:'1',rent:6500,fur:'unfurnished',area:'Nawada',note:'Affordable. Near metro. Basic amenities.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.585,lng:77.038,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Dwarka Sec 14',note:'Quiet locality. Gated. Power backup.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.605,lng:77.05,type:'pg',bhk:'1',rent:7000,fur:'semi',area:'Uttam Nagar West',note:'Budget PG. Near market. Sharing rooms.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.596,lng:77.082,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Dwarka Sec 10',note:'Near metro. Girls PG. Safe area.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.575,lng:77.07,type:'pg',bhk:'1',rent:13000,fur:'furnished',area:'Dwarka Mor',note:'Premium. Gym, Wi-Fi, meals. Near metro.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.72,lng:77.2,type:'pg',bhk:'1',rent:4500,fur:'unfurnished',area:'Burari',note:'Very budget. Inspire N PG. ₹3500 sharing.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.6924,lng:77.2282,type:'pg',bhk:'1',rent:11000,fur:'furnished',area:'Civil Lines',note:'Near Delhi University. Clean. Safe.',sqft:null,time:'Recently',zone:'north'},
+  {lat:28.68,lng:77.22,type:'pg',bhk:'1',rent:8000,fur:'semi',area:'Shakti Nagar',note:'Near coaching. Study environment. Wi-Fi.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.7,lng:77.205,type:'pg',bhk:'1',rent:5000,fur:'unfurnished',area:'Sant Nagar',note:'Budget. Near Burari. Basic facilities.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.715,lng:77.23,type:'pg',bhk:'1',rent:4000,fur:'unfurnished',area:'Wazirabad',note:'Cheapest in north. Very basic. Sharing.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.676,lng:77.19,type:'pg',bhk:'1',rent:7000,fur:'semi',area:'Azadpur',note:'Near metro interchange. Mixed PG.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.6664,lng:77.2282,type:'pg',bhk:'1',rent:8500,fur:'semi',area:'Kashmere Gate',note:'Near metro interchange. Mixed PG. No curfew.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.6315,lng:77.2167,type:'pg',bhk:'1',rent:20000,fur:'furnished',area:'Connaught Place',note:'Central Delhi. Premium. Near all metro lines.',sqft:null,time:'Recently',zone:'coaching'},
+  {lat:28.5809,lng:77.1803,type:'pg',bhk:'1',rent:14000,fur:'furnished',area:'Moti Bagh',note:'Gated society. 24hr security. Good food.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.5944,lng:77.1657,type:'pg',bhk:'1',rent:12000,fur:'furnished',area:'Dhaula Kuan',note:'Near IIT. Professionals preferred. AC rooms.',sqft:null,time:'Recently',zone:'south'},
+  {lat:28.68,lng:77.15,type:'pg',bhk:'1',rent:7000,fur:'semi',area:'Peera Garhi',note:'Budget PG. Near metro. Sharing available.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.67,lng:77.3,type:'pg',bhk:'1',rent:5000,fur:'unfurnished',area:'Loni Road',note:'Very affordable. Basic. Near GT Road.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.51,lng:77.22,type:'pg',bhk:'1',rent:6000,fur:'semi',area:'Faridabad Border',note:'Budget. Near Badarpur metro. Basic amenities.',sqft:null,time:'Recently',zone:'budget'},
+  {lat:28.75,lng:77.18,type:'pg',bhk:'1',rent:8000,fur:'furnished',area:'Rohini Sec 11',note:'Good locality. Near metro. Clean rooms.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.62,lng:77.04,type:'pg',bhk:'1',rent:8500,fur:'furnished',area:'Dwarka Sec 22',note:'Near airport. Working professionals only.',sqft:null,time:'Recently',zone:'other'},
+  {lat:28.695,lng:77.165,type:'pg',bhk:'1',rent:9000,fur:'furnished',area:'Shalimar Bagh',note:'Girls PG. Near metro. Power backup. Wi-Fi.',sqft:null,time:'Recently',zone:'other'},
 ];
 
 const ZONES=[
@@ -1399,8 +1121,11 @@ function draw(){
   const useCluster=typeof L.markerClusterGroup!=='undefined';
   if(!window._cluster&&useCluster){window._cluster=L.markerClusterGroup({maxClusterRadius:50,showCoverageOnHover:false,spiderfyOnMaxZoom:true,iconCreateFunction:c=>L.divIcon({html:`<div class="km-cluster">${c.getChildCount()}</div>`,className:'',iconSize:[38,38]})});map.addLayer(window._cluster);}
   if(useCluster&&window._cluster)window._cluster.clearLayers();
+  // Tag each pin with stable index for popup reference
+  all.forEach((p,i) => p._idx = i);
+
   vis.forEach(p=>{
-    const pidx=all.indexOf(p);
+    const pidx = p._idx;
     const fl={furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
     const m=L.marker([p.lat,p.lng],{icon:mkIcon(p.type)});
     m.bindTooltip(`<b>₹${Number(p.rent).toLocaleString('en-IN')}</b>/mo · ${p.area}`,{permanent:false,direction:'top'});
@@ -1425,7 +1150,7 @@ function draw(){
 function openPinPanel(idx){
   const basePins=(USE_SUPABASE&&window._dbPins&&window._dbPins.length)?window._dbPins:seed;
   const allStaticPGs=typeof PG_PINS!=='undefined'?PG_PINS:[];
-  const all=[...basePins,...userPins];
+  const all=[...basePins,...allStaticPGs,...userPins];
   const p=all[idx];if(!p)return;
   activePinData={...p,idx};
   const tl={flat:'FLAT',pg:'PG / PAYING GUEST',flatmate:'FLATMATE NEEDED'}[p.type];
@@ -1458,6 +1183,8 @@ function openPinPanel(idx){
   }
   document.getElementById('int-rent').textContent=`₹${Number(p.rent).toLocaleString('en-IN')}/month`;
   document.getElementById('int-det').textContent=`${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}`;
+  const icoEl=document.getElementById('int-type-ico');
+  if(icoEl) icoEl.textContent={flat:'🏠',pg:'🛏',flatmate:'🤝'}[p.type]||'📍';
   showAIMatches(p);
   document.getElementById('pin-panel').classList.add('open');
 }
@@ -1492,15 +1219,38 @@ function reportPin(){showToast('🚩 Reported — our team will review.');}
 // ════════════════════════════════════════
 function openInterest(){document.getElementById('interest-modal').classList.add('open');}
 async function submitInterest(){
+  const name=document.getElementById('int-name').value.trim();
   const email=document.getElementById('int-email').value.trim();
+  const phone=document.getElementById('int-phone').value.trim();
+  if(!name){showToast('⚠️ Please enter your name.');return;}
   if(!email||!email.includes('@')){showToast('⚠️ Please enter a valid email.');return;}
+  if(!phone){showToast('⚠️ Please enter your WhatsApp number.');return;}
   if(!activePinData){showToast('⚠️ No listing selected.');return;}
-  showLoading('Sending your interest…');
-  const ok=await saveInterest({pin_id:activePinData.id||null,name:document.getElementById('int-name').value.trim()||null,email,phone:document.getElementById('int-phone').value.trim()||null,message:document.getElementById('int-msg').value.trim()||null});
+  showLoading('Sending your interest to owner…');
+  const ok=await saveInterest({
+    pin_id:activePinData.id||null,
+    name,email,
+    phone,
+    message:document.getElementById('int-msg').value.trim()||null
+  });
   hideLoading();
   document.getElementById('interest-modal').classList.remove('open');
   ['int-name','int-email','int-phone','int-msg'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  showToast(ok?'✅ Interest sent! Owner will be notified.':'⚠️ Could not save interest.',4000);
+  if(ok){
+    showToast('✅ Interest sent! Owner will contact you soon.',4000);
+    // If owner has WhatsApp, offer direct connect too
+    if(activePinData.owner_whatsapp){
+      const waMsg=encodeURIComponent('Hi! I saw your listing on KirayaMap and sent my interest. Can we connect?');
+      const waNum=activePinData.owner_whatsapp.replace(/[^0-9]/g,'');
+      setTimeout(()=>{
+        if(confirm('Interest sent! \n\nWant to also WhatsApp the owner directly?')){
+          window.open('https://wa.me/'+waNum+'?text='+waMsg,'_blank');
+        }
+      },500);
+    }
+  } else {
+    showToast('⚠️ Could not send. Please try again.',4000);
+  }
 }
 
 // ════════════════════════════════════════
