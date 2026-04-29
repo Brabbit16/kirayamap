@@ -380,6 +380,111 @@
       #mob-filter-btn{display:flex;}
     }
     @media(max-width:480px){.logo-ai,.top-right .tbtn:not(.acc){display:none;}}
+
+    /* ══ VERIFIED BADGE ══ */
+    .verified-badge{display:inline-flex;align-items:center;gap:4px;background:#e6f2ec;color:#2d6a4f;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:600;border:1px solid #b7ddc8;}
+    .pp-verified{padding:8px 20px 0;display:flex;align-items:center;gap:8px;}
+
+    /* ══ AVAILABLE / TAKEN ══ */
+    .status-badge{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 11px;font-size:11px;font-weight:600;}
+    .status-available{background:#e6f2ec;color:#2d6a4f;border:1px solid #b7ddc8;}
+    .status-taken{background:#fdecea;color:#c0392b;border:1px solid #f5c6c2;text-decoration:line-through;}
+    .btn-mark-taken{background:none;border:1px solid #32334a;border-radius:8px;padding:5px 12px;font-size:11px;color:#9aa0a6;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+    .btn-mark-taken:hover{border-color:#e74c3c;color:#e74c3c;}
+    .btn-mark-avail{background:none;border:1px solid #32334a;border-radius:8px;padding:5px 12px;font-size:11px;color:#9aa0a6;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+    .btn-mark-avail:hover{border-color:#2d6a4f;color:#2d6a4f;}
+
+    /* ══ RENT AVG BADGE ══ */
+    .rent-avg-badge{display:inline-flex;align-items:center;gap:4px;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:600;margin-left:8px;}
+    .rent-below{background:#e6f2ec;color:#2d6a4f;}
+    .rent-above{background:#fdecea;color:#c0392b;}
+    .rent-avg{background:#fff8e1;color:#b8902a;}
+
+    /* ══ NEAR ME BUTTON ══ */
+    #near-me-btn{position:fixed;bottom:80px;left:20px;z-index:600;background:var(--white);border:1px solid var(--border);border-radius:24px;padding:9px 16px;font-size:12px;font-weight:500;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:var(--shl);display:flex;align-items:center;gap:6px;transition:all .2s;}
+    #near-me-btn:hover{border-color:var(--accent);color:var(--accent);}
+    #near-me-btn.loading{opacity:.6;pointer-events:none;}
+    @media(max-width:768px){#near-me-btn{bottom:70px;left:14px;}}
+
+    /* ══ SAVED / BOOKMARKS ══ */
+    .pp-save-btn{background:none;border:1px solid #32334a;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .2s;}
+    .pp-save-btn.saved{background:#fff8e1;border-color:#b8902a;}
+    #saved-tab{position:fixed;bottom:20px;right:320px;z-index:499;background:var(--white);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:500;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:var(--sh);display:flex;align-items:center;gap:6px;}
+    #saved-tab:hover{border-color:var(--accent);color:var(--accent);}
+    @media(max-width:768px){#saved-tab{right:14px;bottom:70px;}}
+
+    /* ══ SAVED DRAWER ══ */
+    #saved-drawer{display:none;position:fixed;top:54px;right:300px;width:320px;bottom:0;z-index:799;background:var(--white);border-left:1px solid var(--border);overflow-y:auto;flex-direction:column;padding:16px;}
+    #saved-drawer.open{display:flex;}
+    .saved-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:11px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+    .saved-item:hover{border-color:var(--accent);}
+    .saved-ico{font-size:20px;flex-shrink:0;}
+    .saved-rent{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;}
+    .saved-det{font-size:11px;color:var(--ink3);margin-top:2px;}
+    .saved-remove{margin-left:auto;background:none;border:none;font-size:14px;cursor:pointer;color:var(--ink3);padding:4px;}
+    @media(max-width:768px){#saved-drawer{right:0;width:100%;}}
+
+    /* ══ SHARE PIN TOAST ══ */
+    #share-modal{display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;}
+    #share-modal.open{display:flex;}
+    .share-card{background:#fff;border-radius:20px;padding:24px;width:100%;max-width:360px;text-align:center;}
+    .share-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:4px;}
+    .share-sub{font-size:13px;color:var(--ink2);margin-bottom:16px;}
+    .share-link-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--ink2);margin-bottom:14px;word-break:break-all;text-align:left;}
+    .share-btns{display:flex;gap:8px;}
+    .share-btn{flex:1;padding:11px;border-radius:10px;border:none;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .share-copy{background:var(--ink);color:#fff;}
+    .share-wa{background:#25d366;color:#fff;}
+
+    /* ══ AI ESTIMATOR ══ */
+    #estimator-panel{display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:900;background:#1e1f2e;border:1px solid #2a2b3d;border-radius:16px;padding:16px 20px;min-width:280px;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+    #estimator-panel.show{display:block;}
+    .est-title{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px;}
+    .est-range{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff;}
+    .est-sub{font-size:12px;color:#9aa0a6;margin-top:3px;}
+    .est-close{position:absolute;top:10px;right:12px;background:none;border:none;color:#555;cursor:pointer;font-size:14px;}
+
+    /* ══ REPORT MODAL ══ */
+    #report-modal{display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.6);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;}
+    #report-modal.open{display:flex;}
+    .report-card{background:#fff;border-radius:20px;padding:24px;width:100%;max-width:360px;position:relative;}
+    .report-reason{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;margin-bottom:10px;cursor:pointer;}
+    .report-reason.on{border-color:var(--accent);background:var(--acl);}
+    .btn-report-submit{width:100%;padding:12px;border-radius:10px;border:none;background:#e74c3c;color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+    /* ══ METRO SEARCH FILTER ══ */
+    .metro-station-select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;margin-top:4px;}
+    .metro-station-select:focus{border-color:var(--accent);}
+
+    /* ══ CELEBRATION ══ */
+    #confetti-wrap{position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden;display:none;}
+    .confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFall 2.5s ease-in forwards;}
+    @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+    /* ══ AREA REPORT CARD ══ */
+    .area-score-wrap{padding:14px 20px 0;}
+    .area-score-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:10px;}
+    .area-score-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+    .area-score-label{font-size:12px;color:#9aa0a6;width:100px;flex-shrink:0;}
+    .area-score-bar{flex:1;height:5px;background:#32334a;border-radius:4px;overflow:hidden;}
+    .area-score-fill{height:100%;border-radius:4px;background:#6c63ff;transition:width .6s ease;}
+    .area-score-val{font-size:11px;color:#9aa0a6;width:20px;text-align:right;flex-shrink:0;}
+    .area-rate-btn{margin-top:8px;background:none;border:1px solid #32334a;border-radius:8px;padding:6px 14px;font-size:11px;color:#9aa0a6;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;text-align:center;}
+    .area-rate-btn:hover{border-color:#6c63ff;color:#a09cf7;}
+
+
+    /* ══ FLAG BADGE ══ */
+    .flag-badge{display:inline-flex;align-items:center;gap:4px;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:600;color:#856404;}
+    .flag-badge.danger{background:#fdecea;border-color:#e74c3c;color:#c0392b;}
+
+    /* ══ BROKER DETECT WARNING ══ */
+    .broker-warning{margin:10px 20px 0;background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.3);border-radius:10px;padding:10px 13px;font-size:12px;color:#e74c3c;line-height:1.5;display:none;}
+
+    /* ══ TREND BADGE ══ */
+    .trend-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;margin-left:6px;}
+    .trend-up{background:#fdecea;color:#c0392b;}
+    .trend-down{background:#e6f2ec;color:#2d6a4f;}
+
   </style>
 </head>
 <body>
@@ -413,6 +518,12 @@
     <div class="sp-hero">Find your place.<br><span>See real Delhi rents on a live map</span></div>
     <div class="sp-desc">Real rents pinned anonymously across Delhi — DU, coaching hubs &amp; budget zones.</div>
     <div class="sp-trust">No fake listings • Real user-submitted rents • <span id="sp-pill-count">—</span> pins live</div>
+    <div style="display:flex;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+      <span style="font-size:11px;background:rgba(168,197,181,.1);border:1px solid rgba(168,197,181,.2);border-radius:20px;padding:4px 11px;color:#a8c5b5;">🏠 Flats</span>
+      <span style="font-size:11px;background:rgba(168,197,181,.1);border:1px solid rgba(168,197,181,.2);border-radius:20px;padding:4px 11px;color:#a8c5b5;">🛏 PGs</span>
+      <span style="font-size:11px;background:rgba(168,197,181,.1);border:1px solid rgba(168,197,181,.2);border-radius:20px;padding:4px 11px;color:#a8c5b5;">🤝 Flatmates</span>
+      <span style="font-size:11px;background:rgba(168,197,181,.1);border:1px solid rgba(168,197,181,.2);border-radius:20px;padding:4px 11px;color:#a8c5b5;">🌡️ Heat Map</span>
+    </div>
     <div class="sp-slbl">Share with your group</div>
     <div class="sp-sbox">
       <div class="sp-stxt" id="smsg">Finally a real rent map for all Delhi People. No BS. Anonymous pins, AI matching. 👉 kirayamap.in</div>
@@ -582,9 +693,42 @@
     </div>
     <div class="fd" id="fd-map-overlay">
       <button class="fd-trigger" onclick="toggleFd('fd-map-overlay')">Map overlays<div class="fd-tr"><span class="fd-val" id="fv-metro">Off</span><span class="fd-arrow">▾</span></div></button>
-      <div class="fd-body"><div class="chips">
-        <button class="chip" id="metro-toggle" onclick="toggleMetro(this)">🚇 Metro lines</button>
-      </div></div>
+      <div class="fd-body">
+        <div class="chips" style="margin-bottom:10px;">
+          <button class="chip" id="metro-toggle" onclick="toggleMetro(this)">🚇 Metro lines</button>
+          <button class="chip" id="heat-toggle-btn" onclick="toggleHeatmap()">🌡️ Heat Map</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:5px;font-weight:500;">Near metro station</div>
+        <select class="metro-station-select" id="metro-station-filter" onchange="filterByMetro(this.value)">
+          <option value="">All areas</option>
+          <optgroup label="Yellow Line">
+            <option value="28.6938,77.2107">Vishwavidyalaya</option>
+            <option value="28.6895,77.2101">GTB Nagar</option>
+            <option value="28.6315,77.2167">Rajiv Chowk</option>
+            <option value="28.5672,77.2100">AIIMS</option>
+            <option value="28.5431,77.2062">Hauz Khas</option>
+            <option value="28.5244,77.1855">Qutab Minar</option>
+          </optgroup>
+          <optgroup label="Blue Line">
+            <option value="28.6322,77.2777">Laxmi Nagar</option>
+            <option value="28.6253,77.2167">Rajouri Garden</option>
+            <option value="28.6079,77.1016">Dwarka</option>
+            <option value="28.5921,77.0460">Dwarka Sec-21</option>
+          </optgroup>
+          <optgroup label="Pink Line">
+            <option value="28.6864,77.2025">Netaji Subhash Place</option>
+            <option value="28.6788,77.2086">Shakurpur</option>
+          </optgroup>
+          <optgroup label="Red Line">
+            <option value="28.7192,77.1118">Rohini West</option>
+            <option value="28.7062,77.1197">Pitampura</option>
+          </optgroup>
+          <optgroup label="Violet Line">
+            <option value="28.5694,77.2580">Lajpat Nagar</option>
+            <option value="28.6290,77.2408">ITO</option>
+          </optgroup>
+        </select>
+      </div>
     </div>
     <div class="rp-foot">
       <button class="btn-reset" onclick="resetAll()">Reset</button>
@@ -596,13 +740,28 @@
     <div style="padding:16px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;">
       <div><div class="pp-type" id="pp-type">FLAT</div><div class="pp-rent" id="pp-rent">₹—<small>/month</small></div></div>
       <div class="pp-actions">
-        <button class="pp-action" onclick="sharePin()" title="Share">⬆</button>
-        <button class="pp-action" onclick="reportPin()" title="Report">🚩</button>
+        <button class="pp-save-btn" id="pp-save-btn" onclick="toggleSavePin()" title="Save">☆</button>
+        <button class="pp-action" onclick="openShareModal()" title="Share">⬆</button>
+        <button class="pp-action" onclick="openReportModal()" title="Report">🚩</button>
         <button class="pp-action" onclick="closePinPanel()" title="Close">✕</button>
       </div>
     </div>
     <div class="pp-notice" id="pp-notice" style="display:none"></div>
     <div class="pp-tags" id="pp-tags"></div>
+    <!-- Status badge -->
+    <div style="padding:10px 20px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span id="pp-status-badge" class="status-badge status-available">🟢 Available</span>
+      <span id="pp-avg-badge" class="rent-avg-badge" style="display:none;"></span>
+      <button id="pp-status-toggle" class="btn-mark-taken" onclick="togglePinStatus()">Mark as Taken</button>
+    </div>
+    <!-- Flag badge (shown when reports exist) -->
+    <div id="pp-flag-badge" style="display:none;padding:6px 20px 0;"></div>
+    <!-- Broker warning -->
+    <div class="broker-warning" id="pp-broker-warn">⚠️ This listing shows patterns common to broker posts. Verify carefully before paying any advance.</div>
+    <!-- Verified badge -->
+    <div class="pp-verified" id="pp-verified-wrap" style="display:none;">
+      <span class="verified-badge">✓ Verified Owner</span>
+    </div>
     <div class="pp-section" id="pp-quote-sec" style="display:none">
       <div class="pp-sec-lbl">Tenant Said</div>
       <div class="pp-quote" id="pp-quote"></div>
@@ -626,6 +785,16 @@
       <input class="ci" id="ci" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')postComment()"/>
       <button class="ci-post" onclick="postComment()">Post</button>
     </div>
+    <!-- Area Report Card -->
+    <div class="area-score-wrap" id="pp-area-scores">
+      <div class="area-score-title">Area Report Card</div>
+      <div class="area-score-row"><div class="area-score-label">Safety</div><div class="area-score-bar"><div class="area-score-fill" id="score-safety"></div></div><div class="area-score-val" id="sval-safety">—</div></div>
+      <div class="area-score-row"><div class="area-score-label">Connectivity</div><div class="area-score-bar"><div class="area-score-fill" id="score-connect"></div></div><div class="area-score-val" id="sval-connect">—</div></div>
+      <div class="area-score-row"><div class="area-score-label">Water supply</div><div class="area-score-bar"><div class="area-score-fill" id="score-water"></div></div><div class="area-score-val" id="sval-water">—</div></div>
+      <div class="area-score-row"><div class="area-score-label">Noise level</div><div class="area-score-bar"><div class="area-score-fill" id="score-noise" style="background:#e74c3c;"></div></div><div class="area-score-val" id="sval-noise">—</div></div>
+      <button class="area-rate-btn" onclick="rateArea()">+ Rate this area</button>
+    </div>
+    <div class="pp-divider" style="margin:12px 20px 0;"></div>
     <div class="pp-cta">
       <div class="pp-cta-title">Interested in this place?</div>
       <div class="pp-cta-sub">Connect with the owner or get AI-matched with similar listings.</div>
@@ -643,6 +812,7 @@
     <div class="si"><div class="snum" id="s-avg">₹—</div><div class="slbl">Avg rent</div></div>
     <div class="si"><div class="snum" id="s-low">₹—</div><div class="slbl">Lowest</div></div>
     <div class="si"><div class="snum" id="s-mine" style="color:#6c63ff">0</div><div class="slbl">Your pins</div></div>
+    <div class="si"><div class="snum" id="s-saved" style="color:#b8902a">0</div><div class="slbl">Saved</div></div>
   </div>
   <div id="banner">📍 Tap the map where your flat / PG is</div>
   <div id="hint-bar" style="display:none;position:fixed;bottom:54px;left:calc(50% - 150px);transform:translateX(-50%);z-index:490;background:rgba(26,26,26,.82);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;backdrop-filter:blur(6px);pointer-events:none;white-space:nowrap;animation:fadeUp .4s ease;">🗺 Search an area or tap a pin to explore</div>
@@ -678,6 +848,20 @@
   </div>
 
   <div id="km-loading"><div class="km-spinner"></div><div id="km-loading-text">Loading…</div></div>
+
+  <!-- NEAR ME -->
+  <button id="near-me-btn" onclick="nearMe()">📍 Near Me</button>
+
+  <button id="saved-tab" onclick="toggleSavedDrawer()">🔖 Saved <span id="saved-count" style="background:var(--acl);color:var(--accent);border-radius:10px;padding:1px 7px;font-size:11px;">0</span></button>
+
+  <!-- SAVED DRAWER -->
+  <div id="saved-drawer">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;">🔖 Saved Listings</div>
+      <button onclick="toggleSavedDrawer()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#999;">✕</button>
+    </div>
+    <div id="saved-list"><div style="font-size:13px;color:var(--ink3);text-align:center;padding:30px 0;">No saved listings yet.<br>Tap ☆ on any pin to save it.</div></div>
+  </div>
   <button id="mob-filter-btn">⚙</button>
   <div id="mob-overlay"></div>
   <div id="mob-sheet">
@@ -739,6 +923,40 @@
     </div>
   </div>
 
+  <div id="confetti-wrap"></div>
+  <div id="estimator-panel"><button class="est-close" onclick="closeEstimator()">✕</button><div class="est-title">AI Rent Estimate</div><div class="est-range" id="est-range">₹—</div><div class="est-sub" id="est-sub">Based on nearby listings</div></div>
+
+  <!-- SHARE PIN MODAL -->
+  <div id="share-modal">
+    <div class="share-card">
+      <div class="share-title">Share this listing</div>
+      <div class="share-sub" id="share-sub">₹— · —</div>
+      <div class="share-link-box" id="share-link-box">Loading…</div>
+      <div class="share-btns">
+        <button class="share-btn share-copy" onclick="copyShareLink()">⧉ Copy Link</button>
+        <button class="share-btn share-wa" onclick="waShareLink()">💬 WhatsApp</button>
+      </div>
+      <button onclick="document.getElementById('share-modal').classList.remove('open')" style="width:100%;margin-top:10px;padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Close</button>
+    </div>
+  </div>
+
+  <!-- REPORT MODAL -->
+  <div id="report-modal">
+    <div class="report-card">
+      <button onclick="document.getElementById('report-modal').classList.remove('open')" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:#999;">✕</button>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:4px;">Report Listing</div>
+      <div style="font-size:13px;color:var(--ink2);margin-bottom:14px;">Why are you reporting this?</div>
+      <div class="report-reason" onclick="selectReport(this,'fake')">🚫 Fake or misleading listing</div>
+      <div class="report-reason" onclick="selectReport(this,'broker')">💼 Broker posing as owner</div>
+      <div class="report-reason" onclick="selectReport(this,'wrong_rent')">💰 Wrong rent information</div>
+      <div class="report-reason" onclick="selectReport(this,'spam')">📢 Spam or duplicate</div>
+      <div class="report-reason" onclick="selectReport(this,'unavailable')">🔒 Already rented / unavailable</div>
+      <div style="margin-top:12px;margin-bottom:12px;">
+        <textarea id="report-detail" placeholder="Any additional details? (optional)" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;resize:none;height:70px;outline:none;"></textarea>
+      </div>
+      <button class="btn-report-submit" onclick="submitReport()">Submit Report</button>
+    </div>
+  </div>
   <div id="toast">✅ Done!</div>
 </div>
 
@@ -1079,6 +1297,8 @@ function enterApp(){
     document.addEventListener('click',()=>{localStorage.setItem('km_hinted','1');const h=document.getElementById('hint-bar');if(h){h.style.opacity='0';h.style.transition='opacity .3s';setTimeout(()=>h.style.display='none',300);}},{once:true});
   }
   syncMobileFilters();
+  checkDeepLink();
+  updateSavedCount();
 }
 
 // ════════════════════════════════════════
@@ -1097,7 +1317,23 @@ function initMetroLayer(){metroLayer=L.layerGroup(METRO_LINES.map(l=>L.polyline(
 function setMetroEnabled(e){metroEnabled=e;if(!metroLayer)initMetroLayer();if(e)metroLayer.addTo(map);else map.removeLayer(metroLayer);document.getElementById('metro-toggle')?.classList.toggle('on',e);document.getElementById('mob-metro-toggle')?.classList.toggle('on',e);const fv=document.getElementById('fv-metro');if(fv)fv.textContent=e?'On':'Off';}
 function toggleMetro(el){setMetroEnabled(!metroEnabled);}
 
-function mkIcon(type){
+
+function mkIconFull(type, taken, flagCount){
+  if(taken){
+    return L.divIcon({className:'',html:`<div style="width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#aaa;border:2px solid rgba(255,255,255,.5);box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;opacity:.45"><span style="transform:rotate(45deg);font-size:13px">🔒</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-36]});
+  }
+  if(flagCount>=3){
+    // Flagged — show warning orange
+    return L.divIcon({className:'',html:`<div style="width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#e67e22;border:2px solid rgba(255,255,255,.75);box-shadow:0 2px 8px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:13px">🚩</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-36]});
+  }
+  const c={flat:{bg:'#c8552a',e:'🏠'},pg:{bg:'#2d6a4f',e:'🛏'},flatmate:{bg:'#b8902a',e:'🤝'}}[type]||{bg:'#1a1a1a',e:'📍'};
+  return L.divIcon({className:'',html:`<div style="width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${c.bg};border:2px solid rgba(255,255,255,.75);box-shadow:0 2px 8px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:13px">${c.e}</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-36]});
+}
+
+function mkIcon(type,taken){
+  if(taken){
+    return L.divIcon({className:'',html:`<div style="width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#aaa;border:2px solid rgba(255,255,255,.5);box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;opacity:.5"><span style="transform:rotate(45deg);font-size:13px">🔒</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-36]});
+  }
   const c={flat:{bg:'#c8552a',e:'🏠'},pg:{bg:'#2d6a4f',e:'🛏'},flatmate:{bg:'#b8902a',e:'🤝'}}[type]||{bg:'#1a1a1a',e:'📍'};
   return L.divIcon({className:'',html:`<div style="width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${c.bg};border:2px solid rgba(255,255,255,.75);box-shadow:0 2px 8px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:13px">${c.e}</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-36]});
 }
@@ -1127,7 +1363,9 @@ function draw(){
   vis.forEach(p=>{
     const pidx = p._idx;
     const fl={furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
-    const m=L.marker([p.lat,p.lng],{icon:mkIcon(p.type)});
+    const isTaken=pinStatuses[String(p._idx)]==='taken';
+    const flagCount=typeof pinFlags!=='undefined'?(pinFlags[String(p._idx)]||0):0;
+    const m=L.marker([p.lat,p.lng],{icon:mkIconFull(p.type,isTaken,flagCount)});
     m.bindTooltip(`<b>₹${Number(p.rent).toLocaleString('en-IN')}</b>/mo · ${p.area}`,{permanent:false,direction:'top'});
     m.bindPopup(`<div class="mp-rent">₹${Number(p.rent).toLocaleString('en-IN')}<small>/mo</small></div><div class="mp-tags">${p.bhk&&p.type!=='pg'?`<span class="mp-tag">${p.bhk} BHK</span>`:''}<span class="mp-tag">${fl}</span><span class="mp-tag">📍 ${p.area}</span></div><button class="mp-view" onclick="openPinPanel(${pidx})">View Details →</button>`);
     if(useCluster&&window._cluster)window._cluster.addLayer(m);else m.addTo(map);
@@ -1187,6 +1425,34 @@ function openPinPanel(idx){
   if(icoEl) icoEl.textContent={flat:'🏠',pg:'🛏',flatmate:'🤝'}[p.type]||'📍';
   showAIMatches(p);
   document.getElementById('pin-panel').classList.add('open');
+
+  // ── NEW FEATURES ──
+  // Save button state
+  const saveBtn=document.getElementById('pp-save-btn');
+  if(saveBtn){
+    const isSaved=typeof savedPins!=='undefined'&&savedPins.includes(idx);
+    saveBtn.textContent=isSaved?'★':'☆';
+    saveBtn.classList.toggle('saved',isSaved);
+  }
+  // Status badge
+  if(typeof updateStatusBadge==='function') updateStatusBadge(idx);
+  // Rent avg badge
+  const avgBadge=document.getElementById('pp-avg-badge');
+  if(avgBadge&&typeof getAvgBadge==='function'){
+    const badge=getAvgBadge(p);
+    if(badge){avgBadge.style.display='inline-flex';avgBadge.className='rent-avg-badge '+badge.cls;avgBadge.textContent=badge.label;}
+    else avgBadge.style.display='none';
+  }
+  // Broker warning
+  const brokerWarn=document.getElementById('pp-broker-warn');
+  if(brokerWarn&&typeof isSuspectedBroker==='function')
+    brokerWarn.style.display=isSuspectedBroker(p)?'block':'none';
+  // Area scores
+  if(typeof renderAreaScores==='function') renderAreaScores(p.zone||'other');
+  // Rent estimator
+  if(typeof showRentEstimate==='function') showRentEstimate(p.lat,p.lng,p.type,p.bhk);
+  // Flag count on pin
+  if(typeof updateFlagBadge==='function') updateFlagBadge(idx);
 }
 
 function closePinPanel(){document.getElementById('pin-panel').classList.remove('open');activePinData=null;}
@@ -1211,8 +1477,8 @@ async function postComment(){
   if(USE_SUPABASE&&activePinData.id)await saveComment(activePinData.id,txt);
 }
 
-function sharePin(){const p=activePinData;if(!p)return;navigator.clipboard.writeText(`Check out this ${p.type} in ${p.area} — ₹${Number(p.rent).toLocaleString('en-IN')}/mo on KirayaMap! kirayamap.in`).then(()=>showToast('✅ Link copied!'));}
-function reportPin(){showToast('🚩 Reported — our team will review.');}
+function sharePin(){openShareModal();}
+function reportPin(){openReportModal();}
 
 // ════════════════════════════════════════
 // INTEREST
@@ -1428,6 +1694,7 @@ map.on('click',e=>{
   pendingLL=e.latlng;
   document.getElementById('cloc').textContent=`${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
   document.getElementById('modal').classList.add('open');
+  showRentEstimate(pendingLL.lat,pendingLL.lng,curType,'2');
 });
 
 function seltype(el,t){document.querySelectorAll('.tbtn2').forEach(b=>b.classList.remove('on'));el.classList.add('on');curType=t;document.getElementById('bhkrow').style.display=t==='pg'?'none':'block';}
@@ -1461,6 +1728,9 @@ async function submit(){
   if(savedToSupabase)await loadPins();else draw();
   localStorage.setItem('km_total_pins',String(totalPins+1));
   showToast('✅ Pin added! Flying to your location…',4000);
+  // Check if first pin in this area
+  const areaCount=(window._dbPins||[]).filter(p=>p.area===newPin.area).length;
+  if(areaCount<=1) firstPinCelebrate();
   document.getElementById('s-mine').textContent=userPins.length;
   setTimeout(()=>map.flyTo([lat,lng],16,{duration:0.8}),100);
   setTimeout(()=>{const last=markers[markers.length-1];if(last)last.openPopup();},1000);
@@ -1605,6 +1875,425 @@ function drawHeatmap(){
       1.0:  '#e74c3c'   // expensive — red
     }
   }).addTo(map);
+}
+
+
+// ════════════════════════════════════════════════════════
+// FEATURE: DEEP LINK — open specific pin via ?pin=idx
+// ════════════════════════════════════════════════════════
+function checkDeepLink(){
+  const params = new URLSearchParams(window.location.search);
+  const pinIdx = params.get('pin');
+  if(pinIdx !== null){
+    setTimeout(()=>{
+      openPinPanel(parseInt(pinIdx));
+      const basePins=(USE_SUPABASE&&window._dbPins&&window._dbPins.length)?window._dbPins:seed;
+      const allSPGs=typeof PG_PINS!=='undefined'?PG_PINS:[];
+      const all=[...basePins,...allSPGs,...userPins];
+      const p=all[parseInt(pinIdx)];
+      if(p) map.flyTo([p.lat,p.lng],16,{duration:1});
+    },1200);
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: SHARE MODAL with deep link
+// ════════════════════════════════════════════════════════
+let _shareUrl='';
+function openShareModal(){
+  const p=activePinData; if(!p) return;
+  const url=`${location.origin}${location.pathname}?pin=${p.idx}`;
+  _shareUrl=url;
+  document.getElementById('share-sub').textContent=`₹${Number(p.rent).toLocaleString('en-IN')}/mo · ${p.area}`;
+  document.getElementById('share-link-box').textContent=url;
+  document.getElementById('share-modal').classList.add('open');
+}
+function copyShareLink(){
+  navigator.clipboard.writeText(_shareUrl).then(()=>{showToast('✅ Link copied!');document.getElementById('share-modal').classList.remove('open');});
+}
+function waShareLink(){
+  const p=activePinData; if(!p) return;
+  const txt=`Check out this ${p.type} in ${p.area} — ₹${Number(p.rent).toLocaleString('en-IN')}/mo on KirayaMap!\n${_shareUrl}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+  document.getElementById('share-modal').classList.remove('open');
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: SAVE / BOOKMARK PINS
+// ════════════════════════════════════════════════════════
+let savedPins = JSON.parse(localStorage.getItem('km_saved')||'[]');
+function toggleSavePin(){
+  if(!activePinData) return;
+  const idx=activePinData.idx;
+  const btn=document.getElementById('pp-save-btn');
+  const pos=savedPins.indexOf(idx);
+  if(pos>=0){
+    savedPins.splice(pos,1);
+    btn.textContent='☆'; btn.classList.remove('saved');
+    showToast('Removed from saved');
+  } else {
+    savedPins.push(idx);
+    btn.textContent='★'; btn.classList.add('saved');
+    showToast('⭐ Saved!');
+    celebrateIfFirst();
+  }
+  localStorage.setItem('km_saved',JSON.stringify(savedPins));
+  updateSavedCount();
+  renderSavedList();
+}
+function updateSavedCount(){
+  const el=document.getElementById('saved-count');
+  if(el) el.textContent=savedPins.length;
+  const el2=document.getElementById('s-saved');
+  if(el2) el2.textContent=savedPins.length;
+}
+function renderSavedList(){
+  const container=document.getElementById('saved-list'); if(!container) return;
+  const basePins=(USE_SUPABASE&&window._dbPins&&window._dbPins.length)?window._dbPins:seed;
+  const allSPGs=typeof PG_PINS!=='undefined'?PG_PINS:[];
+  const all=[...basePins,...allSPGs,...userPins];
+  if(!savedPins.length){
+    container.innerHTML='<div style="font-size:13px;color:var(--ink3);text-align:center;padding:30px 0;">No saved listings yet.<br>Tap ☆ on any pin to save it.</div>';
+    return;
+  }
+  container.innerHTML=savedPins.map(idx=>{
+    const p=all[idx]; if(!p) return '';
+    const ico={flat:'🏠',pg:'🛏',flatmate:'🤝'}[p.type];
+    const fl={furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
+    return `<div class="saved-item" onclick="openPinPanel(${idx});toggleSavedDrawer()">
+      <span class="saved-ico">${ico}</span>
+      <div style="flex:1">
+        <div class="saved-rent">₹${Number(p.rent).toLocaleString('en-IN')}<span style="font-size:11px;font-weight:400;color:var(--ink3)">/mo</span></div>
+        <div class="saved-det">${p.bhk&&p.type!=='pg'?p.bhk+' BHK · ':''}${fl} · ${p.area}</div>
+      </div>
+      <button class="saved-remove" onclick="event.stopPropagation();removeSaved(${idx})">✕</button>
+    </div>`;
+  }).join('');
+}
+function removeSaved(idx){
+  savedPins=savedPins.filter(i=>i!==idx);
+  localStorage.setItem('km_saved',JSON.stringify(savedPins));
+  updateSavedCount();renderSavedList();
+}
+function toggleSavedDrawer(){
+  const d=document.getElementById('saved-drawer');
+  d.classList.toggle('open');
+  if(d.classList.contains('open')) renderSavedList();
+}
+updateSavedCount();
+
+// ════════════════════════════════════════════════════════
+// FEATURE: NEAR ME
+// ════════════════════════════════════════════════════════
+function nearMe(){
+  const btn=document.getElementById('near-me-btn');
+  btn.classList.add('loading');
+  btn.innerHTML='📍 Locating…';
+  if(!navigator.geolocation){showToast('⚠️ Geolocation not supported');btn.classList.remove('loading');btn.innerHTML='📍 Near Me';return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const {latitude:lat,longitude:lng}=pos.coords;
+    map.flyTo([lat,lng],15,{duration:1.2});
+    // Add user location marker
+    if(window._myLocMarker) map.removeLayer(window._myLocMarker);
+    window._myLocMarker=L.circleMarker([lat,lng],{
+      radius:10,fillColor:'#6c63ff',color:'#fff',weight:3,fillOpacity:1
+    }).addTo(map).bindTooltip('You are here',{permanent:false});
+    // Show nearby pins
+    setTimeout(()=>showNearby(lat,lng),1300);
+    btn.classList.remove('loading');
+    btn.innerHTML='📍 Near Me';
+    showToast('📍 Showing pins near you!');
+  }, err=>{
+    btn.classList.remove('loading');
+    btn.innerHTML='📍 Near Me';
+    showToast('⚠️ Could not get location. Please allow access.');
+  },{timeout:8000});
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: AVAILABLE / TAKEN STATUS
+// ════════════════════════════════════════════════════════
+let pinStatuses = JSON.parse(localStorage.getItem('km_statuses')||'{}');
+function togglePinStatus(){
+  if(!activePinData) return;
+  const idx=String(activePinData.idx);
+  const current=pinStatuses[idx]||'available';
+  const next=current==='available'?'taken':'available';
+  pinStatuses[idx]=next;
+  localStorage.setItem('km_statuses',JSON.stringify(pinStatuses));
+  updateStatusBadge(idx);
+  showToast(next==='taken'?'🔒 Marked as taken':'🟢 Marked as available');
+  draw(); // refresh map to grey out if taken
+}
+function updateStatusBadge(idx){
+  const badge=document.getElementById('pp-status-badge');
+  const toggleBtn=document.getElementById('pp-status-toggle');
+  const status=pinStatuses[String(idx)]||'available';
+  if(status==='taken'){
+    badge.className='status-badge status-taken';
+    badge.textContent='🔴 Taken';
+    toggleBtn.textContent='Mark as Available';
+    toggleBtn.className='btn-mark-avail';
+  } else {
+    badge.className='status-badge status-available';
+    badge.textContent='🟢 Available';
+    toggleBtn.textContent='Mark as Taken';
+    toggleBtn.className='btn-mark-taken';
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: RENT AVG BADGE — above/below area average
+// ════════════════════════════════════════════════════════
+function getRentAvgBadge(pin){
+  const basePins=(USE_SUPABASE&&window._dbPins&&window._dbPins.length)?window._dbPins:seed;
+  const allSPGs=typeof PG_PINS!=='undefined'?PG_PINS:[];
+  const all=[...basePins,...allSPGs,...userPins];
+  const zonepins=all.filter(p=>p.zone===pin.zone&&p.type===pin.type);
+  if(zonekins.length<3) return null;
+  const avg=zonekins.reduce((s,p)=>s+p.rent,0)/zonekins.length;
+  const diff=((pin.rent-avg)/avg)*100;
+  if(Math.abs(diff)<5) return {label:'≈ Area avg',cls:'rent-avg'};
+  if(diff<0) return {label:`⬇ ${Math.abs(diff).toFixed(0)}% below avg`,cls:'rent-below'};
+  return {label:`⬆ ${diff.toFixed(0)}% above avg`,cls:'rent-above'};
+}
+
+// Fix typo in getRentAvgBadge
+function getAvgBadge(pin){
+  const basePins=(USE_SUPABASE&&window._dbPins&&window._dbPins.length)?window._dbPins:seed;
+  const allSPGs=typeof PG_PINS!=='undefined'?PG_PINS:[];
+  const all=[...basePins,...allSPGs,...userPins];
+  const zonepins=all.filter(p=>p.zone===pin.zone&&p.type===pin.type);
+  if(zonepins.length<3) return null;
+  const avg=zonepins.reduce((s,p)=>s+p.rent,0)/zonepins.length;
+  const diff=((pin.rent-avg)/avg)*100;
+  if(Math.abs(diff)<5) return {label:'≈ Area avg',cls:'rent-avg'};
+  if(diff<0) return {label:`⬇ ${Math.abs(diff).toFixed(0)}% below avg`,cls:'rent-below'};
+  return {label:`⬆ ${diff.toFixed(0)}% above avg`,cls:'rent-above'};
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: BROKER DETECTION
+// ════════════════════════════════════════════════════════
+function isSuspectedBroker(pin){
+  // Round rent ending in exactly 000, no note, PG with 3+ BHK
+  const roundRent = pin.rent%1000===0;
+  const noNote = !pin.note || pin.note.length<10;
+  const suspiciousBHK = pin.type==='pg'&&pin.bhk>2;
+  return (roundRent&&noNote)||suspiciousBHK;
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: AREA SCORES (seeded by zone)
+// ════════════════════════════════════════════════════════
+const AREA_SCORES={
+  north:{safety:78,connect:90,water:65,noise:72},
+  coaching:{safety:70,connect:85,water:60,noise:55},
+  south:{safety:88,connect:82,water:75,noise:68},
+  budget:{safety:65,connect:88,water:58,noise:60},
+  other:{safety:72,connect:75,water:70,noise:75},
+  user:{safety:70,connect:70,water:65,noise:70},
+};
+// Load user ratings from localStorage
+let areaRatings=JSON.parse(localStorage.getItem('km_area_ratings')||'{}');
+
+function renderAreaScores(zone){
+  const base=AREA_SCORES[zone]||AREA_SCORES.user;
+  const user=areaRatings[zone]||{};
+  const scores={
+    safety: user.safety||base.safety,
+    connect: user.connect||base.connect,
+    water: user.water||base.water,
+    noise: user.noise||base.noise,
+  };
+  ['safety','connect','water','noise'].forEach(k=>{
+    const fill=document.getElementById('score-'+k);
+    const val=document.getElementById('sval-'+k);
+    if(fill){fill.style.width=scores[k]+'%';}
+    if(val){val.textContent=scores[k];}
+  });
+}
+
+function rateArea(){
+  if(!activePinData) return;
+  const zone=activePinData.zone||'other';
+  const score=parseInt(prompt('Rate this area 1–100 (safety, connectivity, water, noise avg):'));
+  if(!score||score<1||score>100) return;
+  if(!areaRatings[zone]) areaRatings[zone]={};
+  areaRatings[zone]={safety:score,connect:score,water:score,noise:100-score};
+  localStorage.setItem('km_area_ratings',JSON.stringify(areaRatings));
+  renderAreaScores(zone);
+  showToast('✅ Area rating saved!');
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: CONFETTI CELEBRATION
+// ════════════════════════════════════════════════════════
+let _celebrated=JSON.parse(localStorage.getItem('km_celebrated')||'{}');
+function celebrateIfFirst(){
+  const basePins=(USE_SUPABASE&&window._dbPins&&window._dbPins.length)?window._dbPins:seed;
+  const allSPGs=typeof PG_PINS!=='undefined'?PG_PINS:[];
+  if(savedPins.length===1&&!_celebrated.first_save){
+    _celebrated.first_save=true;
+    localStorage.setItem('km_celebrated',JSON.stringify(_celebrated));
+    launchConfetti();
+    setTimeout(()=>showToast('🎉 First save! You\'re on your way to finding your place.'),500);
+  }
+}
+function launchConfetti(){
+  const wrap=document.getElementById('confetti-wrap');
+  wrap.style.display='block';
+  wrap.innerHTML='';
+  const colors=['#2d6a4f','#f9ab00','#6c63ff','#e74c3c','#3498db','#a8c5b5'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}%;background:${colors[i%colors.length]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-delay:${Math.random()*0.8}s;animation-duration:${2+Math.random()*1.5}s;`;
+    wrap.appendChild(el);
+  }
+  setTimeout(()=>{wrap.style.display='none';wrap.innerHTML='';},4000);
+}
+function firstPinCelebrate(){
+  if(!_celebrated.first_pin){
+    _celebrated.first_pin=true;
+    localStorage.setItem('km_celebrated',JSON.stringify(_celebrated));
+    launchConfetti();
+    showToast('🎉 You\'re the first to pin in this area!',4000);
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: AI RENT ESTIMATOR
+// ════════════════════════════════════════════════════════
+function closeEstimator(){document.getElementById('estimator-panel').classList.remove('show');}
+
+function showRentEstimate(lat,lng,type,bhk){
+  const basePins=(USE_SUPABASE&&window._dbPins&&window._dbPins.length)?window._dbPins:seed;
+  const allSPGs=typeof PG_PINS!=='undefined'?PG_PINS:[];
+  const all=[...basePins,...allSPGs,...userPins];
+  // Get 10 nearest matching pins
+  const nearby=all
+    .filter(p=>p.type===type&&(type==='pg'||p.bhk===bhk))
+    .map(p=>({...p,d:Math.sqrt((p.lat-lat)**2+(p.lng-lng)**2)}))
+    .sort((a,b)=>a.d-b.d)
+    .slice(0,10);
+  if(nearby.length<3){
+    showToast('Not enough nearby data to estimate. Drop a pin!');
+    return;
+  }
+  const rents=nearby.map(p=>p.rent).sort((a,b)=>a-b);
+  const low=rents[Math.floor(rents.length*0.25)];
+  const high=rents[Math.floor(rents.length*0.75)];
+  const mid=Math.round(rents.reduce((s,r)=>s+r,0)/rents.length/500)*500;
+  document.getElementById('est-range').textContent=`₹${low.toLocaleString('en-IN')} – ₹${high.toLocaleString('en-IN')}`;
+  document.getElementById('est-sub').textContent=`Based on ${nearby.length} nearby ${type} listings · Fair price ~₹${mid.toLocaleString('en-IN')}`;
+  document.getElementById('estimator-panel').classList.add('show');
+  setTimeout(()=>document.getElementById('estimator-panel').classList.remove('show'),8000);
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: REPORT MODAL
+// ════════════════════════════════════════════════════════
+let _selectedReportReason='';
+function openReportModal(){
+  document.getElementById('report-modal').classList.add('open');
+  document.querySelectorAll('.report-reason').forEach(r=>r.classList.remove('on'));
+  _selectedReportReason='';
+}
+function selectReport(el,reason){
+  document.querySelectorAll('.report-reason').forEach(r=>r.classList.remove('on'));
+  el.classList.add('on');_selectedReportReason=reason;
+}
+async function submitReport(){
+  if(!_selectedReportReason){showToast('⚠️ Please select a reason.');return;}
+  if(!activePinData){showToast('⚠️ No listing selected.');return;}
+  const detail=document.getElementById('report-detail').value.trim();
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/reports`,{
+      method:'POST',
+      headers:sbH({'Content-Type':'application/json','Prefer':'return=minimal'}),
+      body:JSON.stringify({pin_id:activePinData.id||null,reason:_selectedReportReason,detail:detail||null})
+    });
+  }catch(e){}
+  document.getElementById('report-modal').classList.remove('open');
+  document.getElementById('report-detail').value='';
+  showToast('🚩 Report submitted — thank you for keeping the map clean!',4000);
+}
+
+// ════════════════════════════════════════════════════════
+// FEATURE: FILTER BY METRO STATION
+// ════════════════════════════════════════════════════════
+let metroFilterActive=false;
+function filterByMetro(val){
+  if(!val){metroFilterActive=false;draw();document.getElementById('fv-metro').textContent=metroEnabled?'On':'Off';return;}
+  const [lat,lng]=val.split(',').map(Number);
+  metroFilterActive=true;
+  map.flyTo([lat,lng],15,{duration:1});
+  // Show only pins within ~800m of station
+  const RADIUS=0.008; // ~800m in degrees
+  const basePins=(USE_SUPABASE&&window._dbPins&&window._dbPins.length)?window._dbPins:seed;
+  const allSPGs=typeof PG_PINS!=='undefined'?PG_PINS:[];
+  const all=[...basePins,...allSPGs,...userPins];
+  all.forEach((p,i)=>p._idx=i);
+  markers.forEach(m=>map.removeLayer(m));markers=[];
+  if(window._cluster) window._cluster.clearLayers();
+  const nearby=all.filter(p=>Math.sqrt((p.lat-lat)**2+(p.lng-lng)**2)<RADIUS);
+  const useCluster=typeof L.markerClusterGroup!=='undefined';
+  nearby.forEach(p=>{
+    const fl={furnished:'Furnished',semi:'Semi',unfurnished:'Bare'}[p.fur];
+    const isTaken=pinStatuses[String(p._idx)]==='taken';
+    const flagCount=typeof pinFlags!=='undefined'?(pinFlags[String(p._idx)]||0):0;
+    const m=L.marker([p.lat,p.lng],{icon:mkIconFull(p.type,isTaken,flagCount)});
+    m.bindPopup(`<div class="mp-rent">₹${Number(p.rent).toLocaleString('en-IN')}<small>/mo</small></div><div class="mp-tags">${p.bhk&&p.type!=='pg'?`<span class="mp-tag">${p.bhk} BHK</span>`:''}<span class="mp-tag">${fl}</span><span class="mp-tag">📍 ${p.area}</span></div><button class="mp-view" onclick="openPinPanel(${p._idx})">View Details →</button>`);
+    if(useCluster&&window._cluster)window._cluster.addLayer(m);else m.addTo(map);
+    markers.push(m);
+  });
+  document.getElementById('s-pins').textContent=nearby.length;
+  showToast(`🚇 Showing ${nearby.length} pins near this station`);
+}
+
+
+
+
+// ════════════════════════════════════════════════════════
+// FEATURE: FLAG COUNT — show report count on pin panel
+// ════════════════════════════════════════════════════════
+let pinFlags = JSON.parse(localStorage.getItem('km_flags')||'{}');
+
+function updateFlagBadge(idx){
+  const el=document.getElementById('pp-flag-badge');
+  if(!el) return;
+  const count=pinFlags[String(idx)]||0;
+  if(count===0){el.style.display='none';return;}
+  el.style.display='block';
+  const cls=count>=3?'flag-badge danger':'flag-badge';
+  const msg=count>=3
+    ? `🚩 ${count} reports — use caution with this listing`
+    : `⚑ ${count} report${count>1?'s':''} filed on this listing`;
+  el.innerHTML=`<span class="${cls}">${msg}</span>`;
+}
+
+// Patch submitReport to also track locally + mark on map
+const _origSubmitReport = submitReport;
+async function submitReport(){
+  if(!_selectedReportReason){showToast('⚠️ Please select a reason.');return;}
+  if(!activePinData){showToast('⚠️ No listing selected.');return;}
+  const idx=String(activePinData.idx);
+  pinFlags[idx]=(pinFlags[idx]||0)+1;
+  localStorage.setItem('km_flags',JSON.stringify(pinFlags));
+  await _origSubmitReport();
+  updateFlagBadge(activePinData.idx);
+  // If 3+ reports, auto-dim the pin on map
+  if(pinFlags[idx]>=3){
+    showToast('🚩 This pin has been flagged multiple times. It will be reviewed.',4000);
+    draw(); // re-render so flagged pins appear differently
+  }
+}
+
+// Modify mkIcon to show flagged pins differently
+const _origMkIcon = mkIcon;
+function mkIcon(type, taken){
+  return _origMkIcon(type, taken);
 }
 
 syncTimer=setInterval(()=>{if(!document.hidden)loadPins();},15000);
