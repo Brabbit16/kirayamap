@@ -280,7 +280,7 @@
     .slbl{font-size:9px;color:var(--ink3);margin-top:1px;letter-spacing:.3px;}
     #banner{display:none;position:fixed;top:66px;left:calc((100% - 300px)/2);transform:translateX(-50%);z-index:900;background:var(--ink);color:#fff;padding:9px 20px;border-radius:20px;font-size:13px;box-shadow:var(--shl);white-space:nowrap;animation:pulse 1.5s infinite;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.65}}
-    #pin-panel{display:none;position:fixed;top:54px;right:300px;width:360px;bottom:0;z-index:800;background:#0f1117;border-left:1px solid rgba(255,255,255,.08);flex-direction:column;overflow:hidden;box-shadow:-8px 0 40px rgba(0,0,0,.35);}
+    #pin-panel{display:none;position:fixed;top:54px;right:300px;width:340px;bottom:0;z-index:800;background:#0f1117;border-left:1px solid rgba(255,255,255,.08);flex-direction:column;overflow:hidden;box-shadow:-8px 0 40px rgba(0,0,0,.35);}
     #pin-panel.open{display:flex;}
     #pp-scroll{flex:1;overflow-y:auto;overflow-x:hidden;}
     #pp-scroll::-webkit-scrollbar{width:4px;}
@@ -744,17 +744,20 @@
   <div id="pin-panel">
 
     <!-- FIXED HEADER -->
-    <div id="pp-header" style="flex-shrink:0;background:#0f1117;border-bottom:1px solid rgba(255,255,255,.07);padding:16px 18px 14px;">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">
-        <div>
+    <div id="pp-header" style="flex-shrink:0;background:#0f1117;border-bottom:1px solid rgba(255,255,255,.07);padding:16px 18px 14px;position:relative;">
+      <!-- Close button — always top right, never clipped -->
+      <button onclick="closePinPanel()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);cursor:pointer;font-size:14px;color:#888;display:flex;align-items:center;justify-content:center;z-index:10;flex-shrink:0;">✕</button>
+
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;padding-right:44px;">
+        <div style="min-width:0;">
           <div style="font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#555;margin-bottom:5px;" id="pp-type">FLAT</div>
-          <div style="font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:#fff;line-height:1;" id="pp-rent">₹—<small style="font-size:13px;font-weight:400;color:#666;font-family:'DM Sans',sans-serif;">/month</small></div>
+          <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#fff;line-height:1;" id="pp-rent">₹—<small style="font-size:13px;font-weight:400;color:#666;font-family:'DM Sans',sans-serif;">/month</small></div>
         </div>
-        <div style="display:flex;gap:7px;align-items:center;margin-top:4px;">
-          <button id="pp-save-btn" onclick="toggleSavePin()" title="Save" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:16px;color:#aaa;display:flex;align-items:center;justify-content:center;">☆</button>
-          <button onclick="openShareModal()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:14px;color:#aaa;display:flex;align-items:center;justify-content:center;">⬆</button>
-          <button onclick="openReportModal()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:14px;color:#aaa;display:flex;align-items:center;justify-content:center;">🚩</button>
-          <button onclick="closePinPanel()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:15px;color:#aaa;display:flex;align-items:center;justify-content:center;">✕</button>
+        <!-- Action buttons — save, share, report -->
+        <div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-shrink:0;">
+          <button id="pp-save-btn" onclick="toggleSavePin()" title="Save" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:15px;color:#aaa;display:flex;align-items:center;justify-content:center;">☆</button>
+          <button onclick="openShareModal()" title="Share" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:13px;color:#aaa;display:flex;align-items:center;justify-content:center;">⬆</button>
+          <button onclick="openReportModal()" title="Report" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:13px;color:#aaa;display:flex;align-items:center;justify-content:center;">🚩</button>
         </div>
       </div>
       <div id="pp-tags" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;"></div>
