@@ -547,8 +547,7 @@
 <!-- ══ HOW TO USE ══ -->
 <div id="how-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
   <div class="modal-card" style="position:relative;">
-    <button onclick="closeHow()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:#999;line-height:1;">✕</button>
-    <div class="mc-title">How KirayaMap works</div>
+        <div class="mc-title">How KirayaMap works</div>
     <div class="mc-sub">Simple. Anonymous. Honest.</div>
     <div class="step"><div class="step-n">1</div><div><div class="step-t">Search any place in Delhi</div><div class="step-d">Type anything — Lajpat Nagar, Connaught Place, AIIMS, Janakpuri. The map flies there and shows nearby rent pins.</div></div></div>
     <div class="step"><div class="step-n">2</div><div><div class="step-t">Tap any pin for full details</div><div class="step-d">See rent, BHK, furnishing, tenant's honest quote, ratings, comments. Tap "I'm Interested" to connect with the owner.</div></div></div>
@@ -744,30 +743,33 @@
   <div id="pin-panel">
 
     <!-- FIXED HEADER -->
-    <div id="pp-header" style="flex-shrink:0;background:#0f1117;border-bottom:1px solid rgba(255,255,255,.07);padding:16px 18px 14px;position:relative;">
-      <!-- Close button — always top right, never clipped -->
-      <button onclick="closePinPanel()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);cursor:pointer;font-size:14px;color:#888;display:flex;align-items:center;justify-content:center;z-index:10;flex-shrink:0;">✕</button>
+    <div id="pp-header" style="flex-shrink:0;background:#0f1117;border-bottom:1px solid rgba(255,255,255,.07);padding:14px 16px 12px;">
 
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;padding-right:44px;">
-        <div style="min-width:0;">
-          <div style="font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#555;margin-bottom:5px;" id="pp-type">FLAT</div>
-          <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#fff;line-height:1;" id="pp-rent">₹—<small style="font-size:13px;font-weight:400;color:#666;font-family:'DM Sans',sans-serif;">/month</small></div>
-        </div>
-        <!-- Action buttons — save, share, report -->
-        <div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-shrink:0;">
-          <button id="pp-save-btn" onclick="toggleSavePin()" title="Save" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:15px;color:#aaa;display:flex;align-items:center;justify-content:center;">☆</button>
-          <button onclick="openShareModal()" title="Share" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:13px;color:#aaa;display:flex;align-items:center;justify-content:center;">⬆</button>
-          <button onclick="openReportModal()" title="Report" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:13px;color:#aaa;display:flex;align-items:center;justify-content:center;">🚩</button>
+      <!-- Row 1: type label + action buttons (including close) -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#555;" id="pp-type">FLAT</div>
+        <div style="display:flex;gap:5px;align-items:center;">
+          <button id="pp-save-btn" onclick="toggleSavePin()" title="Save" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:13px;color:#aaa;display:flex;align-items:center;justify-content:center;">&#9734;</button>
+          <button onclick="openShareModal()" title="Share" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:11px;color:#aaa;display:flex;align-items:center;justify-content:center;">&#8679;</button>
+          <button onclick="openReportModal()" title="Report" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:11px;color:#aaa;display:flex;align-items:center;justify-content:center;">&#9873;</button>
+          <button onclick="closePinPanel()" title="Close" style="width:28px;height:28px;border-radius:50%;background:rgba(220,50,50,.15);border:1px solid rgba(220,50,50,.3);cursor:pointer;font-size:13px;color:#e88;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
         </div>
       </div>
-      <div id="pp-tags" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;"></div>
+
+      <!-- Row 2: rent amount -->
+      <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#fff;line-height:1;margin-bottom:12px;" id="pp-rent">&#x20B9;&mdash;<small style="font-size:13px;font-weight:400;color:#666;font-family:'DM Sans',sans-serif;">/month</small></div>
+
+      <!-- Row 3: tags -->
+      <div id="pp-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
+
+      <!-- Row 4: status badges -->
       <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
-        <span id="pp-status-badge" class="status-badge status-available">🟢 Available</span>
+        <span id="pp-status-badge" class="status-badge status-available">&#x1F7E2; Available</span>
         <span id="pp-avg-badge" class="rent-avg-badge" style="display:none;"></span>
         <button id="pp-status-toggle" class="btn-mark-taken" onclick="togglePinStatus()">Mark as Taken</button>
       </div>
       <div id="pp-flag-badge" style="display:none;margin-top:8px;"></div>
-      <div class="broker-warning" id="pp-broker-warn" style="margin:8px 0 0;">⚠️ Patterns suggest broker listing. Verify before any payment.</div>
+      <div class="broker-warning" id="pp-broker-warn" style="margin:8px 0 0;">&#9888;&#65039; Patterns suggest broker listing. Verify before any payment.</div>
     </div>
 
     <!-- SCROLLABLE BODY -->
@@ -2018,27 +2020,40 @@ updateSavedCount();
 // ════════════════════════════════════════════════════════
 function nearMe(){
   const btn=document.getElementById('near-me-btn');
-  btn.classList.add('loading');
-  btn.innerHTML='📍 Locating…';
-  if(!navigator.geolocation){showToast('⚠️ Geolocation not supported');btn.classList.remove('loading');btn.innerHTML='📍 Near Me';return;}
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const {latitude:lat,longitude:lng}=pos.coords;
-    map.flyTo([lat,lng],15,{duration:1.2});
-    // Add user location marker
-    if(window._myLocMarker) map.removeLayer(window._myLocMarker);
-    window._myLocMarker=L.circleMarker([lat,lng],{
-      radius:10,fillColor:'#00b4d8',color:'#fff',weight:3,fillOpacity:1
-    }).addTo(map).bindTooltip('You are here',{permanent:false});
-    // Show nearby pins
-    setTimeout(()=>showNearby(lat,lng),1300);
-    btn.classList.remove('loading');
-    btn.innerHTML='📍 Near Me';
-    showToast('📍 Showing pins near you!');
-  }, err=>{
-    btn.classList.remove('loading');
-    btn.innerHTML='📍 Near Me';
-    showToast('⚠️ Could not get location. Please allow access.');
-  },{timeout:8000});
+  if(!btn) return;
+  if(!navigator.geolocation){
+    showToast('Location not supported on this browser.');
+    return;
+  }
+  btn.style.opacity='0.6';
+  btn.style.pointerEvents='none';
+  btn.innerHTML='&#x1F4CD; Locating…';
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      var lat=pos.coords.latitude;
+      var lng=pos.coords.longitude;
+      map.flyTo([lat,lng],15,{duration:1.2});
+      if(window._myLocMarker) map.removeLayer(window._myLocMarker);
+      window._myLocMarker=L.circleMarker([lat,lng],{
+        radius:12,fillColor:'#00b4d8',color:'#fff',
+        weight:3,fillOpacity:0.9
+      }).addTo(map).bindPopup('<b>You are here</b>');
+      setTimeout(function(){showNearby(lat,lng);},1400);
+      btn.style.opacity='1';
+      btn.style.pointerEvents='all';
+      btn.innerHTML='&#x1F4CD; Near Me';
+      showToast('Showing listings near you!');
+    },
+    function(err){
+      btn.style.opacity='1';
+      btn.style.pointerEvents='all';
+      btn.innerHTML='&#x1F4CD; Near Me';
+      if(err.code===1) showToast('Location blocked. Allow location in browser settings.',4000);
+      else if(err.code===2) showToast('Location unavailable. Try again.',4000);
+      else showToast('Location timed out. Try again.',4000);
+    },
+    {timeout:10000,enableHighAccuracy:false,maximumAge:30000}
+  );
 }
 
 // ════════════════════════════════════════════════════════
